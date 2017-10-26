@@ -4,27 +4,22 @@ import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
-@Entity(tableName = "base_menu")
-public class MenuModel {
+@Entity(tableName = "base_role_authority")
+public class RoleAuthorityModel {
     @Column(primaryKey = true)
     private int id = -1;
 
-    private String code;
-    private String title;
+    @Column(columnName = "role_id")
+    private int roleId = -1;
 
-    @Column(columnName = "parent_id")
-    private int parentId = -1;
+    @Column(columnName = "resource_id")
+    private int resourceId = -1;
 
-    private String href;
-    private String icon;
-    private String type;
-
-    @Column(columnName = "order_num")
-    private int orderNum = 0;
+    @Column(columnName = "resource_type")
+    private String resourceType;
 
     private String description;
     private String path;
-    private int enabled = 1;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -55,7 +50,4 @@ public class MenuModel {
     private String attr3;
     private String attr4;
     private String attr5;
-    private String attr6;
-    private String attr7;
-    private String attr8;
 }

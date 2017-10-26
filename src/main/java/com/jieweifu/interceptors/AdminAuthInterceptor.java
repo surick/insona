@@ -1,6 +1,7 @@
 package com.jieweifu.interceptors;
 
 import com.jieweifu.common.business.BaseContextHandler;
+import com.jieweifu.common.utils.ClientUtil;
 import com.jieweifu.constants.CommonConstant;
 import com.jieweifu.models.ResultModel;
 import com.jieweifu.common.utils.TokenUtil;
@@ -22,9 +23,10 @@ public class AdminAuthInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(request.getMethod().equalsIgnoreCase(HttpMethod.OPTIONS.name())){
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.OPTIONS.name())) {
             return true;
         }
+        BaseContextHandler.set(CommonConstant.REQUEST_IP, ClientUtil.getClientIp(request));
 
         HandlerMethod methodHandler = (HandlerMethod) handler;
         AdminAuthAnnotation classAuth = methodHandler.getBeanType().getAnnotation(AdminAuthAnnotation.class);
@@ -41,25 +43,26 @@ public class AdminAuthInterceptor extends HandlerInterceptorAdapter {
         }
 
         String authToken = request.getHeader(CommonConstant.TOKEN_AUTHORIZATION);
-        String userId = tokenUtil.getUserInfoToken(authToken);
+        String userId = tokenUtil.getUserId(authToken);
         if (userId == null) {
             writeUnAuthorization(response);
             return false;
         }
 
-        //此处从缓存中获取用户权限
+        tokenUtil.cacheUserInThreadLocal(Integer.parseInt(userId));
+
         String path = request.getServletPath();
         String method = request.getMethod();
-
-
-
-        writeUnAuthorization(response);
-
-        request.setAttribute(CommonConstant.USER, "");
+        boolean canAction = tokenUtil.checkAuthorization(path, method);
+        if (!canAction) {
+            writeUnAuthorization(response);
+            return false;
+        }
         return true;
     }
 
     private void writeUnAuthorization(HttpServletResponse response) throws Exception {
+        BaseContextHandler.remove();
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");

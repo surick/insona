@@ -33,6 +33,13 @@ public class ResultModel {
         return this;
     }
 
+    public ResultModel setError(String message) {
+        ResultModel model = new ResultModel();
+        this.message = message;
+        this.success = false;
+        return this;
+    }
+
     public int getCode() {
         return code;
     }

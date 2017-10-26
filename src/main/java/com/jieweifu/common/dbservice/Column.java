@@ -6,11 +6,13 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Documented
 public @interface Column {
-    boolean insert() default false;
+    boolean insert() default true;
 
-    boolean update() default false;
+    boolean update() default true;
 
-    String column() default "";
+    boolean select() default true;
+
+    String columnName() default "";
 
     boolean primaryKey() default false;
 }

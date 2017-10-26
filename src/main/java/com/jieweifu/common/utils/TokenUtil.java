@@ -1,6 +1,9 @@
 package com.jieweifu.common.utils;
 
+import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.constants.CommonConstant;
+import com.jieweifu.models.admin.UserModel;
+import com.jieweifu.services.admin.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,12 +29,14 @@ public class TokenUtil {
     private String publicKey;
 
     private RedisUtil redisUtil;
+    private UserService userService;
 
     private static RsaKeyUtil rsaKeyUtil = new RsaKeyUtil();
 
     @Autowired
-    public TokenUtil(RedisUtil redisUtil) {
+    public TokenUtil(RedisUtil redisUtil, UserService userService) {
         this.redisUtil = redisUtil;
+        this.userService = userService;
     }
 
     public RedisUtil getRedisUtil() {
@@ -86,7 +91,7 @@ public class TokenUtil {
     /**
      * 获取用户id
      */
-    public String getUserInfoToken(String token) {
+    public String getUserId(String token) {
         if (token == null || token.length() == 0) {
             return null;
         }
@@ -108,5 +113,16 @@ public class TokenUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void cacheUserInThreadLocal(int userId) {
+        BaseContextHandler.set(CommonConstant.USER_ID, userId);
+        UserModel userModel = userService.getUserById(userId);
+        BaseContextHandler.set(CommonConstant.USER_NAME, userModel.getUserName());
+        BaseContextHandler.setUser(userModel);
+    }
+
+    public boolean checkAuthorization(String path, String method) {
+        return true;
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @SuppressWarnings("unused")
-@Controller("AdminMenu")
+@Controller("SystemMenu")
 @RequestMapping("sys/menu")
 @AdminAuthAnnotation
 public class MenuController {

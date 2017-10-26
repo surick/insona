@@ -66,27 +66,30 @@ public class Update {
         return this;
     }
 
-    private <T> Update set(T t) throws IllegalAccessException {
+    private <T> Update set(T t, boolean needPrimary) throws IllegalAccessException {
         Class<?> clazz = t.getClass();
         for (Field f : clazz.getDeclaredFields()) {
             f.setAccessible(true);
+            String dbName = f.getName();
             Column column = f.getAnnotation(Column.class);
-            if (column != null) {
-                String dbName = f.getName();
-                if (!column.column().isEmpty()) {
-                    dbName = column.column();
+            if (column != null && column.update() && f.get(t) != null) {
+                if (!column.columnName().isEmpty()) {
+                    dbName = column.columnName();
                 }
-                if (f.get(t) != null) {
-                    if (column.update()) {
-                        set("`" + dbName + "`", f.get(t));
-                    }
-                    if (column.primaryKey()) {
-                        where(dbName + " = ?", f.get(t));
-                    }
-                }
+                set("`" + dbName + "`", f.get(t));
+            }
+            if (column == null && f.get(t) != null) {
+                set("`" + dbName + "`", f.get(t));
+            }
+            if (column != null && column.primaryKey() && needPrimary) {
+                where(dbName + " = ?", f.get(t));
             }
         }
         return this;
+    }
+
+    private <T> Update set(T t) throws IllegalAccessException {
+        return set(t, true);
     }
 
     public Update limit(Integer pageSize) {
@@ -127,6 +130,11 @@ public class Update {
         DB.writeLog(logger, sql, parameters.getValues());
 
         return sql;
+    }
+
+    @Override
+    public String toString() {
+        return buildSQL();
     }
 
     public Integer execute() {

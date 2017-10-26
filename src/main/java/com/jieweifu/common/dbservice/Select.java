@@ -254,14 +254,16 @@ public class Select {
                         f.setAccessible(true);
                         Column column = f.getAnnotation(Column.class);
                         String dbName = f.getName();
-                        if (column != null && !column.column().isEmpty()) {
-                            dbName = column.column();
+                        if (column != null && !column.columnName().isEmpty()) {
+                            dbName = column.columnName();
                         }
-                        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-                        int columns = resultSetMetaData.getColumnCount();
-                        for (int x = 1; x <= columns; x++) {
-                            if (dbName.equals(resultSetMetaData.getColumnName(x))) {
-                                f.set(t, resultSet.getObject(dbName));
+                        if(column == null || column.select()){
+                            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+                            int columns = resultSetMetaData.getColumnCount();
+                            for (int x = 1; x <= columns; x++) {
+                                if (dbName.equalsIgnoreCase(resultSetMetaData.getColumnName(x))) {
+                                    f.set(t, resultSet.getObject(dbName));
+                                }
                             }
                         }
                     }

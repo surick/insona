@@ -66,6 +66,11 @@ public class Delete {
         return sql;
     }
 
+    @Override
+    public String toString() {
+        return buildSQL();
+    }
+
     public Integer execute() {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         return namedParameterJdbcTemplate.update(buildSQL(), parameters);
