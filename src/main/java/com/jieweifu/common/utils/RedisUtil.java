@@ -4,7 +4,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -16,14 +16,13 @@ public class RedisUtil {
     @Value("${custom.redis.prefix}")
     private String redisPrefix;
 
-    private StringRedisTemplate redisTemplate;
-
     private RedissonClient redissonClient;
+    private RedisOperations<String, Object> redisOperations;
 
     @Autowired
-    public RedisUtil(StringRedisTemplate redisTemplate, RedissonClient redissonClient) {
-        this.redisTemplate = redisTemplate;
+    public RedisUtil(RedissonClient redissonClient, RedisOperations<String, Object> redisOperations) {
         this.redissonClient = redissonClient;
+        this.redisOperations = redisOperations;
     }
 
     public void lock(String lockName, int timeout, Runnable successAction, Runnable errorAction) {
@@ -50,40 +49,40 @@ public class RedisUtil {
         return redisPrefix + key;
     }
 
-    public void set(String key, String value) {
+    public void set(String key, Object value) {
         key = getKey(key);
-        redisTemplate.opsForValue().set(key, value);
+        redisOperations.opsForValue().set(key, value);
     }
 
-    public void setEX(String key, String value, int timeout, TimeUnit timeUnit) {
+    public void setEX(String key, Object value, int timeout, TimeUnit timeUnit) {
         key = getKey(key);
-        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
+        redisOperations.opsForValue().set(key, value, timeout, timeUnit);
     }
 
     public void incr(String key, int value){
         key = getKey(key);
-        redisTemplate.opsForValue().increment(key, value);
+        redisOperations.opsForValue().increment(key, value);
     }
 
-    public String get(String key) {
+    public Object get(String key) {
         key = getKey(key);
-        return redisTemplate.opsForValue().get(key);
+        return redisOperations.opsForValue().get(key);
     }
 
     public void delete(String key) {
         key = getKey(key);
-        if (redisTemplate.hasKey(key)) {
-            redisTemplate.delete(key);
+        if (redisOperations.hasKey(key)) {
+            redisOperations.delete(key);
         }
     }
 
     public void expiry(String key, int timeout, TimeUnit timeUnit) {
         key = getKey(key);
-        redisTemplate.expire(key, timeout, timeUnit);
+        redisOperations.expire(key, timeout, timeUnit);
     }
 
     public boolean hasKey(String key) {
         key = getKey(key);
-        return redisTemplate.hasKey(key);
+        return redisOperations.hasKey(key);
     }
 }

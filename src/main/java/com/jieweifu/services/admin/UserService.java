@@ -1,5 +1,6 @@
 package com.jieweifu.services.admin;
 
+import com.jieweifu.models.admin.ElementModel;
 import com.jieweifu.models.admin.UserModel;
 import com.jieweifu.vo.admin.MenuElement;
 
@@ -16,4 +17,5 @@ public interface UserService {
     boolean getIsAdmin(int userId);
     List<MenuElement> getMenuElements(int userId, boolean isAdmin);
     List<MenuElement> getAllMenuElements();
+    List<ElementModel> getAllAuthElements(int userId, boolean isAdmin);
 }

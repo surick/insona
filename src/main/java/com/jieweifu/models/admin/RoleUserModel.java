@@ -10,10 +10,10 @@ public class RoleUserModel {
     private int id = -1;
 
     @Column(columnName = "user_id")
-    private int userId = -1;
+    private Integer userId;
 
     @Column(columnName = "role_id")
-    private int roleId = -1;
+    private Integer roleId;
 
     private String description;
 

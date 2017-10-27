@@ -16,13 +16,13 @@ public class RoleModel {
     private String roleCode;
 
     @Column(columnName = "parent_id")
-    private int parentId = -1;
+    private Integer parentId;
 
     @Column(columnName = "order_num")
     private String orderNum;
 
     private String description;
-    private int enabled = 1;
+    private Integer enabled;
 
     @Column(columnName = "crt_time")
     private String createTime;

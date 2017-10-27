@@ -10,10 +10,10 @@ public class RoleAuthorityModel {
     private int id = -1;
 
     @Column(columnName = "role_id")
-    private int roleId = -1;
+    private Integer roleId;
 
     @Column(columnName = "resource_id")
-    private int resourceId = -1;
+    private Integer resourceId;
 
     @Column(columnName = "resource_type")
     private String resourceType;

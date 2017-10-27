@@ -3,9 +3,11 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
+import java.io.Serializable;
+
 @SuppressWarnings("unused")
 @Entity(tableName = "base_element")
-public class ElementModel {
+public class ElementModel implements Serializable {
     @Column(primaryKey = true)
     private int id = -1;
 
@@ -16,10 +18,10 @@ public class ElementModel {
 
     private String uri;
     @Column(columnName = "menu_id")
-    private int menuId = -1;
+    private Integer menuId;
 
     @Column(columnName = "parent_id")
-    private int parentId = -1;
+    private Integer parentId;
 
     private String path;
     private String method;

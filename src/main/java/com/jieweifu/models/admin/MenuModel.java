@@ -13,18 +13,18 @@ public class MenuModel {
     private String title;
 
     @Column(columnName = "parent_id")
-    private int parentId;
+    private Integer parentId;
 
     private String href;
     private String icon;
     private String type;
 
     @Column(columnName = "order_num")
-    private int orderNum;
+    private Integer orderNum;
 
     private String description;
     private String path;
-    private int enabled;
+    private Integer enabled;
 
     @Column(columnName = "crt_time")
     private String createTime;

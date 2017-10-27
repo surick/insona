@@ -97,7 +97,8 @@ public class UserServiceImpl implements UserService {
                     _elementModels.add(elementModel);
                 }
             });
-            return generateMenuElements(_menuModels, _elementModels);
+            menuModels = _menuModels;
+            elementModels = _elementModels;
         }
 
         return generateMenuElements(menuModels, elementModels);
@@ -106,6 +107,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<MenuElement> getAllMenuElements() {
         return getMenuElements(-1, true);
+    }
+
+    @Override
+    public List<ElementModel> getAllAuthElements(int userId, boolean isAdmin) {
+        List<ElementModel> elementModels = getAllElements();
+
+        if (!isAdmin) {
+            List<ElementModel> _elementModels = new ArrayList<>();
+            List<RoleAuthorityModel> roleAuthorityModels = getRoleAuthorization(userId);
+            elementModels.forEach(elementModel -> {
+                if (roleAuthorityModels.stream().filter(p -> p.getResourceId() == elementModel.getId()
+                        && p.getResourceType().equalsIgnoreCase("ELEMENT")).count() > 0) {
+                    _elementModels.add(elementModel);
+                }
+            });
+            elementModels = _elementModels;
+        }
+
+        return elementModels;
     }
 
     private List<MenuElement> generateMenuElements(List<MenuModel> menuModels, List<ElementModel> elementModels) {

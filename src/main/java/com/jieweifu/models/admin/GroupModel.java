@@ -13,10 +13,10 @@ public class GroupModel {
     private String groupName;
 
     @Column(columnName = "order_num")
-    private String orderNum;
+    private Integer orderNum;
 
     private String description;
-    private int enabled = 1;
+    private Integer enabled;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -64,11 +64,11 @@ public class GroupModel {
         this.groupName = groupName;
     }
 
-    public String getOrderNum() {
+    public int getOrderNum() {
         return orderNum;
     }
 
-    public void setOrderNum(String orderNum) {
+    public void setOrderNum(int orderNum) {
         this.orderNum = orderNum;
     }
 

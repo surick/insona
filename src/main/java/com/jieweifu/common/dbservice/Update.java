@@ -58,31 +58,31 @@ public class Update {
             tableName = entity.tableName();
         }
         this.tableName = tableName;
-        try {
-            this.set(t, true);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        set(t, true);
         return this;
     }
 
-    private <T> Update set(T t, boolean needPrimary) throws IllegalAccessException {
+    public <T> Update set(T t, boolean needPrimary) {
         Class<?> clazz = t.getClass();
         for (Field f : clazz.getDeclaredFields()) {
-            f.setAccessible(true);
-            String dbName = f.getName();
-            Column column = f.getAnnotation(Column.class);
-            if (column != null && column.update() && f.get(t) != null) {
-                if (!column.columnName().isEmpty()) {
-                    dbName = column.columnName();
+            try {
+                f.setAccessible(true);
+                String dbName = f.getName();
+                Column column = f.getAnnotation(Column.class);
+                if (column != null && column.update() && f.get(t) != null && !column.primaryKey()) {
+                    if (!column.columnName().isEmpty()) {
+                        dbName = column.columnName();
+                    }
+                    set("`" + dbName + "`", f.get(t));
                 }
-                set("`" + dbName + "`", f.get(t));
-            }
-            if (column == null && f.get(t) != null) {
-                set("`" + dbName + "`", f.get(t));
-            }
-            if (column != null && column.primaryKey() && needPrimary) {
-                where(dbName + " = ?", f.get(t));
+                if (column == null && f.get(t) != null) {
+                    set("`" + dbName + "`", f.get(t));
+                }
+                if (column != null && column.primaryKey() && needPrimary) {
+                    where("`" + dbName + "` = ?", f.get(t));
+                }
+            } catch (IllegalAccessException ex) {
+                ex.printStackTrace();
             }
         }
         return this;
