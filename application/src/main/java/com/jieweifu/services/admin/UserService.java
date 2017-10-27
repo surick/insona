@@ -8,7 +8,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public interface UserService {
-    void getUser();
+    List<UserModel> getAllUsers();
     int addUser(UserModel userModel);
     UserModel doUserLogin(String userName, String password);
     UserModel getUserById(int id);

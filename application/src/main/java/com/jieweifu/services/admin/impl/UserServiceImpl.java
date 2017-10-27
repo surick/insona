@@ -20,14 +20,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void getUser() {
-        List<UserModel> userModelList = db.select().from(UserModel.class).queryForList(UserModel.class);
-        userModelList.forEach(userModel -> System.out.println(userModel.getUserName()));
+    public List<UserModel> getAllUsers() {
+        return db.select()
+                .from(UserModel.class)
+                .queryForList(UserModel.class);
     }
 
     @Override
     public int addUser(UserModel userModel) {
-        return 0;
+        return db.insert()
+                .save(userModel)
+                .execute();
     }
 
     @Override

@@ -3,17 +3,14 @@ package com.jieweifu.configurations;
 import com.jieweifu.common.utils.TokenUtil;
 import com.jieweifu.interceptors.AdminAuthInterceptor;
 import com.jieweifu.interceptors.LimitInterceptor;
+import com.jieweifu.interceptors.OptionsInterceptor;
 import com.jieweifu.services.admin.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
@@ -37,19 +34,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new OptionsInterceptor());
         registry.addInterceptor(new LimitInterceptor(tokenUtil.getRedisUtil()));
         registry.addInterceptor(new AdminAuthInterceptor(tokenUtil, logService)).addPathPatterns("/sys/**");
-    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        if (Arrays.stream(environment.getActiveProfiles()).filter(profile -> profile.equalsIgnoreCase("dev")).count() > 0) {
-            registry.addMapping("/**")
-                    .allowedOrigins("*")
-                    .allowedMethods("*")
-                    .allowedHeaders("*")
-                    .allowCredentials(false);
-        }
-        super.addCorsMappings(registry);
     }
 }

@@ -73,6 +73,12 @@ public class UserController {
         return new ResultModel().setData(null);
     }
 
+    public ResultModel updatePassword(@RequestBody Map<String, String> passwordInfo){
+        int userId = BaseContextHandler.getUserId();
+
+        return new ResultModel();
+    }
+
     /**
      * @return 返回用户功能权限
      */
