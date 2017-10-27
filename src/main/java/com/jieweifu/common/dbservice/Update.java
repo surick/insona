@@ -59,7 +59,7 @@ public class Update {
         }
         this.tableName = tableName;
         try {
-            this.set(t);
+            this.set(t, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -86,10 +86,6 @@ public class Update {
             }
         }
         return this;
-    }
-
-    private <T> Update set(T t) throws IllegalAccessException {
-        return set(t, true);
     }
 
     public Update limit(Integer pageSize) {

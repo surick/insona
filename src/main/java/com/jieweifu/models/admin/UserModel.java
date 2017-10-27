@@ -26,8 +26,12 @@ public class UserModel {
     private String mobilePhone;
 
     private String email;
-    private int sex = 0;
-    private int status = 0;
+    private int sex;
+    private int status;
+
+    @Column(columnName = "head_img_url")
+    private String headImgUrl;
+
     private String description;
 
     @Column(columnName = "crt_time")
@@ -151,6 +155,14 @@ public class UserModel {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
     }
 
     public String getDescription() {

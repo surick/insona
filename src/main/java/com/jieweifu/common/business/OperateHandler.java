@@ -1,23 +1,72 @@
 package com.jieweifu.common.business;
 
-import com.jieweifu.constants.CommonConstant;
-
+import java.lang.reflect.Method;
 import java.time.Instant;
 
 public class OperateHandler {
-    public String getUserId() {
-        return (String) BaseContextHandler.get(CommonConstant.USER_ID);
+    private String getUserId() {
+        return String.valueOf(BaseContextHandler.getUserId());
     }
 
-    public String getUserName() {
-        return (String) BaseContextHandler.get(CommonConstant.USER_NAME);
+    private String getUserName() {
+        return BaseContextHandler.getUserName();
     }
 
-    public String getOperateIp() {
-        return (String) BaseContextHandler.get(CommonConstant.REQUEST_IP);
+    private String getOperateIp() {
+        return BaseContextHandler.getRequestIp();
     }
 
-    public String getOperateTime() {
-        return String.valueOf(Instant.now().getEpochSecond());
+    private String getOperateTime() {
+        return String.valueOf(Instant.now().toEpochMilli());
+    }
+
+    public static <T> void assignCreateUser(T model) {
+        OperateHandler operateHandler = new OperateHandler();
+        Method[] methods = model.getClass().getDeclaredMethods();
+        try {
+            for (Method method : methods) {
+                switch (method.getName()) {
+                    case "setCreateTime":
+                        method.invoke(model, operateHandler.getOperateTime());
+                        break;
+                    case "setCreateUser":
+                        method.invoke(model, operateHandler.getUserId());
+                        break;
+                    case "setCreateUserName":
+                        method.invoke(model, operateHandler.getUserName());
+                        break;
+                    case "setCreateHost":
+                        method.invoke(model, operateHandler.getOperateIp());
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static <T> void assignUpdateUser(T model) {
+        OperateHandler operateHandler = new OperateHandler();
+        Method[] methods = model.getClass().getDeclaredMethods();
+        try {
+            for (Method method : methods) {
+                switch (method.getName()) {
+                    case "setUpdateTime":
+                        method.invoke(model, operateHandler.getOperateTime());
+                        break;
+                    case "setUpdateUser":
+                        method.invoke(model, operateHandler.getUserId());
+                        break;
+                    case "setUpdateUserName":
+                        method.invoke(model, operateHandler.getUserName());
+                        break;
+                    case "setUpdateHost":
+                        method.invoke(model, operateHandler.getOperateIp());
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

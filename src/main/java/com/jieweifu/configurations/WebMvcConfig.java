@@ -3,6 +3,7 @@ package com.jieweifu.configurations;
 import com.jieweifu.interceptors.AdminAuthInterceptor;
 import com.jieweifu.common.utils.TokenUtil;
 import com.jieweifu.interceptors.LimitInterceptor;
+import com.jieweifu.services.admin.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -18,11 +19,13 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     private Environment environment;
     private TokenUtil tokenUtil;
+    private LogService logService;
 
     @Autowired
-    public WebMvcConfig(Environment environment, TokenUtil tokenUtil) {
+    public WebMvcConfig(Environment environment, TokenUtil tokenUtil, LogService logService) {
         this.environment = environment;
         this.tokenUtil = tokenUtil;
+        this.logService = logService;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LimitInterceptor(tokenUtil.getRedisUtil()));
-        registry.addInterceptor(new AdminAuthInterceptor(tokenUtil)).addPathPatterns("/sys/**");
+        registry.addInterceptor(new AdminAuthInterceptor(tokenUtil, logService)).addPathPatterns("/sys/**");
     }
 
     @Override

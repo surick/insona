@@ -38,6 +38,8 @@ spring:
     static-locations: classpath:/resources,classpath:/static/,file:${custom.path}/static
   profiles:
     active: dev
+  jackson:
+    default-property-inclusion: non_null
 
 logging:
   path: ${custom.path}/logs

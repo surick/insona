@@ -1,7 +1,6 @@
 package com.jieweifu.controllers.admin;
 
 import com.jieweifu.common.business.BaseContextHandler;
-import com.jieweifu.constants.CommonConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.ResultModel;
 import com.jieweifu.models.admin.UserModel;
@@ -10,6 +9,8 @@ import com.jieweifu.common.utils.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @SuppressWarnings("unused")
 @Controller("SystemUser")
@@ -27,13 +28,16 @@ public class UserController {
 
     /**
      * 返回用户登录成功的Token
+     *
      * @return 每次请求头需带上此Token, 校验权限
      */
     @AdminAuthAnnotation(check = false)
     @PostMapping("login")
     @ResponseBody
     public ResultModel doLogin(String loginName, String password) {
-        UserModel userModel = userService.getUserByUserName(loginName, password);
+        List<?> menuElements = userService.getAllMenuElements();
+
+        UserModel userModel = userService.doUserLogin(loginName, password);
         if (userModel != null) {
             return new ResultModel().setData(tokenUtil.generateToken(String.valueOf(userModel.getId())));
         }
@@ -42,13 +46,22 @@ public class UserController {
 
     /**
      * 更新Token后原Token失效
+     *
      * @return 返回用户的新token
      */
     @GetMapping("token/refresh")
     @ResponseBody
     public ResultModel refreshToken() {
-        String userId = String.valueOf(BaseContextHandler.get(CommonConstant.USER_ID));
+        String userId = String.valueOf(BaseContextHandler.getUserId());
         return new ResultModel().setData(tokenUtil.generateToken(userId));
+    }
+
+    @PostMapping("head/update")
+    @ResponseBody
+    public ResultModel updateHeadImg(String headImgUrl) {
+        int userId = BaseContextHandler.getUserId();
+        userService.updateUserHeadImg(userId, headImgUrl);
+        return new ResultModel().setData(null);
     }
 
     /**
@@ -57,6 +70,8 @@ public class UserController {
     @GetMapping("power")
     @ResponseBody
     public ResultModel getUserPower() {
-        return null;
+        int userId = BaseContextHandler.getUserId();
+        boolean isAdmin = BaseContextHandler.getUserIsAdmin();
+        return new ResultModel().setData(userService.getMenuElements(userId, isAdmin));
     }
 }

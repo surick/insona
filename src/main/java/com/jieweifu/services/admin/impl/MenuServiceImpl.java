@@ -1,5 +1,6 @@
 package com.jieweifu.services.admin.impl;
 
+import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.admin.MenuModel;
 import com.jieweifu.services.admin.MenuService;
@@ -33,6 +34,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void updateMenu(MenuModel menuModel) {
+        OperateHandler.assignUpdateUser(menuModel);
         db.update()
                 .save(menuModel)
                 .execute();
@@ -48,6 +50,9 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public int addMenu(MenuModel menuModel) {
-        return db.insert().save(menuModel).execute();
+        OperateHandler.assignCreateUser(menuModel);
+        return db.insert()
+                .save(menuModel)
+                .execute();
     }
 }

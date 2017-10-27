@@ -60,6 +60,11 @@ public class RedisUtil {
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
+    public void incr(String key, int value){
+        key = getKey(key);
+        redisTemplate.opsForValue().increment(key, value);
+    }
+
     public String get(String key) {
         key = getKey(key);
         return redisTemplate.opsForValue().get(key);

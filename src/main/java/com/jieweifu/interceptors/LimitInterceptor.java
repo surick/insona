@@ -5,6 +5,7 @@ import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.constants.CommonConstant;
 import com.jieweifu.models.ResultModel;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.omg.CORBA.TIMEOUT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class LimitInterceptor extends HandlerInterceptorAdapter {
 
@@ -38,18 +40,11 @@ public class LimitInterceptor extends HandlerInterceptorAdapter {
         int count = 0;
         if (redisUtil.hasKey(key)) {
             count = Integer.parseInt(redisUtil.get(key));
+            redisUtil.incr(key, 1);
+        } else {
+            redisUtil.setEX(key, String.valueOf(1), 10, TimeUnit.SECONDS);
         }
         count++;
-        redisUtil.set(key, String.valueOf(count));
-
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                redisUtil.delete(key);
-            }
-        };
-        timer.schedule(task, CommonConstant.LIMIT_TIME);
 
         if (count > CommonConstant.LIMIT_COUNT) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());

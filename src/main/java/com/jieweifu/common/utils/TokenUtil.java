@@ -116,10 +116,9 @@ public class TokenUtil {
     }
 
     public void cacheUserInThreadLocal(int userId) {
-        BaseContextHandler.set(CommonConstant.USER_ID, userId);
         UserModel userModel = userService.getUserById(userId);
-        BaseContextHandler.set(CommonConstant.USER_NAME, userModel.getUserName());
         BaseContextHandler.setUser(userModel);
+        BaseContextHandler.setUserIsAdmin(userService.getIsAdmin(userId));
     }
 
     public boolean checkAuthorization(String path, String method) {
