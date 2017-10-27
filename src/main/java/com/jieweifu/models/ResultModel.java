@@ -1,5 +1,6 @@
 package com.jieweifu.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,9 @@ public class ResultModel {
     private int code = HttpStatus.OK.value();
     private boolean success = true;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String message;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object data;
 
     public ResultModel setData(Object data) {

@@ -2,6 +2,7 @@ package com.jieweifu.common.utils;
 
 import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.constants.CommonConstant;
+import com.jieweifu.models.admin.ElementModel;
 import com.jieweifu.models.admin.UserModel;
 import com.jieweifu.services.admin.UserService;
 import io.jsonwebtoken.Claims;
@@ -10,8 +11,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.AntPathMatcher;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -103,7 +106,7 @@ public class TokenUtil {
 
             String userId = body.get(CommonConstant.USER_ID).toString();
             String redisUserId = String.format("_%s_%s", CommonConstant.USER_ID, userId);
-            if (redisUtil.hasKey(redisUserId) && redisUtil.get(redisUserId).equalsIgnoreCase(token)) {
+            if (redisUtil.hasKey(redisUserId) && redisUtil.get(redisUserId).toString().equalsIgnoreCase(token)) {
                 //如果存在token并且数据库存在该用户, 则刷新token过期时间
                 redisUtil.expiry(redisUserId, timeout, TimeUnit.MINUTES);
                 return userId;
@@ -121,7 +124,30 @@ public class TokenUtil {
         BaseContextHandler.setUserIsAdmin(userService.getIsAdmin(userId));
     }
 
+    @SuppressWarnings("unchecked")
     public boolean checkAuthorization(String path, String method) {
-        return true;
+        int userId = BaseContextHandler.getUserId();
+        boolean isAdmin = BaseContextHandler.getUserIsAdmin();
+        List<ElementModel> elementModels;
+        String elementUserKey = String.format("_%s_%s", CommonConstant.USER_ELEMENTS, userId);
+        if (redisUtil.hasKey(elementUserKey)) {
+            elementModels = (List<ElementModel>) redisUtil.get(elementUserKey);
+        } else {
+            elementModels = userService.getAllAuthElements(userId, isAdmin);
+            redisUtil.setEX(elementUserKey, elementModels, timeout, TimeUnit.MINUTES);
+        }
+        return elementModels
+                .stream()
+                .filter(p -> new AntPathMatcher().match(p.getPath(), path) &&
+                        p.getMethod().equalsIgnoreCase(method))
+                .count() > 0;
+    }
+
+    public void refreshAuthorization() {
+        int userId = BaseContextHandler.getUserId();
+        boolean isAdmin = BaseContextHandler.getUserIsAdmin();
+        List<ElementModel> elementModels = userService.getAllAuthElements(userId, isAdmin);
+        String elementUserKey = String.format("_%s_%s", CommonConstant.USER_ELEMENTS, userId);
+        redisUtil.setEX(elementUserKey, elementModels, timeout, TimeUnit.MINUTES);
     }
 }

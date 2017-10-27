@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @Controller("SystemUser")
@@ -34,9 +35,9 @@ public class UserController {
     @AdminAuthAnnotation(check = false)
     @PostMapping("login")
     @ResponseBody
-    public ResultModel doLogin(String loginName, String password) {
-        List<?> menuElements = userService.getAllMenuElements();
-
+    public ResultModel doLogin(@RequestBody Map<String, String> loginInfo) {
+        String loginName = loginInfo.get("loginName");
+        String password = loginInfo.get("password");
         UserModel userModel = userService.doUserLogin(loginName, password);
         if (userModel != null) {
             return new ResultModel().setData(tokenUtil.generateToken(String.valueOf(userModel.getId())));
@@ -53,12 +54,13 @@ public class UserController {
     @ResponseBody
     public ResultModel refreshToken() {
         String userId = String.valueOf(BaseContextHandler.getUserId());
+        tokenUtil.refreshAuthorization();
         return new ResultModel().setData(tokenUtil.generateToken(userId));
     }
 
-    @PostMapping("head/update")
+    @PutMapping("head/update")
     @ResponseBody
-    public ResultModel updateHeadImg(String headImgUrl) {
+    public ResultModel updateHeadImg(@RequestBody String headImgUrl) {
         int userId = BaseContextHandler.getUserId();
         userService.updateUserHeadImg(userId, headImgUrl);
         return new ResultModel().setData(null);

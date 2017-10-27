@@ -24,28 +24,28 @@ public class LogServiceImpl implements LogService {
         logModel.setUri(path);
         OperateHandler.assignCreateUser(logModel);
         new Thread(() -> {
-            TitleName titleName = db.select()
+            TitleName titleName = new TitleName();
+            db.select()
                     .columns("menu.title, element.element_name as elementName, element.type")
                     .from(ElementModel.class, "element")
                     .leftOuterJoin(MenuModel.class, "menu", "element.menu_id = menu.id")
-                    .where("menu.path = ? AND element.method = ?", path, method)
-                    .queryForEntity(TitleName.class);
-            if (titleName == null) {
-                titleName = new TitleName();
-                titleName.title = "未知";
-                titleName.elementName = "未知";
-                titleName.type = -1;
+                    .where("element.path = ? AND element.method = ?", path, method)
+                    .queryForList(p -> {
+                        titleName.title = p.getString(p.findColumn("title"));
+                        titleName.elementName = p.getString(p.findColumn("elementName"));
+                        titleName.type = p.getString(p.findColumn("type"));
+                    });
+            if (titleName.title == null) {
+                return;
             }
             logModel.setMenu(titleName.title);
             logModel.setOpt(logModel.getCreateUserName()
                     .concat("用户")
-                    .concat("执行")
-                    .concat(titleName.title)
-                    .concat("菜单")
-                    .concat(titleName.type == -1 ? "未知类型" : (titleName.type == 0 ? "功能" : "按钮"))
-                    .concat(titleName.elementName)
                     .concat(method)
-                    .concat("请求, ")
+                    .concat(titleName.title)
+                    .concat(titleName.elementName)
+                    .concat(titleName.type)
+                    .concat(", ")
                     .concat(hasAuthorization ? "正常" : "无权限")
                     .concat(", 响应时间")
                     .concat(logModel.getActionTime()));
@@ -58,6 +58,6 @@ public class LogServiceImpl implements LogService {
     class TitleName {
         String title;
         String elementName;
-        int type;
+        String type;
     }
 }

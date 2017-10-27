@@ -10,10 +10,10 @@ public class GroupUserModel {
     private int id = -1;
 
     @Column(columnName = "user_id")
-    private int userId = -1;
+    private Integer userId;
 
     @Column(columnName = "group_id")
-    private int groupId = -1;
+    private Integer groupId;
 
     private String description;
 

@@ -26,8 +26,8 @@ public class UserModel {
     private String mobilePhone;
 
     private String email;
-    private int sex;
-    private int status;
+    private Integer sex;
+    private Integer status;
 
     @Column(columnName = "head_img_url")
     private String headImgUrl;

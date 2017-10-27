@@ -39,10 +39,10 @@ public class LimitInterceptor extends HandlerInterceptorAdapter {
 
         int count = 0;
         if (redisUtil.hasKey(key)) {
-            count = Integer.parseInt(redisUtil.get(key));
+            count = Integer.parseInt(redisUtil.get(key).toString());
             redisUtil.incr(key, 1);
         } else {
-            redisUtil.setEX(key, String.valueOf(1), 10, TimeUnit.SECONDS);
+            redisUtil.setEX(key, 1, CommonConstant.LIMIT_TIME, TimeUnit.SECONDS);
         }
         count++;
 
