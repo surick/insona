@@ -14,3 +14,7 @@ target/
 *.iws
 *.iml
 *.ipr
+
+
+src/main/resources/static/admin/.vscode
+src/main/resources/static/admin/node_modules
