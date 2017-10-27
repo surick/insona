@@ -40,6 +40,7 @@ public class UserController {
         String password = loginInfo.get("password");
         UserModel userModel = userService.doUserLogin(loginName, password);
         if (userModel != null) {
+            tokenUtil.refreshAuthorization(userModel.getId(), null);
             return new ResultModel().setData(tokenUtil.generateToken(String.valueOf(userModel.getId())));
         }
         return new ResultModel().setError("用户名或密码错误");
@@ -54,7 +55,8 @@ public class UserController {
     @ResponseBody
     public ResultModel refreshToken() {
         String userId = String.valueOf(BaseContextHandler.getUserId());
-        tokenUtil.refreshAuthorization();
+        boolean isAdmin = BaseContextHandler.getUserIsAdmin();
+        tokenUtil.refreshAuthorization(Integer.parseInt(userId), isAdmin);
         return new ResultModel().setData(tokenUtil.generateToken(userId));
     }
 

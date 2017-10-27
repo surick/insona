@@ -9,7 +9,7 @@ import javax.crypto.spec.IvParameterSpec;
 public class EncryptUtil {
     private static byte[] keys = new byte[]{83, 121, 115, 116, 101, 109, 46, 73};
 
-    public static String encrypt(String valueToEnCrypt) {
+    private static String encrypt(String valueToEnCrypt) {
         try {
             Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
             DESKeySpec desKeySpec = new DESKeySpec(keys);

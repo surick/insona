@@ -40,22 +40,26 @@ public class LimitInterceptor extends HandlerInterceptorAdapter {
         int count = 0;
         if (redisUtil.hasKey(key)) {
             count = Integer.parseInt(redisUtil.get(key).toString());
+            ++count;
             redisUtil.incr(key, 1);
         } else {
-            redisUtil.setEX(key, 1, CommonConstant.LIMIT_TIME, TimeUnit.SECONDS);
+            redisUtil.setEX(key, ++count, CommonConstant.LIMIT_TIME, TimeUnit.SECONDS);
         }
-        count++;
 
         if (count > CommonConstant.LIMIT_COUNT) {
-            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json");
-            response.getWriter().print(new ResultModel().setError(HttpStatus.TOO_MANY_REQUESTS.value(), "访问过于频繁").toJSON());
-            response.flushBuffer();
+            writeLimitResponse(response);
             logger.error(HttpStatus.TOO_MANY_REQUESTS.name(), String.format("ip: %s, url: %s", ip, url));
             return false;
         }
 
         return super.preHandle(request, response, handler);
+    }
+
+    private void writeLimitResponse(HttpServletResponse response) throws Exception {
+        response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.getWriter().print(new ResultModel().setError(HttpStatus.TOO_MANY_REQUESTS.value(), "访问过于频繁").toJSON());
+        response.flushBuffer();
     }
 }

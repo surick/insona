@@ -143,11 +143,15 @@ public class TokenUtil {
                 .count() > 0;
     }
 
-    public void refreshAuthorization() {
-        int userId = BaseContextHandler.getUserId();
-        boolean isAdmin = BaseContextHandler.getUserIsAdmin();
-        List<ElementModel> elementModels = userService.getAllAuthElements(userId, isAdmin);
-        String elementUserKey = String.format("_%s_%s", CommonConstant.USER_ELEMENTS, userId);
-        redisUtil.setEX(elementUserKey, elementModels, timeout, TimeUnit.MINUTES);
+    public void refreshAuthorization(int userId, Boolean isAdmin) {
+        new Thread(() -> {
+            Boolean _isAdmin = isAdmin;
+            if (_isAdmin == null) {
+                _isAdmin = userService.getIsAdmin(userId);
+            }
+            List<ElementModel> elementModels = userService.getAllAuthElements(userId, _isAdmin);
+            String elementUserKey = String.format("_%s_%s", CommonConstant.USER_ELEMENTS, userId);
+            redisUtil.setEX(elementUserKey, elementModels, timeout, TimeUnit.MINUTES);
+        }).start();
     }
 }
