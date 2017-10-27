@@ -1,6 +1,7 @@
 package com.jieweifu.common.business;
 
 import com.jieweifu.constants.CommonConstant;
+import com.jieweifu.constants.UserConstant;
 import com.jieweifu.models.admin.UserModel;
 
 import java.time.Instant;
@@ -42,7 +43,7 @@ public class BaseContextHandler {
     }
 
     public static void setUser(UserModel userModel) {
-        set(CommonConstant.USER, userModel);
+        set(UserConstant.USER, userModel);
     }
 
     public static int getUserId() {
@@ -54,11 +55,11 @@ public class BaseContextHandler {
     }
 
     public static void setUserIsAdmin(boolean isAdmin){
-        set(CommonConstant.USER_IS_ADMIN, isAdmin);
+        set(UserConstant.USER_IS_ADMIN, isAdmin);
     }
 
     public static boolean getUserIsAdmin() {
-        Object isAdmin = get(CommonConstant.USER_IS_ADMIN);
+        Object isAdmin = get(UserConstant.USER_IS_ADMIN);
         return isAdmin != null && (boolean) isAdmin;
     }
 
@@ -99,7 +100,7 @@ public class BaseContextHandler {
     }
 
     public static UserModel getUser() {
-        UserModel userModel = (UserModel) get(CommonConstant.USER);
+        UserModel userModel = (UserModel) get(UserConstant.USER);
         if (userModel == null) {
             userModel = new UserModel();
             userModel.setUserName("未知");

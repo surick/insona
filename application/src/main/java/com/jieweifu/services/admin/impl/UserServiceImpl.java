@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel doUserLogin(String userName, String password) {
         return db.select()
-                .columns("id")
+                .columns("id, head_img_url, name")
                 .from(UserModel.class)
                 .where("user_name = ?", userName)
                 .where("password = MD5(CONCAT(salt, ?))", "123456")
@@ -71,8 +71,7 @@ public class UserServiceImpl implements UserService {
                 .leftOuterJoin(RoleModel.class, "B", "A.role_id = B.id")
                 .where("A.user_id = ? AND B.role_code = 'admin'", userId)
                 .limit(0, 1)
-                .queryForList()
-                .size() > 0;
+                .total() > 0;
     }
 
     @Override

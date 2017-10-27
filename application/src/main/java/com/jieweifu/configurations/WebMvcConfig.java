@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 @Configuration
@@ -42,7 +43,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        if (Stream.of(environment.getActiveProfiles()).filter(profile -> profile.equalsIgnoreCase("dev")).count() > 0) {
+        if (Arrays.stream(environment.getActiveProfiles()).filter(profile -> profile.equalsIgnoreCase("dev")).count() > 0) {
             registry.addMapping("/**")
                     .allowedOrigins("*")
                     .allowedMethods("*")

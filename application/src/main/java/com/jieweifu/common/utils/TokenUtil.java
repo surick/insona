@@ -2,6 +2,7 @@ package com.jieweifu.common.utils;
 
 import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.constants.CommonConstant;
+import com.jieweifu.constants.UserConstant;
 import com.jieweifu.models.admin.ElementModel;
 import com.jieweifu.models.admin.UserModel;
 import com.jieweifu.services.admin.UserService;
@@ -49,7 +50,7 @@ public class TokenUtil {
     public String generateToken(String userId) {
         Claims claims = Jwts.claims();
 
-        claims.put(CommonConstant.USER_ID, userId);
+        claims.put(UserConstant.USER_ID, userId);
         claims.put(CommonConstant.UUID, UUID.randomUUID());
         claims.put(CommonConstant.DATE, Instant.now());
 
@@ -65,7 +66,7 @@ public class TokenUtil {
 
         if (token != null) {
             //将token存到数据库, 并设置过期时间, 此操作会覆盖之前的token, 只允许一个账号有且只有一个客户端登录后台管理系统
-            String redisUserId = String.format("_%s_%s", CommonConstant.USER_ID, userId);
+            String redisUserId = String.format("_%s_%s", UserConstant.USER_ID, userId);
             redisUtil.setEX(redisUserId, token, 120, TimeUnit.MINUTES);
         }
         return token;
@@ -82,8 +83,8 @@ public class TokenUtil {
                         .parseClaimsJws(token)
                         .getBody();
 
-                String userId = body.get(CommonConstant.USER_ID).toString();
-                String redisUserId = String.format("_%s_%s", CommonConstant.USER_ID, userId);
+                String userId = body.get(UserConstant.USER_ID).toString();
+                String redisUserId = String.format("_%s_%s", UserConstant.USER_ID, userId);
                 redisUtil.delete(redisUserId);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,8 +105,8 @@ public class TokenUtil {
                     .parseClaimsJws(token)
                     .getBody();
 
-            String userId = body.get(CommonConstant.USER_ID).toString();
-            String redisUserId = String.format("_%s_%s", CommonConstant.USER_ID, userId);
+            String userId = body.get(UserConstant.USER_ID).toString();
+            String redisUserId = String.format("_%s_%s", UserConstant.USER_ID, userId);
             if (redisUtil.hasKey(redisUserId) && redisUtil.get(redisUserId).toString().equalsIgnoreCase(token)) {
                 //如果存在token并且数据库存在该用户, 则刷新token过期时间
                 redisUtil.expiry(redisUserId, timeout, TimeUnit.MINUTES);
@@ -129,7 +130,7 @@ public class TokenUtil {
         int userId = BaseContextHandler.getUserId();
         boolean isAdmin = BaseContextHandler.getUserIsAdmin();
         List<ElementModel> elementModels;
-        String elementUserKey = String.format("_%s_%s", CommonConstant.USER_ELEMENTS, userId);
+        String elementUserKey = String.format("_%s_%s", UserConstant.USER_ELEMENTS, userId);
         if (redisUtil.hasKey(elementUserKey)) {
             elementModels = (List<ElementModel>) redisUtil.get(elementUserKey);
         } else {
@@ -143,14 +144,10 @@ public class TokenUtil {
                 .count() > 0;
     }
 
-    public void refreshAuthorization(int userId, Boolean isAdmin) {
+    public void refreshAuthorization(int userId, boolean isAdmin) {
         new Thread(() -> {
-            Boolean _isAdmin = isAdmin;
-            if (_isAdmin == null) {
-                _isAdmin = userService.getIsAdmin(userId);
-            }
-            List<ElementModel> elementModels = userService.getAllAuthElements(userId, _isAdmin);
-            String elementUserKey = String.format("_%s_%s", CommonConstant.USER_ELEMENTS, userId);
+            List<ElementModel> elementModels = userService.getAllAuthElements(userId, isAdmin);
+            String elementUserKey = String.format("_%s_%s", UserConstant.USER_ELEMENTS, userId);
             redisUtil.setEX(elementUserKey, elementModels, timeout, TimeUnit.MINUTES);
         }).start();
     }

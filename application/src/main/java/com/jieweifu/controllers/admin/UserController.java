@@ -2,6 +2,7 @@ package com.jieweifu.controllers.admin;
 
 import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.TokenUtil;
+import com.jieweifu.constants.UserConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.ResultModel;
 import com.jieweifu.models.admin.UserModel;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.WeakHashMap;
 
 @SuppressWarnings("unused")
 @Controller("SystemUser")
@@ -39,8 +41,12 @@ public class UserController {
         String password = loginInfo.get("password");
         UserModel userModel = userService.doUserLogin(loginName, password);
         if (userModel != null) {
-            tokenUtil.refreshAuthorization(userModel.getId(), null);
-            return new ResultModel().setData(tokenUtil.generateToken(String.valueOf(userModel.getId())));
+            tokenUtil.refreshAuthorization(userModel.getId(), userService.getIsAdmin(userModel.getId()));
+            Map<String, String> userInfo = new WeakHashMap<>();
+            userInfo.put(UserConstant.USER_TOKEN, tokenUtil.generateToken(String.valueOf(userModel.getId())));
+            userInfo.put(UserConstant.USER_NAME, userModel.getName());
+            userInfo.put(UserConstant.USER_HEAD_IMG, userModel.getHeadImgUrl());
+            return new ResultModel().setData(userInfo);
         }
         return new ResultModel().setError("用户名或密码错误");
     }
