@@ -44,11 +44,6 @@ export default {
         menuList: Array,
         iconSize: Number
     },
-    computed: {
-        tagsList () {
-            return this.$store.state.tagsList;
-        }
-    },
     methods: {
         changeMenu (active) {
             if (active !== 'accesstest_index') {

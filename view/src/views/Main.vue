@@ -72,10 +72,10 @@
     </div>
 </template>
 <script>
-    import sidebarMenu from './main_components/sidebarMenu.vue';
-    import tagsPageOpened from './main_components/tagsPageOpened.vue';
-    import breadcrumbNav from './main_components/breadcrumbNav.vue';
-    import sidebarMenuShrink from './main_components/sidebarMenuShrink.vue';
+    import sidebarMenu from './components/sidebarMenu.vue';
+    import tagsPageOpened from './components/tagsPageOpened.vue';
+    import breadcrumbNav from './components/breadcrumbNav.vue';
+    import sidebarMenuShrink from './components/sidebarMenuShrink.vue';
     import util from '@/libs/util.js';
 
     export default {

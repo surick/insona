@@ -21,27 +21,27 @@ const ajax = (vm, request) => {
                     break;
                 case 401:
                     localStorage.clear();
-                    vm.$router.push({
+                    vm && vm.$router.push({
                         name: 'login'
                     });
                     break;
                 case 403:
-                    vm.$router.push({
+                    vm && vm.$router.push({
                         name: 'error_401'
                     });
                     break;
                 case 404:
-                    vm.$router.push({
+                    vm && vm.$router.push({
                         name: 'error_404'
                     });
                     break;
                 default:
-                    vm.$Message.error(res.data.message);
+                    vm && vm.$Message.error(res.data.message);
                 }
             })
             .catch((err) => {
                 if (env === 'development') console.error(err.response);
-                vm.$Message.error('网络请求出错！');
+                vm && vm.$Message.error('网络请求出错！');
                 reject(err);
             });
     });
