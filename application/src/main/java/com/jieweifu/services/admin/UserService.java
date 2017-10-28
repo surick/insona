@@ -11,9 +11,11 @@ public interface UserService {
     List<UserModel> getAllUsers();
     int addUser(UserModel userModel);
     UserModel doUserLogin(String userName, String password);
+    UserModel doUserLogin(int userId, String password);
     UserModel getUserById(int id);
     void updateUserHeadImg(int userId, String headImgUrl);
     void updateUser(UserModel userModel);
+    void updateUserPassword(int userId, String password);
     boolean getIsAdmin(int userId);
     List<MenuElement> getMenuElements(int userId, boolean isAdmin);
     List<MenuElement> getAllMenuElements();

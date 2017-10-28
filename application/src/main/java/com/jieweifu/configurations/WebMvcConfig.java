@@ -7,7 +7,6 @@ import com.jieweifu.interceptors.OptionsInterceptor;
 import com.jieweifu.services.admin.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -15,13 +14,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-    private Environment environment;
     private TokenUtil tokenUtil;
     private LogService logService;
 
     @Autowired
-    public WebMvcConfig(Environment environment, TokenUtil tokenUtil, LogService logService) {
-        this.environment = environment;
+    public WebMvcConfig(TokenUtil tokenUtil, LogService logService) {
         this.tokenUtil = tokenUtil;
         this.logService = logService;
     }
