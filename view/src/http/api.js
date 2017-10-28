@@ -1,5 +1,5 @@
 import axios from 'axios';
-import env from '../config/env';
+import env from '@/config/env';
 
 const ajaxUrl = env === 'development'
     ? 'http://192.168.3.39:8080'
@@ -14,17 +14,37 @@ const http = axios.create({
 
 const ajax = (vm, request) => {
     return new Promise((resolve, reject) => {
+        request.headers = { TokenAuthorization: localStorage.token || '' };
         http(request)
             .then(res => {
-                if (res.data.code === 200) {
+                switch (res.data.code) {
+                case 200:
                     resolve(res.data);
-                } else {
-                    vm.$Message.error(res.data.data.message);
+                    break;
+                case 401:
+                    localStorage.clear();
+                    vm.$router.push({
+                        name: 'login'
+                    });
+                    break;
+                case 403:
+                    vm.$router.push({
+                        name: 'error_401'
+                    });
+                    break;
+                case 404:
+                    vm.$router.push({
+                        name: 'error_404'
+                    });
+                    break;
+                default:
+                    vm.$Message.error(res.data.message);
                 }
             })
             .catch((err) => {
                 if (env === 'development') console.error(err.response);
                 vm.$Message.error('网络请求出错！');
+                reject(err);
             });
     });
 };

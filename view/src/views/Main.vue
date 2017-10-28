@@ -41,11 +41,6 @@
                             </Badge>
                         </Tooltip>
                     </div>
-                    <div class="switch-theme-con">
-                        <Row class="switch-theme" type="flex" justify="center" align="middle">
-                            <theme-dropdown-menu></theme-dropdown-menu>
-                        </Row>
-                    </div>
                     <div class="user-dropdown-menu-con">
                         <Row type="flex" justify="end" align="middle" class="user-dropdown-innercon">
                             <Dropdown trigger="click" @on-click="handleClickUserDropdown">
@@ -80,9 +75,7 @@
     import sidebarMenu from './main_components/sidebarMenu.vue';
     import tagsPageOpened from './main_components/tagsPageOpened.vue';
     import breadcrumbNav from './main_components/breadcrumbNav.vue';
-    import themeDropdownMenu from './main_components/themeDropdownMenu.vue';
     import sidebarMenuShrink from './main_components/sidebarMenuShrink.vue';
-    import Cookies from 'js-cookie';
     import util from '@/libs/util.js';
 
     export default {
@@ -90,7 +83,6 @@
             sidebarMenu,
             tagsPageOpened,
             breadcrumbNav,
-            themeDropdownMenu,
             sidebarMenuShrink
         },
         data () {
@@ -141,7 +133,7 @@
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
-                this.userName = Cookies.get('user');
+                this.userName = localStorage.user;
                 let messageCount = 3;
                 this.messageCount = messageCount.toString();
                 this.checkTag(this.$route.name);
@@ -157,10 +149,7 @@
                     });
                 } else if (name === 'loginout') {
                     // 退出登录
-                    Cookies.remove('user');
-                    Cookies.remove('password');
-                    Cookies.remove('hasGreet');
-                    Cookies.remove('access');
+                    localStorage.clear();
                     this.$Notice.close('greeting');
                     this.$store.commit('clearOpenedSubmenu');
                     // 回复默认样式
@@ -197,7 +186,7 @@
                 lockScreenBack.style.boxShadow = '0 0 0 ' + this.lockScreenSize + 'px #667aa6 inset';
                 this.showUnlock = true;
                 this.$store.commit('lock');
-                Cookies.set('last_page_name', this.$route.name); // 本地存储锁屏之前打开的页面以便解锁后打开
+                localStorage.last_page_name = this.$route.name; // 本地存储锁屏之前打开的页面以便解锁后打开
                 setTimeout(() => {
                     lockScreenBack.style.transition = 'all 0s';
                     this.$router.push({
@@ -249,14 +238,14 @@
             });
             lockScreenBack.style.width = lockScreenBack.style.height = size + 'px';
             // 问候信息相关
-            if (!Cookies.get('hasGreet')) {
+            if (!localStorage.hasGreet) {
                 let now = new Date();
                 let hour = now.getHours();
                 let greetingWord = {
                     title: '',
                     words: ''
                 };
-                let userName = Cookies.get('user');
+                let userName = localStorage.user;
                 if (hour > 5 && hour < 6) {
                     greetingWord = {title: '凌晨好~' + userName, words: '早起的鸟儿有虫吃~'};
                 } else if (hour >= 6 && hour < 9) {
@@ -283,12 +272,12 @@
                     duration: 4,
                     name: 'greeting'
                 });
-                Cookies.set('hasGreet', 1);
+                localStorage.hasGreet = 1;
             }
         },
         created () {
             // 查找当前用户之前登录时设置的主题
-            let name = Cookies.get('user');
+            let name = localStorage.user;
             if (localStorage.theme) {
                 let hasThisUser = JSON.parse(localStorage.theme).some(item => {
                     if (item.userName === name) {

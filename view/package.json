@@ -5,9 +5,9 @@
     "author": "moneyinto <woyaoqianjin@gmail.com>",
     "private": true,
     "scripts": {
-        "dev": "node build/dev-server.js",
-        "start": "node build/dev-server.js",
-        "build": "node build/build.js",
+        "dev": "cross-env NODE_ENV=development node build/dev-server.js",
+        "start": "cross-env NODE_ENV=development node build/dev-server.js",
+        "build": "cross-env NODE_ENV=production node build/build.js",
         "lint": "eslint --ext .js,.vue src"
     },
     "dependencies": {
@@ -38,6 +38,7 @@
         "babel-preset-stage-2": "^6.22.0",
         "babel-register": "^6.22.0",
         "chalk": "^1.1.3",
+        "cross-env": "5.0.1",
         "connect-history-api-fallback": "^1.3.0",
         "copy-webpack-plugin": "^4.0.1",
         "css-loader": "^0.28.0",

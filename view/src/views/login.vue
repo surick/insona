@@ -1,83 +1,137 @@
-<style lang="less">
-    @import './login.less';
-</style>
-
 <template>
-    <div class="login" @keydown.enter="handleSubmit">
-        <div class="login-con">
-            <Card :bordered="false">
-                <p slot="title">
-                    <Icon type="log-in"></Icon>
-                    欢迎登录
-                </p>
-                <div class="form-con">
-                    <Form ref="loginForm" :model="form" :rules="rules">
-                        <FormItem prop="userName">
-                            <Input v-model="form.userName" placeholder="请输入用户名">
-                                <span slot="prepend">
-                                    <Icon :size="16" type="person"></Icon>
-                                </span>
-                            </Input>
-                        </FormItem>
-                        <FormItem prop="password">
-                            <Input type="password" v-model="form.password" placeholder="请输入密码">
-                                <span slot="prepend">
-                                    <Icon :size="14" type="locked"></Icon>
-                                </span>
-                            </Input>
-                        </FormItem>
-                        <FormItem>
-                            <Button @click="handleSubmit" type="primary" long>登录</Button>
-                        </FormItem>
-                    </Form>
-                    <p class="login-tip">输入任意用户名和密码即可</p>
-                </div>
-            </Card>
+    <div class="login-background">
+        <div class="login">
+            <img src="https://app.astralapp.com/images/logo.svg" alt="">
+            <div class="input-box">
+                <input type="text" placeholder="账号" v-model="form.loginName" @keyup.enter="login">
+            </div>
+            <div class="input-box">
+                <input type="password" placeholder="密码" v-model="form.password" @keyup.enter="login">
+            </div>
+            <Button type="primary" :loading="loading" class="login-btn" @click="login">
+                <span v-if="!loading">登 录</span>
+                <span v-else>登 录</span>
+            </Button>
         </div>
     </div>
 </template>
 
 <script>
-import Cookies from 'js-cookie';
+import { User } from '@/http';
 export default {
-    data () {
+    data() {
         return {
             form: {
-                userName: 'iview_admin',
+                loginName: '',
                 password: ''
             },
-            rules: {
-                userName: [
-                    { required: true, message: '账号不能为空', trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' }
-                ]
-            }
+            loading: false
         };
     },
     methods: {
-        handleSubmit () {
-            this.$refs.loginForm.validate((valid) => {
-                if (valid) {
-                    Cookies.set('user', this.form.userName);
-                    Cookies.set('password', this.form.password);
-                    this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
-                    if (this.form.userName === 'iview_admin') {
-                        Cookies.set('access', JSON.stringify({test: true, test2: true}));
-                    } else {
-                        Cookies.set('access', 1);
-                    }
-                    this.$router.push({
-                        name: 'home_index'
+        login() {
+            if (this.form.loginName === '' || this.form.password === '') {
+                this.$Message.warning('请将信息填写完整！');
+            } else {
+                this.loading = true;
+                User.login(this, this.form)
+                    .then(res => {
+                        if (res.success) {
+                            let user = res.data;
+                            localStorage.token = user.token;
+                            User.getPower(this)
+                                .then(res => {
+                                    this.loading = false;
+                                    if (res.success) {
+                                        console.log(res.data);
+                                        localStorage.user = user.name;
+                                        this.$store.commit('setAvator', user.headImgUrl);
+                                        this.$router.push({
+                                            name: 'home_index'
+                                        });
+                                        // localStorage.access = JSON.stringify({test: true, test2: true});
+                                    }
+                                });
+                        } else {
+                            this.$Message.error(res.message);
+                            this.loading = false;
+                        }
+                    }).catch(() => {
+                        this.loading = false;
                     });
-                }
-            });
+            }
         }
     }
 };
 </script>
 
 <style>
+.login {
+    width: 400px;
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
 
+.login img {
+    width: 100%;
+}
+
+.login input {
+    margin: 0 auto;
+    padding-top: 15px;
+    display: block;
+    background: 0;
+    border: 0;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    font-weight: 500;
+    outline: 0;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.login input::placeholder {
+    color: #fff;
+}
+
+.login .input-box {
+    padding: 5px 50px;
+}
+
+.login-btn {
+    background: hsla(0, 0%, 100%, .08);
+    border: 1px solid hsla(0, 0%, 100%, .65);
+    border-radius: 3px;
+    -webkit-box-shadow: 0 0 8px hsla(0, 0%, 100%, .3);
+    box-shadow: 0 0 8px hsla(0, 0%, 100%, .3);
+    color: #fff;
+    display: inline-block;
+    font-size: 18px;
+    padding: .78rem 1.3rem;
+    text-decoration: none;
+    text-shadow: none;
+    width: 300px;
+    box-sizing: border-box;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background: hsla(0, 0%, 100%, .12);
+    border: 1px solid #fff;
+    color: #fff;
+}
+
+.login-background {
+    height: 100vh;
+    overflow: hidden;
+    background: url(/static/img/login_bg.jpg) no-repeat;
+    background-size: cover;
+}
 </style>

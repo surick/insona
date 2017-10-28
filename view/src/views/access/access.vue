@@ -42,12 +42,11 @@
 </template>
 
 <script>
-import Cookies from 'js-cookie';
 export default {
     name: 'access_index',
     data () {
         return {
-            access: JSON.parse(Cookies.get('access'))
+            access: JSON.parse(localStorage.access || '{}')
         };
     },
     computed: {
@@ -58,13 +57,13 @@ export default {
     methods: {
         changeAccess (res) {
             this.access.test = res;
-            Cookies.set('access', JSON.stringify(this.access));
+            localStorage.access = JSON.stringify(this.access);
             this.$store.commit('updateMenulist');
         },
 
         changeAccess2 (res) {
             this.access.test2 = res;
-            Cookies.set('access', JSON.stringify(this.access));
+            localStorage.access = JSON.stringify(this.access);
             this.$store.commit('updateMenulist');
         }
     }
