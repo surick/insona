@@ -5,7 +5,6 @@
 </template>
 
 <script>
-    import Cookies from 'js-cookie';
     export default {
         name: 'accessCtrl',
 
@@ -13,7 +12,7 @@
 
         data () {
             return {
-                access: JSON.parse(Cookies.get('access'))
+                access: JSON.parse(localStorage.access || '{}')
             };
         },
 
@@ -28,7 +27,7 @@
 
             updateAccess() {
                 this.access[this.name] = !this.access[this.name];
-                Cookies.set('access', JSON.stringify(this.access));
+                localStorage.access = JSON.stringify(this.access);
             }
         }
     };

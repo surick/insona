@@ -1,6 +1,6 @@
 <style lang="less">
-    @import "./home.less";
-    @import "../../styles/common.less";
+@import "./home.less";
+@import "../../styles/common.less";
 </style>
 <template>
     <div class="home-main">
@@ -13,26 +13,24 @@
 </template>
 
 <script>
-    import accessCtrl from '../components/accessCtrl.vue';
-    import { User } from '../../http';
-    export default {
-        name: 'home',
+import accessCtrl from '../components/accessCtrl.vue';
+// import { User } from '@/http';
+export default {
+    name: 'home',
 
-        components: {
-            accessCtrl
-        },
+    components: {
+        accessCtrl
+    },
 
-        mounted() {
-            User.login(this, {
-                loginName: 'admin',
-                password: '123456'
-            });
-        },
+    mounted() {
+        // User.getPower(this);
+        this.$store.updateMenulist(this);
+    },
 
-        methods: {
-            ctrlAccess() {
-                this.$refs.access.updateAccess();
-            }
+    methods: {
+        ctrlAccess() {
+            this.$refs.access.updateAccess();
         }
-    };
+    }
+};
 </script>
