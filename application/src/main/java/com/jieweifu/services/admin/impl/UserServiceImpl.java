@@ -39,7 +39,17 @@ public class UserServiceImpl implements UserService {
                 .columns("id, head_img_url, name")
                 .from(UserModel.class)
                 .where("user_name = ?", userName)
-                .where("password = MD5(CONCAT(salt, ?))", "123456")
+                .where("password = MD5(CONCAT(salt, ?))", password)
+                .queryForEntity(UserModel.class);
+    }
+
+    @Override
+    public UserModel doUserLogin(int userId, String password) {
+        return db.select()
+                .columns("id, head_img_url, name")
+                .from(UserModel.class)
+                .where("id = ?", userId)
+                .where("password = MD5(CONCAT(salt, ?))", password)
                 .queryForEntity(UserModel.class);
     }
 
@@ -63,6 +73,14 @@ public class UserServiceImpl implements UserService {
     public void updateUser(UserModel userModel) {
         db.update()
                 .save(userModel)
+                .execute();
+    }
+
+    @Override
+    public void updateUserPassword(int userId, String password) {
+        db.update()
+                .set("password = MD5(CONCAT(salt, ?))", password)
+                .where("id = ?", userId)
                 .execute();
     }
 

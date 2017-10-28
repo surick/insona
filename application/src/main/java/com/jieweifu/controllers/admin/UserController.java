@@ -29,16 +29,14 @@ public class UserController {
     }
 
     /**
-     * 返回用户登录成功的Token
-     *
-     * @return 每次请求头需带上此Token, 校验权限
+     * @return 返回用户登录成功的Token, 每次请求头需带上此Token, 校验权限
      */
     @AdminAuthAnnotation(check = false)
     @PostMapping("login")
     @ResponseBody
-    public ResultModel doLogin(@RequestBody Map<String, String> loginInfo) {
-        String loginName = loginInfo.get("loginName");
-        String password = loginInfo.get("password");
+    public ResultModel doLogin(@RequestBody LoginInfo loginInfo) {
+        String loginName = loginInfo.loginName;
+        String password = loginInfo.password;
         UserModel userModel = userService.doUserLogin(loginName, password);
         if (userModel != null) {
             tokenUtil.refreshAuthorization(userModel.getId(), userService.getIsAdmin(userModel.getId()));
@@ -52,9 +50,7 @@ public class UserController {
     }
 
     /**
-     * 更新Token后原Token失效
-     *
-     * @return 返回用户的新token
+     * @return 更新Token后原Token失效, 返回用户的新token
      */
     @GetMapping("token/refresh")
     @ResponseBody
@@ -65,7 +61,7 @@ public class UserController {
         return new ResultModel().setData(tokenUtil.generateToken(userId));
     }
 
-    @PutMapping("head/update")
+    @PutMapping("headImage/update")
     @ResponseBody
     public ResultModel updateHeadImg(@RequestBody String headImgUrl) {
         int userId = BaseContextHandler.getUserId();
@@ -73,10 +69,21 @@ public class UserController {
         return new ResultModel().setData(null);
     }
 
-    public ResultModel updatePassword(@RequestBody Map<String, String> passwordInfo){
+    /**
+     * @return 更新用户密码
+     */
+    @PutMapping("password/update")
+    @ResponseBody
+    public ResultModel updatePassword(@RequestBody PasswordInfo passwordInfo) {
         int userId = BaseContextHandler.getUserId();
-
-        return new ResultModel();
+        String oldPassword = passwordInfo.oldPassword;
+        String newPassword = passwordInfo.newPassword;
+        UserModel userModel = userService.doUserLogin(userId, oldPassword);
+        if (userModel != null) {
+            userService.updateUserPassword(userId, newPassword);
+            return new ResultModel().setMessage("密码更新成功");
+        }
+        return new ResultModel().setError("密码错误");
     }
 
     /**
@@ -88,5 +95,53 @@ public class UserController {
         int userId = BaseContextHandler.getUserId();
         boolean isAdmin = BaseContextHandler.getUserIsAdmin();
         return new ResultModel().setData(userService.getMenuElements(userId, isAdmin));
+    }
+
+    /**
+     * loginInfo类
+     */
+    public static class LoginInfo {
+        private String loginName;
+        private String password;
+
+        public String getLoginName() {
+            return loginName;
+        }
+
+        public void setLoginName(String loginName) {
+            this.loginName = loginName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+    /**
+     * passwordInfo类
+     */
+    public static class PasswordInfo {
+        private String oldPassword;
+        private String newPassword;
+
+        public String getOldPassword() {
+            return oldPassword;
+        }
+
+        public void setOldPassword(String oldPassword) {
+            this.oldPassword = oldPassword;
+        }
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
+        }
     }
 }
