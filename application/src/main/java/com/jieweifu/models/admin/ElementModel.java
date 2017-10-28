@@ -16,12 +16,8 @@ public class ElementModel implements Serializable {
     @Column(columnName = "element_name")
     private String elementName;
 
-    private String uri;
     @Column(columnName = "menu_id")
     private Integer menuId;
-
-    @Column(columnName = "parent_id")
-    private Integer parentId;
 
     private String path;
     private String method;
@@ -94,28 +90,12 @@ public class ElementModel implements Serializable {
         this.elementName = elementName;
     }
 
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
     public int getMenuId() {
         return menuId;
     }
 
     public void setMenuId(int menuId) {
         this.menuId = menuId;
-    }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
     }
 
     public String getPath() {

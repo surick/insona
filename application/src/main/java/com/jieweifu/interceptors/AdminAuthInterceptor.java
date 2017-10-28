@@ -49,7 +49,7 @@ public class AdminAuthInterceptor extends HandlerInterceptorAdapter {
         String authToken = request.getHeader(CommonConstant.TOKEN_AUTHORIZATION);
         String userId = tokenUtil.getUserId(authToken);
         if (userId == null) {
-            writeUnAuthorization(request, response);
+            writeUnAuthorization(HttpStatus.UNAUTHORIZED, request, response);
             return false;
         }
 
@@ -59,19 +59,19 @@ public class AdminAuthInterceptor extends HandlerInterceptorAdapter {
         String method = request.getMethod();
         boolean canAction = tokenUtil.checkAuthorization(path, method);
         if (!canAction) {
-            writeUnAuthorization(request, response);
+            writeUnAuthorization(HttpStatus.FORBIDDEN, request, response);
             return false;
         }
         return true;
     }
 
-    private void writeUnAuthorization(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        afterCompletion(request, response, false, new RuntimeException("未授权或授权已过期"));
+    private void writeUnAuthorization(HttpStatus httpStatus, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        afterCompletion(request, response, false, new RuntimeException(httpStatus == HttpStatus.UNAUTHORIZED ? "未登录" : "无权限"));
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(HttpStatus.OK.value());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().print(new ResultModel().setError(HttpStatus.UNAUTHORIZED.value(), "未授权或授权已过期").toJSON());
+        response.getWriter().print(new ResultModel().setError(httpStatus.value(), httpStatus == HttpStatus.UNAUTHORIZED ? "未登录" : "无权限").toJSON());
         response.flushBuffer();
     }
 

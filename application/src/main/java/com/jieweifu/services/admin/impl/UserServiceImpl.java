@@ -20,20 +20,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void getUser() {
-        List<UserModel> userModelList = db.select().from(UserModel.class).queryForList(UserModel.class);
-        userModelList.forEach(userModel -> System.out.println(userModel.getUserName()));
+    public List<UserModel> getAllUsers() {
+        return db.select()
+                .from(UserModel.class)
+                .queryForList(UserModel.class);
     }
 
     @Override
     public int addUser(UserModel userModel) {
-        return 0;
+        return db.insert()
+                .save(userModel)
+                .execute();
     }
 
     @Override
     public UserModel doUserLogin(String userName, String password) {
         return db.select()
-                .columns("id")
+                .columns("id, head_img_url, name")
                 .from(UserModel.class)
                 .where("user_name = ?", userName)
                 .where("password = MD5(CONCAT(salt, ?))", "123456")
@@ -71,8 +74,7 @@ public class UserServiceImpl implements UserService {
                 .leftOuterJoin(RoleModel.class, "B", "A.role_id = B.id")
                 .where("A.user_id = ? AND B.role_code = 'admin'", userId)
                 .limit(0, 1)
-                .queryForList()
-                .size() > 0;
+                .total() > 0;
     }
 
     @Override
