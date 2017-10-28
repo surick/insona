@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import iView from 'iview';
-import { router, appRouter } from './router';
+import { router } from './router';
 import store from './store';
 import Util from './libs/util';
 import App from './app.vue';
@@ -12,7 +12,7 @@ import zhLocale from 'iview/src/locale/lang/zh-CN';
 import enLocale from 'iview/src/locale/lang/en-US';
 import zhTLocale from 'iview/src/locale/lang/zh-TW';
 
-import Loading from './views/components/loading';
+import Loading from './components/loading';
 
 Vue.use(VueI18n);
 Vue.use(iView);
@@ -47,13 +47,28 @@ router.beforeEach((to, from, next) => {
             next(false);
         } else {
             if (to.name !== 'login') { // 正常情况
-                next();
+                console.log(store.state.menuList);
+                if (store.state.menuList.length === 0) {
+                    store.dispatch('GenerateRoutes', '').then(() => {
+                        next({ ...to }); // hack方法 确保appRouter已完成
+                    });
+                } else {
+                    next();
+                }
             } else { // 判断登录状态去登录页面
                 Util.title();
                 next({
                     name: 'home'
                 });
             }
+        }
+    } else {
+        if (to.name === 'login') {
+            next();
+        } else {
+            router.replace({
+                name: 'login'
+            });
         }
     }
     iView.LoadingBar.finish();
@@ -92,7 +107,7 @@ new Vue({
     },
     created () {
         let tagsList = [];
-        appRouter.map((item) => {
+        this.$store.state.appRouter.map((item) => {
             if (item.children.length <= 1) {
                 tagsList.push(item.children[0]);
             } else {

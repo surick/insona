@@ -39,19 +39,13 @@ export default {
                         if (res.success) {
                             let user = res.data;
                             localStorage.token = user.token;
-                            User.getPower(this)
-                                .then(res => {
-                                    this.loading = false;
-                                    if (res.success) {
-                                        console.log(res.data);
-                                        localStorage.user = user.name;
-                                        this.$store.commit('setAvator', user.headImgUrl);
-                                        this.$router.push({
-                                            name: 'home_index'
-                                        });
-                                        // localStorage.access = JSON.stringify({test: true, test2: true});
-                                    }
+                            localStorage.user = user.name;
+                            this.$store.commit('setAvator', user.headImgUrl);
+                            this.$store.dispatch('GenerateRoutes', this).then((res) => {
+                                this.$router.push({
+                                    name: 'home'
                                 });
+                            });
                         } else {
                             this.$Message.error(res.message);
                             this.loading = false;

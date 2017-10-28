@@ -47,11 +47,6 @@ export default {
             openedSubmenuArr: this.$store.state.openedSubmenuArr
         };
     },
-    computed: {
-        tagsList () {
-            return this.$store.state.tagsList;
-        }
-    },
     methods: {
         changeMenu (active) {
             if (active !== 'accesstest_index') {

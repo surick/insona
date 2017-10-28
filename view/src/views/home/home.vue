@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import accessCtrl from '../components/accessCtrl.vue';
+import accessCtrl from '@/components/accessCtrl.vue';
 // import { User } from '@/http';
 export default {
     name: 'home',

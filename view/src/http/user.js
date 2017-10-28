@@ -4,7 +4,7 @@ export default {
     login(vm, obj) {
         return ajax(vm, {
             method: 'POST',
-            url: '/sys/user/login',
+            url: '/sys/login',
             data: obj
         });
     },
@@ -12,7 +12,7 @@ export default {
     getPower(vm) {
         return ajax(vm, {
             method: 'GET',
-            url: '/sys/user/power'
+            url: '/sys/power'
         });
     }
 };
