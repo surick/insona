@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Main from '@/views/Main.vue';
-const _import = require('./_import_' + process.env.NODE_ENV);
-console.log(process.env.NODE_ENV);
+const env = require('@/config/env').default;
+const _import = require('./_import_' + env);
 Vue.use(VueRouter);
 
 // 不作为Main组件的子页面展示的页面单独写，如下

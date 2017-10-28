@@ -24,7 +24,6 @@ export default {
 
     mounted() {
         // User.getPower(this);
-        this.$store.updateMenulist(this);
     },
 
     methods: {

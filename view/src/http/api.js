@@ -1,5 +1,5 @@
 import axios from 'axios';
-const env = process.env.NODE_ENV;
+import env from '@/config/env';
 
 const ajaxUrl = env === 'development'
     ? 'http://192.168.3.39:8080'
