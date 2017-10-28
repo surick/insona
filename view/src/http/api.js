@@ -3,9 +3,7 @@ import env from '@/config/env';
 
 const ajaxUrl = env === 'development'
     ? 'http://192.168.3.39:8080'
-    : env === 'production'
-    ? 'https://www.url.com'
-    : 'https://debug.url.com';
+    : 'http://api.kyo.hahakeji.com';
 
 const http = axios.create({
     baseURL: ajaxUrl,

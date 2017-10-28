@@ -44,13 +44,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel doUserLogin(int userId, String password) {
+    public boolean doUserLogin(int userId, String password) {
         return db.select()
-                .columns("id, head_img_url, name")
                 .from(UserModel.class)
                 .where("id = ?", userId)
                 .where("password = MD5(CONCAT(salt, ?))", password)
-                .queryForEntity(UserModel.class);
+                .total() > 0;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.jieweifu.controllers;
 
+import com.jieweifu.common.utils.ClientUtil;
 import com.jieweifu.models.ResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +32,23 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
     @RequestMapping(ERROR_PATH)
     @ResponseBody
     public ResultModel error(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Map<String, Object> map = this.errorAttributes.getErrorAttributes(new ServletRequestAttributes(request), false);
+        Map<String, Object> map = errorAttributes.getErrorAttributes(new ServletRequestAttributes(request), false);
         Integer status = (Integer) map.get("status");
         response.setStatus(HttpStatus.OK.value());
 
-        logger.error(String.valueOf(map.get("message")), this.errorAttributes.getError(new ServletRequestAttributes(request)));
+        Throwable error = errorAttributes.getError(new ServletRequestAttributes(request));
+        logger.error("ip: "
+                .concat(ClientUtil.getClientIp(request))
+                .concat(", status: ")
+                .concat(String.valueOf(map.get("status")))
+                .concat(", path: ")
+                .concat(String.valueOf(map.get("path")))
+                .concat(", message: ")
+                .concat(String.valueOf(map.get("message"))), error);
+
         String message = "出错了, 请稍后再试!";
         if (logger.isDebugEnabled()) {
-            message = String.valueOf(map.get("message"));
+            message = error != null ? error.getLocalizedMessage() : String.valueOf(map.get("message"));
         }
 
         return new ResultModel().setError(status, message);

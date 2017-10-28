@@ -11,7 +11,7 @@ public interface UserService {
     List<UserModel> getAllUsers();
     int addUser(UserModel userModel);
     UserModel doUserLogin(String userName, String password);
-    UserModel doUserLogin(int userId, String password);
+    boolean doUserLogin(int userId, String password);
     UserModel getUserById(int id);
     void updateUserHeadImg(int userId, String headImgUrl);
     void updateUser(UserModel userModel);
