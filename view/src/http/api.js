@@ -2,7 +2,7 @@ import axios from 'axios';
 import env from '@/config/env';
 
 const ajaxUrl = env === 'development'
-    ? 'http://192.168.3.39:8080'
+    ? 'http://127.0.0.1:8080'
     : 'http://api.kyo.hahakeji.com';
 
 const http = axios.create({

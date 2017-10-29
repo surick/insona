@@ -50,6 +50,7 @@ router.beforeEach((to, from, next) => {
                 console.log(store.state.menuList);
                 if (store.state.menuList.length === 0) {
                     store.dispatch('GenerateRoutes', '').then(() => {
+                        router.addRoutes(store.state.appRouter);
                         next({ ...to }); // hack方法 确保appRouter已完成
                     });
                 } else {
