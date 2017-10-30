@@ -8,6 +8,7 @@ import java.util.List;
 public interface MenuService {
     List<MenuModel> getAllMenus();
     MenuModel getMenuById(int id);
+    List<MenuModel> getMenuByParentId(int ParentId);
     void updateMenu(MenuModel menuModel);
     void deleteMenu(int id);
     int addMenu(MenuModel menuModel);

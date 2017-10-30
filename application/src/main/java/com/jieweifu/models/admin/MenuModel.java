@@ -3,6 +3,9 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 @Entity(tableName = "base_menu")
 public class MenuModel {
@@ -13,18 +16,18 @@ public class MenuModel {
     private String title;
 
     @Column(columnName = "parent_id")
-    private Integer parentId;
+    private int parentId;
 
     private String href;
     private String icon;
     private String type;
 
     @Column(columnName = "order_num")
-    private Integer orderNum;
+    private int orderNum;
 
     private String description;
     private String path;
-    private Integer enabled;
+    private int enabled;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -273,5 +276,12 @@ public class MenuModel {
 
     public void setAttr8(String attr8) {
         this.attr8 = attr8;
+    }
+
+    @Column(insert = false,update = false)
+    private List<MenuModel> children = new ArrayList<>();
+
+    public List<MenuModel> getChildren() {
+        return children;
     }
 }
