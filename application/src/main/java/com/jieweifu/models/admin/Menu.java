@@ -5,7 +5,7 @@ import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "base_menu")
-public class MenuModel {
+public class Menu {
     @Column(primaryKey = true)
     private int id = -1;
 

@@ -1,32 +1,32 @@
 package com.jieweifu.models;
 
-import com.jieweifu.models.admin.ElementModel;
-import com.jieweifu.models.admin.MenuModel;
+import com.jieweifu.models.admin.Element;
+import com.jieweifu.models.admin.Menu;
 
 import java.util.List;
 
-public class MenuElementsModel {
-    private List<MenuModel> menus;
-    private List<ElementModel> elements;
+public class MenuElements {
+    private List<Menu> menus;
+    private List<Element> elements;
 
-    public MenuElementsModel(List<MenuModel> menuModels, List<ElementModel> elementModels) {
-        this.menus = menuModels;
-        this.elements = elementModels;
+    public MenuElements(List<Menu> menus, List<Element> elements) {
+        this.menus = menus;
+        this.elements = elements;
     }
 
-    public List<MenuModel> getMenus() {
+    public List<Menu> getMenus() {
         return menus;
     }
 
-    public void setMenus(List<MenuModel> menus) {
+    public void setMenus(List<Menu> menus) {
         this.menus = menus;
     }
 
-    public List<ElementModel> getElements() {
+    public List<Element> getElements() {
         return elements;
     }
 
-    public void setElements(List<ElementModel> elements) {
+    public void setElements(List<Element> elements) {
         this.elements = elements;
     }
 }

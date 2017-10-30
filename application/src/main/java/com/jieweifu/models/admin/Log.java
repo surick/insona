@@ -5,7 +5,7 @@ import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "base_log")
-public class LogModel {
+public class Log {
     @Column(primaryKey = true)
     private int id = -1;
 

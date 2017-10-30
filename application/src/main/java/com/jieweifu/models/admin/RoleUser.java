@@ -5,7 +5,7 @@ import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "base_role_user")
-public class RoleUserModel {
+public class RoleUser {
     @Column(primaryKey = true)
     private int id = -1;
 

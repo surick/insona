@@ -1,7 +1,7 @@
 package com.jieweifu.vo.admin;
 
-import com.jieweifu.models.admin.ElementModel;
-import com.jieweifu.models.admin.MenuModel;
+import com.jieweifu.models.admin.Element;
+import com.jieweifu.models.admin.Menu;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,23 +11,23 @@ import java.util.List;
 public class MenuElement implements Serializable{
     static final long serialVersionUID = 1L;
 
-    private MenuModel menu;
+    private Menu menu;
     private List<MenuElement> children = new ArrayList<>();
-    private List<ElementModel> elements = new ArrayList<>();
+    private List<Element> elements = new ArrayList<>();
 
-    public MenuModel getMenu() {
+    public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(MenuModel menu){
+    public void setMenu(Menu menu){
         this.menu = menu;
     }
 
-    public void setElement(ElementModel element){
+    public void setElement(Element element){
         this.elements.add(element);
     }
 
-    public List<ElementModel> getElements() {
+    public List<Element> getElements() {
         return elements;
     }
 

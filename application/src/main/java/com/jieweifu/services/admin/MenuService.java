@@ -1,14 +1,14 @@
 package com.jieweifu.services.admin;
 
-import com.jieweifu.models.admin.MenuModel;
+import com.jieweifu.models.admin.Menu;
 
 import java.util.List;
 
 @SuppressWarnings("unused")
 public interface MenuService {
-    List<MenuModel> getAllMenus();
-    MenuModel getMenuById(int id);
-    void updateMenu(MenuModel menuModel);
+    List<Menu> getAllMenus();
+    Menu getMenuById(int id);
+    void updateMenu(Menu menu);
     void deleteMenu(int id);
-    int addMenu(MenuModel menuModel);
+    int addMenu(Menu menu);
 }

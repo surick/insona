@@ -5,7 +5,7 @@ import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "base_group_user")
-public class GroupUserModel {
+public class GroupUser {
     @Column(primaryKey = true)
     private int id = -1;
 

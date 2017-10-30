@@ -2,7 +2,7 @@ package com.jieweifu.common.business;
 
 import com.jieweifu.constants.CommonConstant;
 import com.jieweifu.constants.UserConstant;
-import com.jieweifu.models.admin.UserModel;
+import com.jieweifu.models.admin.User;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -42,8 +42,8 @@ public class BaseContextHandler {
         return map.get(key);
     }
 
-    public static void setUser(UserModel userModel) {
-        set(UserConstant.USER, userModel);
+    public static void setUser(User user) {
+        set(UserConstant.USER, user);
     }
 
     public static int getUserId() {
@@ -99,13 +99,13 @@ public class BaseContextHandler {
         set(CommonConstant.REQUEST_IP, ip);
     }
 
-    public static UserModel getUser() {
-        UserModel userModel = (UserModel) get(UserConstant.USER);
-        if (userModel == null) {
-            userModel = new UserModel();
-            userModel.setUserName("未知");
-            userModel.setId(-1);
+    public static User getUser() {
+        User user = (User) get(UserConstant.USER);
+        if (user == null) {
+            user = new User();
+            user.setUserName("未知");
+            user.setId(-1);
         }
-        return userModel;
+        return user;
     }
 }

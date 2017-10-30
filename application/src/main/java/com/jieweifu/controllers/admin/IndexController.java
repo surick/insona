@@ -4,8 +4,8 @@ import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.TokenUtil;
 import com.jieweifu.constants.UserConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
-import com.jieweifu.models.ResultModel;
-import com.jieweifu.models.admin.UserModel;
+import com.jieweifu.models.Result;
+import com.jieweifu.models.admin.User;
 import com.jieweifu.services.admin.UserService;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,66 +38,66 @@ public class IndexController {
      */
     @AdminAuthAnnotation(check = false)
     @PostMapping("login")
-    public ResultModel doLogin(@Valid @RequestBody LoginInfo loginInfo) {
+    public Result doLogin(@Valid @RequestBody LoginInfo loginInfo) {
         String loginName = loginInfo.loginName;
         String password = loginInfo.password;
-        UserModel userModel = userService.doUserLogin(loginName, password);
-        if (userModel != null) {
-            tokenUtil.refreshAuthorization(userModel.getId(), userService.getIsAdmin(userModel.getId()));
+        User user = userService.doUserLogin(loginName, password);
+        if (user != null) {
+            tokenUtil.refreshAuthorization(user.getId(), userService.getIsAdmin(user.getId()));
             Map<String, String> userInfo = new WeakHashMap<>();
-            userInfo.put(UserConstant.USER_TOKEN, tokenUtil.generateToken(String.valueOf(userModel.getId())));
-            userInfo.put(UserConstant.USER_NAME, userModel.getName());
-            userInfo.put(UserConstant.USER_HEAD_IMG, userModel.getHeadImgUrl());
-            return new ResultModel().setData(userInfo);
+            userInfo.put(UserConstant.USER_TOKEN, tokenUtil.generateToken(String.valueOf(user.getId())));
+            userInfo.put(UserConstant.USER_NAME, user.getName());
+            userInfo.put(UserConstant.USER_HEAD_IMG, user.getHeadImgUrl());
+            return new Result().setData(userInfo);
         }
-        return new ResultModel().setError("用户名或密码错误");
+        return new Result().setError("用户名或密码错误");
     }
 
     /**
      * @return 更新Token后原Token失效, 返回用户的新token
      */
     @GetMapping("token/refresh")
-    public ResultModel refreshToken() {
+    public Result refreshToken() {
         String userId = String.valueOf(BaseContextHandler.getUserId());
         boolean isAdmin = BaseContextHandler.getUserIsAdmin();
         tokenUtil.refreshAuthorization(Integer.parseInt(userId), isAdmin);
-        return new ResultModel().setData(tokenUtil.generateToken(userId));
+        return new Result().setData(tokenUtil.generateToken(userId));
     }
 
     @PutMapping("headImage/update")
-    public ResultModel updateHeadImg(@RequestBody String headImgUrl) {
+    public Result updateHeadImg(@RequestBody String headImgUrl) {
         int userId = BaseContextHandler.getUserId();
         userService.updateUserHeadImg(userId, headImgUrl);
-        return new ResultModel().setData(null);
+        return new Result().setData(null);
     }
 
     /**
      * @return 更新用户密码
      */
     @PutMapping("password/update")
-    public ResultModel updatePassword(@Valid @RequestBody PasswordInfo passwordInfo) {
+    public Result updatePassword(@Valid @RequestBody PasswordInfo passwordInfo) {
         int userId = BaseContextHandler.getUserId();
         String oldPassword = passwordInfo.oldPassword;
         String newPassword = passwordInfo.newPassword;
         if (newPassword.equals(oldPassword)) {
-            return new ResultModel().setError("新密码不能跟旧密码相同");
+            return new Result().setError("新密码不能跟旧密码相同");
         }
         boolean isPasswordCorrect = userService.doUserLogin(userId, oldPassword);
         if (!isPasswordCorrect) {
-            return new ResultModel().setError("密码错误");
+            return new Result().setError("密码错误");
         }
         userService.updateUserPassword(userId, newPassword);
-        return new ResultModel().setMessage("密码更新成功");
+        return new Result().setMessage("密码更新成功");
     }
 
     /**
      * @return 返回用户功能权限
      */
     @GetMapping("power")
-    public ResultModel getUserPower() {
+    public Result getUserPower() {
         int userId = BaseContextHandler.getUserId();
         boolean isAdmin = BaseContextHandler.getUserIsAdmin();
-        return new ResultModel().setData(userService.getMenuElements(userId, isAdmin));
+        return new Result().setData(userService.getMenuElements(userId, isAdmin));
     }
 
     /**

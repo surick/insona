@@ -4,7 +4,7 @@ import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.ClientUtil;
 import com.jieweifu.common.utils.TokenUtil;
 import com.jieweifu.constants.CommonConstant;
-import com.jieweifu.models.ResultModel;
+import com.jieweifu.models.Result;
 import com.jieweifu.services.admin.LogService;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -71,7 +71,7 @@ public class AdminAuthInterceptor extends HandlerInterceptorAdapter {
         response.setStatus(HttpStatus.OK.value());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().print(new ResultModel().setError(httpStatus.value(), httpStatus == HttpStatus.UNAUTHORIZED ? "未登录" : "无权限").toJSON());
+        response.getWriter().print(new Result().setError(httpStatus.value(), httpStatus == HttpStatus.UNAUTHORIZED ? "未登录" : "无权限").toJSON());
         response.flushBuffer();
     }
 

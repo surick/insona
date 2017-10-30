@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "base_element")
-public class ElementModel implements Serializable {
+public class Element implements Serializable {
     @Column(primaryKey = true)
     private int id = -1;
 
