@@ -25,6 +25,4 @@ public class UserController {
     public Result getAllUsers(){
         return new Result().setData(userService.getAllUsers());
     }
-
-
 }

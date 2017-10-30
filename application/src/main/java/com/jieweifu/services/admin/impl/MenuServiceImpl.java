@@ -4,6 +4,7 @@ import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.admin.Menu;
 import com.jieweifu.services.admin.MenuService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +14,17 @@ public class MenuServiceImpl implements MenuService {
 
     private DB db;
 
+    @Autowired
     public MenuServiceImpl(DB db) {
         this.db = db;
+    }
+
+    @Override
+    public List<Menu> getMenuByParentId(int parent_id) {
+        return db.select()
+                .from(Menu.class)
+                .where("parent_id=?", parent_id)
+                .queryForList(Menu.class);
     }
 
     @Override

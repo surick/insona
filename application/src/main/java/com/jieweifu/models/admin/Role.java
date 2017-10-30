@@ -3,6 +3,9 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 @Entity(tableName = "base_role")
 public class Role {
@@ -16,13 +19,13 @@ public class Role {
     private String roleCode;
 
     @Column(columnName = "parent_id")
-    private Integer parentId;
+    private int parentId = -1;
 
     @Column(columnName = "order_num")
-    private String orderNum;
+    private int orderNum;
 
     private String description;
-    private Integer enabled;
+    private int enabled = 1;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -53,6 +56,8 @@ public class Role {
     private String attr3;
     private String attr4;
     private String attr5;
+    @Column(update = false, insert = false)
+    private List<Role> children = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -86,11 +91,11 @@ public class Role {
         this.parentId = parentId;
     }
 
-    public String getOrderNum() {
+    public int getOrderNum() {
         return orderNum;
     }
 
-    public void setOrderNum(String orderNum) {
+    public void setOrderNum(int orderNum) {
         this.orderNum = orderNum;
     }
 
@@ -212,5 +217,9 @@ public class Role {
 
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
+    }
+
+    public List<Role> getChildren() {
+        return children;
     }
 }
