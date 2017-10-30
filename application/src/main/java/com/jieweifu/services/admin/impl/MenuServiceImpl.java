@@ -2,8 +2,9 @@ package com.jieweifu.services.admin.impl;
 
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
-import com.jieweifu.models.admin.MenuModel;
+import com.jieweifu.models.admin.Menu;
 import com.jieweifu.services.admin.MenuService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,46 +14,55 @@ public class MenuServiceImpl implements MenuService {
 
     private DB db;
 
+    @Autowired
     public MenuServiceImpl(DB db) {
         this.db = db;
     }
 
     @Override
-    public List<MenuModel> getAllMenus() {
+    public List<Menu> getMenuByParentId(int parent_id) {
         return db.select()
-                .from(MenuModel.class)
-                .queryForList(MenuModel.class);
+                .from(Menu.class)
+                .where("parent_id=?", parent_id)
+                .queryForList(Menu.class);
     }
 
     @Override
-    public MenuModel getMenuById(int id) {
+    public List<Menu> getAllMenus() {
         return db.select()
-                .from(MenuModel.class)
+                .from(Menu.class)
+                .queryForList(Menu.class);
+    }
+
+    @Override
+    public Menu getMenuById(int id) {
+        return db.select()
+                .from(Menu.class)
                 .where("id = ?", id)
-                .queryForEntity(MenuModel.class);
+                .queryForEntity(Menu.class);
     }
 
     @Override
-    public void updateMenu(MenuModel menuModel) {
-        OperateHandler.assignUpdateUser(menuModel);
+    public void updateMenu(Menu menu) {
+        OperateHandler.assignUpdateUser(menu);
         db.update()
-                .save(menuModel)
+                .save(menu)
                 .execute();
     }
 
     @Override
     public void deleteMenu(int id) {
         db.delete()
-                .from(MenuModel.class)
+                .from(Menu.class)
                 .where("id = ?", id)
                 .execute();
     }
 
     @Override
-    public int addMenu(MenuModel menuModel) {
-        OperateHandler.assignCreateUser(menuModel);
+    public int addMenu(Menu menu) {
+        OperateHandler.assignCreateUser(menu);
         return db.insert()
-                .save(menuModel)
+                .save(menu)
                 .execute();
     }
 }

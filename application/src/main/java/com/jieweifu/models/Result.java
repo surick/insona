@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 
 @SuppressWarnings("unused")
-public class ResultModel {
+public class Result {
     private int code = HttpStatus.OK.value();
     private boolean success = true;
 
@@ -15,26 +15,26 @@ public class ResultModel {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object data;
 
-    public ResultModel setData(Object data) {
+    public Result setData(Object data) {
         this.data = data;
         return this;
     }
 
-    public ResultModel setMessage(String message) {
+    public Result setMessage(String message) {
         this.message = message;
         return this;
     }
 
-    public ResultModel setError(int code, String message) {
-        ResultModel model = new ResultModel();
+    public Result setError(int code, String message) {
+        Result model = new Result();
         this.code = code;
         this.message = message;
         this.success = false;
         return this;
     }
 
-    public ResultModel setError(String message) {
-        ResultModel model = new ResultModel();
+    public Result setError(String message) {
+        Result model = new Result();
         this.message = message;
         this.success = false;
         return this;

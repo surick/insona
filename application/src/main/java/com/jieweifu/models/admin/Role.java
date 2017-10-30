@@ -3,19 +3,29 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
-@Entity(tableName = "base_role_user")
-public class RoleUserModel {
+@Entity(tableName = "base_role")
+public class Role {
     @Column(primaryKey = true)
     private int id = -1;
 
-    @Column(columnName = "user_id")
-    private Integer userId;
+    @Column(columnName = "role_name")
+    private String roleName;
 
-    @Column(columnName = "role_id")
-    private Integer roleId;
+    @Column(columnName = "role_code")
+    private String roleCode;
+
+    @Column(columnName = "parent_id")
+    private int parentId = -1;
+
+    @Column(columnName = "order_num")
+    private int orderNum;
 
     private String description;
+    private int enabled = 1;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -46,6 +56,8 @@ public class RoleUserModel {
     private String attr3;
     private String attr4;
     private String attr5;
+    @Column(update = false, insert = false)
+    private List<Role> children = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -55,20 +67,36 @@ public class RoleUserModel {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public String getRoleCode() {
+        return roleCode;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
+    public int getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(int orderNum) {
+        this.orderNum = orderNum;
     }
 
     public String getDescription() {
@@ -77,6 +105,14 @@ public class RoleUserModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(int enabled) {
+        this.enabled = enabled;
     }
 
     public String getCreateTime() {
@@ -181,5 +217,9 @@ public class RoleUserModel {
 
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
+    }
+
+    public List<Role> getChildren() {
+        return children;
     }
 }

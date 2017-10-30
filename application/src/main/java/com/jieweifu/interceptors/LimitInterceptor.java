@@ -3,7 +3,7 @@ package com.jieweifu.interceptors;
 import com.jieweifu.common.utils.ClientUtil;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.constants.CommonConstant;
-import com.jieweifu.models.ResultModel;
+import com.jieweifu.models.Result;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class LimitInterceptor extends HandlerInterceptorAdapter {
         response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().print(new ResultModel().setError(HttpStatus.TOO_MANY_REQUESTS.value(), "访问过于频繁").toJSON());
+        response.getWriter().print(new Result().setError(HttpStatus.TOO_MANY_REQUESTS.value(), "访问过于频繁").toJSON());
         response.flushBuffer();
     }
 }

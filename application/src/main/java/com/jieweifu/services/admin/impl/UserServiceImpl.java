@@ -1,6 +1,7 @@
 package com.jieweifu.services.admin.impl;
 
 import com.jieweifu.common.dbservice.DB;
+import com.jieweifu.models.MenuElements;
 import com.jieweifu.models.admin.*;
 import com.jieweifu.services.admin.UserService;
 import com.jieweifu.vo.admin.MenuElement;
@@ -20,58 +21,58 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserModel> getAllUsers() {
+    public List<User> getAllUsers() {
         return db.select()
-                .from(UserModel.class)
-                .queryForList(UserModel.class);
+                .from(User.class)
+                .queryForList(User.class);
     }
 
     @Override
-    public int addUser(UserModel userModel) {
+    public int addUser(User user) {
         return db.insert()
-                .save(userModel)
+                .save(user)
                 .execute();
     }
 
     @Override
-    public UserModel doUserLogin(String userName, String password) {
+    public User doUserLogin(String userName, String password) {
         return db.select()
                 .columns("id, head_img_url, name")
-                .from(UserModel.class)
+                .from(User.class)
                 .where("user_name = ?", userName)
                 .where("password = MD5(CONCAT(salt, ?))", password)
-                .queryForEntity(UserModel.class);
+                .queryForEntity(User.class);
     }
 
     @Override
     public boolean doUserLogin(int userId, String password) {
         return db.select()
-                .from(UserModel.class)
+                .from(User.class)
                 .where("id = ?", userId)
                 .where("password = MD5(CONCAT(salt, ?))", password)
                 .total() > 0;
     }
 
     @Override
-    public UserModel getUserById(int id) {
+    public User getUserById(int id) {
         return db.select()
-                .from(UserModel.class)
+                .from(User.class)
                 .where("id = ?", id)
-                .queryForEntity(UserModel.class);
+                .queryForEntity(User.class);
     }
 
     @Override
     public void updateUserHeadImg(int userId, String headImgUrl) {
-        UserModel userModel = new UserModel();
-        userModel.setId(userId);
-        userModel.setHeadImgUrl(headImgUrl);
-        updateUser(userModel);
+        User user = new User();
+        user.setId(userId);
+        user.setHeadImgUrl(headImgUrl);
+        updateUser(user);
     }
 
     @Override
-    public void updateUser(UserModel userModel) {
+    public void updateUser(User user) {
         db.update()
-                .save(userModel)
+                .save(user)
                 .execute();
     }
 
@@ -87,103 +88,102 @@ public class UserServiceImpl implements UserService {
     public boolean getIsAdmin(int userId) {
         return db.select()
                 .columns("1")
-                .from(RoleUserModel.class, "A")
-                .leftOuterJoin(RoleModel.class, "B", "A.role_id = B.id")
+                .from(RoleUser.class, "A")
+                .leftOuterJoin(Role.class, "B", "A.role_id = B.id")
                 .where("A.user_id = ? AND B.role_code = 'admin'", userId)
                 .limit(0, 1)
                 .total() > 0;
     }
 
-    @Override
-    public List<MenuElement> getMenuElements(int userId, boolean isAdmin) {
-        List<MenuModel> menuModels = getAllMenus();
-        List<ElementModel> elementModels = getAllElements();
+    public MenuElements getMenuElements(int userId, boolean isAdmin){
+        List<Menu> menus = getAllMenus();
+        List<Element> elements = getAllElements();
 
         if (!isAdmin) {
-            List<MenuModel> _menuModels = new ArrayList<>();
-            List<ElementModel> _elementModels = new ArrayList<>();
+            List<Menu> _menus = new ArrayList<>();
+            List<Element> _elements = new ArrayList<>();
 
-            List<RoleAuthorityModel> roleAuthorityModels = getRoleAuthorization(userId);
-            menuModels.forEach(menuModel -> {
-                if (roleAuthorityModels.stream().filter(p -> p.getResourceId() == menuModel.getId()
+            List<RoleAuthority> roleAuthorities = getRoleAuthorization(userId);
+            menus.forEach(menu -> {
+                if (roleAuthorities.stream().filter(p -> p.getResourceId() == menu.getId()
                         && p.getResourceType().equalsIgnoreCase("MENU")).count() > 0) {
-                    _menuModels.add(menuModel);
+                    _menus.add(menu);
                 }
             });
-            elementModels.forEach(elementModel -> {
-                if (roleAuthorityModels.stream().filter(p -> p.getResourceId() == elementModel.getId()
+            elements.forEach(element -> {
+                if (roleAuthorities.stream().filter(p -> p.getResourceId() == element.getId()
                         && p.getResourceType().equalsIgnoreCase("ELEMENT")).count() > 0) {
-                    _elementModels.add(elementModel);
+                    _elements.add(element);
                 }
             });
-            menuModels = _menuModels;
-            elementModels = _elementModels;
+            menus = _menus;
+            elements = _elements;
         }
 
-        return generateMenuElements(menuModels, elementModels);
+        return new MenuElements(menus, elements);
     }
 
     @Override
-    public List<MenuElement> getAllMenuElements() {
+    public MenuElements getAllMenuElements() {
         return getMenuElements(-1, true);
     }
 
     @Override
-    public List<ElementModel> getAllAuthElements(int userId, boolean isAdmin) {
-        List<ElementModel> elementModels = getAllElements();
+    public List<Element> getAllAuthElements(int userId, boolean isAdmin) {
+        List<Element> elements = getAllElements();
 
         if (!isAdmin) {
-            List<ElementModel> _elementModels = new ArrayList<>();
-            List<RoleAuthorityModel> roleAuthorityModels = getRoleAuthorization(userId);
-            elementModels.forEach(elementModel -> {
-                if (roleAuthorityModels.stream().filter(p -> p.getResourceId() == elementModel.getId()
+            List<Element> _elements = new ArrayList<>();
+            List<RoleAuthority> roleAuthorities = getRoleAuthorization(userId);
+            elements.forEach(element -> {
+                if (roleAuthorities.stream().filter(p -> p.getResourceId() == element.getId()
                         && p.getResourceType().equalsIgnoreCase("ELEMENT")).count() > 0) {
-                    _elementModels.add(elementModel);
+                    _elements.add(element);
                 }
             });
-            elementModels = _elementModels;
+            elements = _elements;
         }
 
-        return elementModels;
+        return elements;
     }
 
-    private List<MenuElement> generateMenuElements(List<MenuModel> menuModels, List<ElementModel> elementModels) {
+    private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {
         List<MenuElement> menuElements = new ArrayList<>();
-        findNext(-1, menuModels, menuElements, elementModels);
+        findNext(-1, menus, menuElements, elements);
         return menuElements;
     }
 
-    private void findNext(int parentId, List<MenuModel> menuModels, List<MenuElement> menuElements, List<ElementModel> elementModels) {
-        List<MenuModel> _menuModels = menuModels.stream().filter(p -> p.getParentId() == parentId).collect(Collectors.toList());
-        _menuModels.forEach(_menuModel -> {
+    private void findNext(int parentId, List<Menu> menus, List<MenuElement> menuElements, List<Element> elements) {
+        List<Menu> _menus = menus.stream().filter(p -> p.getParentId() == parentId).collect(Collectors.toList());
+        _menus.forEach(_menu -> {
             MenuElement menuElement = new MenuElement();
-            menuElement.setMenu(_menuModel);
-            elementModels.stream().filter(elementModel -> elementModel.getMenuId() == _menuModel.getId()).forEach(menuElement::setElement);
-            findNext(_menuModel.getId(), menuModels, menuElement.getChildren(), elementModels);
+            menuElement.setMenu(_menu);
+            elements.stream().filter(element -> element.getMenuId() == _menu.getId()).forEach(menuElement::setElement);
+            findNext(_menu.getId(), menus, menuElement.getChildren(), elements);
             menuElements.add(menuElement);
         });
     }
 
-    private List<RoleAuthorityModel> getRoleAuthorization(int userId) {
+    private List<RoleAuthority> getRoleAuthorization(int userId) {
         return db.select()
                 .columns("DISTINCT C.resource_id, C.resource_type")
-                .from(RoleUserModel.class, "A")
-                .leftOuterJoin(RoleAuthorityModel.class, "B", "B.role_id = A.role_id")
+                .from(RoleUser.class, "A")
+                .leftOuterJoin(RoleAuthority.class, "B", "B.role_id = A.role_id")
                 .where("A.user_id = ?", userId)
-                .queryForList(RoleAuthorityModel.class);
+                .queryForList(RoleAuthority.class);
     }
 
-    private List<MenuModel> getAllMenus() {
+    private List<Menu> getAllMenus() {
         return db.select()
                 .columns("id, code, title, parent_id, href, icon, type, order_num, description, path, enabled")
-                .from(MenuModel.class)
-                .queryForList(MenuModel.class);
+                .from(Menu.class)
+                .queryForList(Menu.class);
     }
 
-    private List<ElementModel> getAllElements() {
+    private List<Element> getAllElements() {
         return db.select()
                 .columns("id, code, type, element_name, uri, menu_id, parent_id, path, method, description")
-                .from(ElementModel.class)
-                .queryForList(ElementModel.class);
+                .from(Element.class)
+                .queryForList(Element.class);
     }
 }

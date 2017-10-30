@@ -4,16 +4,19 @@ import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
-@Entity(tableName = "base_group_user")
-public class GroupUserModel {
+@Entity(tableName = "base_role_authority")
+public class RoleAuthority {
     @Column(primaryKey = true)
     private int id = -1;
 
-    @Column(columnName = "user_id")
-    private Integer userId;
+    @Column(columnName = "role_id")
+    private Integer roleId;
 
-    @Column(columnName = "group_id")
-    private Integer groupId;
+    @Column(columnName = "resource_id")
+    private Integer resourceId;
+
+    @Column(columnName = "resource_type")
+    private String resourceType;
 
     private String description;
 
@@ -46,9 +49,6 @@ public class GroupUserModel {
     private String attr3;
     private String attr4;
     private String attr5;
-    private String attr6;
-    private String attr7;
-    private String attr8;
 
     public int getId() {
         return id;
@@ -58,20 +58,28 @@ public class GroupUserModel {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
-    public int getGroupId() {
-        return groupId;
+    public int getResourceId() {
+        return resourceId;
     }
 
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
     }
 
     public String getDescription() {
@@ -184,29 +192,5 @@ public class GroupUserModel {
 
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
-    }
-
-    public String getAttr6() {
-        return attr6;
-    }
-
-    public void setAttr6(String attr6) {
-        this.attr6 = attr6;
-    }
-
-    public String getAttr7() {
-        return attr7;
-    }
-
-    public void setAttr7(String attr7) {
-        this.attr7 = attr7;
-    }
-
-    public String getAttr8() {
-        return attr8;
-    }
-
-    public void setAttr8(String attr8) {
-        this.attr8 = attr8;
     }
 }

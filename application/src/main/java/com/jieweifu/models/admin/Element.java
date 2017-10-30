@@ -3,28 +3,25 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
+import java.io.Serializable;
+
 @SuppressWarnings("unused")
-@Entity(tableName = "base_menu")
-public class MenuModel {
+@Entity(tableName = "base_element")
+public class Element implements Serializable {
     @Column(primaryKey = true)
     private int id = -1;
 
     private String code;
-    private String title;
-
-    @Column(columnName = "parent_id")
-    private Integer parentId;
-
-    private String href;
-    private String icon;
     private String type;
+    @Column(columnName = "element_name")
+    private String elementName;
 
-    @Column(columnName = "order_num")
-    private Integer orderNum;
+    @Column(columnName = "menu_id")
+    private Integer menuId;
 
-    private String description;
     private String path;
-    private Integer enabled;
+    private String method;
+    private String description;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -58,6 +55,8 @@ public class MenuModel {
     private String attr6;
     private String attr7;
     private String attr8;
+    private String attr9;
+    private String attr10;
 
     public int getId() {
         return id;
@@ -75,38 +74,6 @@ public class MenuModel {
         this.code = code;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
     public String getType() {
         return type;
     }
@@ -115,20 +82,20 @@ public class MenuModel {
         this.type = type;
     }
 
-    public int getOrderNum() {
-        return orderNum;
+    public String getElementName() {
+        return elementName;
     }
 
-    public void setOrderNum(int orderNum) {
-        this.orderNum = orderNum;
+    public void setElementName(String elementName) {
+        this.elementName = elementName;
     }
 
-    public String getDescription() {
-        return description;
+    public int getMenuId() {
+        return menuId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMenuId(int menuId) {
+        this.menuId = menuId;
     }
 
     public String getPath() {
@@ -139,12 +106,20 @@ public class MenuModel {
         this.path = path;
     }
 
-    public int getEnabled() {
-        return enabled;
+    public String getMethod() {
+        return method;
     }
 
-    public void setEnabled(int enabled) {
-        this.enabled = enabled;
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCreateTime() {
@@ -273,5 +248,21 @@ public class MenuModel {
 
     public void setAttr8(String attr8) {
         this.attr8 = attr8;
+    }
+
+    public String getAttr9() {
+        return attr9;
+    }
+
+    public void setAttr9(String attr9) {
+        this.attr9 = attr9;
+    }
+
+    public String getAttr10() {
+        return attr10;
+    }
+
+    public void setAttr10(String attr10) {
+        this.attr10 = attr10;
     }
 }

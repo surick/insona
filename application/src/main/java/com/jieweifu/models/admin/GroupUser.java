@@ -4,25 +4,18 @@ import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
-@Entity(tableName = "base_role")
-public class RoleModel {
+@Entity(tableName = "base_group_user")
+public class GroupUser {
     @Column(primaryKey = true)
     private int id = -1;
 
-    @Column(columnName = "role_name")
-    private String roleName;
+    @Column(columnName = "user_id")
+    private Integer userId;
 
-    @Column(columnName = "role_code")
-    private String roleCode;
-
-    @Column(columnName = "parent_id")
-    private Integer parentId;
-
-    @Column(columnName = "order_num")
-    private String orderNum;
+    @Column(columnName = "group_id")
+    private Integer groupId;
 
     private String description;
-    private Integer enabled;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -53,6 +46,9 @@ public class RoleModel {
     private String attr3;
     private String attr4;
     private String attr5;
+    private String attr6;
+    private String attr7;
+    private String attr8;
 
     public int getId() {
         return id;
@@ -62,36 +58,20 @@ public class RoleModel {
         this.id = id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public String getRoleCode() {
-        return roleCode;
+    public int getGroupId() {
+        return groupId;
     }
 
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getOrderNum() {
-        return orderNum;
-    }
-
-    public void setOrderNum(String orderNum) {
-        this.orderNum = orderNum;
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     public String getDescription() {
@@ -100,14 +80,6 @@ public class RoleModel {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(int enabled) {
-        this.enabled = enabled;
     }
 
     public String getCreateTime() {
@@ -212,5 +184,29 @@ public class RoleModel {
 
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
+    }
+
+    public String getAttr6() {
+        return attr6;
+    }
+
+    public void setAttr6(String attr6) {
+        this.attr6 = attr6;
+    }
+
+    public String getAttr7() {
+        return attr7;
+    }
+
+    public void setAttr7(String attr7) {
+        this.attr7 = attr7;
+    }
+
+    public String getAttr8() {
+        return attr8;
+    }
+
+    public void setAttr8(String attr8) {
+        this.attr8 = attr8;
     }
 }

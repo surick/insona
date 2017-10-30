@@ -3,8 +3,8 @@ package com.jieweifu.common.utils;
 import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.constants.CommonConstant;
 import com.jieweifu.constants.UserConstant;
-import com.jieweifu.models.admin.ElementModel;
-import com.jieweifu.models.admin.UserModel;
+import com.jieweifu.models.admin.Element;
+import com.jieweifu.models.admin.User;
 import com.jieweifu.services.admin.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -120,8 +120,8 @@ public class TokenUtil {
     }
 
     public void cacheUserInThreadLocal(int userId) {
-        UserModel userModel = userService.getUserById(userId);
-        BaseContextHandler.setUser(userModel);
+        User user = userService.getUserById(userId);
+        BaseContextHandler.setUser(user);
         BaseContextHandler.setUserIsAdmin(userService.getIsAdmin(userId));
     }
 
@@ -129,15 +129,15 @@ public class TokenUtil {
     public boolean checkAuthorization(String path, String method) {
         int userId = BaseContextHandler.getUserId();
         boolean isAdmin = BaseContextHandler.getUserIsAdmin();
-        List<ElementModel> elementModels;
+        List<Element> elements;
         String elementUserKey = String.format("_%s_%s", UserConstant.USER_ELEMENTS, userId);
         if (redisUtil.hasKey(elementUserKey)) {
-            elementModels = (List<ElementModel>) redisUtil.get(elementUserKey);
+            elements = (List<Element>) redisUtil.get(elementUserKey);
         } else {
-            elementModels = userService.getAllAuthElements(userId, isAdmin);
-            redisUtil.setEX(elementUserKey, elementModels, timeout, TimeUnit.MINUTES);
+            elements = userService.getAllAuthElements(userId, isAdmin);
+            redisUtil.setEX(elementUserKey, elements, timeout, TimeUnit.MINUTES);
         }
-        return elementModels
+        return elements
                 .stream()
                 .filter(p -> new AntPathMatcher().match(p.getPath(), path) &&
                         p.getMethod().equalsIgnoreCase(method))
@@ -146,9 +146,9 @@ public class TokenUtil {
 
     public void refreshAuthorization(int userId, boolean isAdmin) {
         new Thread(() -> {
-            List<ElementModel> elementModels = userService.getAllAuthElements(userId, isAdmin);
+            List<Element> elements = userService.getAllAuthElements(userId, isAdmin);
             String elementUserKey = String.format("_%s_%s", UserConstant.USER_ELEMENTS, userId);
-            redisUtil.setEX(elementUserKey, elementModels, timeout, TimeUnit.MINUTES);
+            redisUtil.setEX(elementUserKey, elements, timeout, TimeUnit.MINUTES);
         }).start();
     }
 }

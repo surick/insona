@@ -1,7 +1,7 @@
 package com.jieweifu.controllers.admin;
 
 import com.jieweifu.interceptors.AdminAuthAnnotation;
-import com.jieweifu.models.ResultModel;
+import com.jieweifu.models.Result;
 import com.jieweifu.services.admin.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +22,7 @@ public class UserController {
     }
 
     @GetMapping("user")
-    public ResultModel getAllUsers(){
-        return new ResultModel().setData(userService.getAllUsers());
+    public Result getAllUsers(){
+        return new Result().setData(userService.getAllUsers());
     }
-
-
 }

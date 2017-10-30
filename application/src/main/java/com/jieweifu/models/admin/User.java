@@ -4,19 +4,35 @@ import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
 @SuppressWarnings("unused")
-@Entity(tableName = "base_group")
-public class GroupModel {
+@Entity(tableName = "base_user")
+public class User {
     @Column(primaryKey = true)
     private int id = -1;
 
-    @Column(columnName = "group_name")
-    private String groupName;
+    @Column(columnName = "user_name")
+    private String userName;
 
-    @Column(columnName = "order_num")
-    private Integer orderNum;
+    @Column(select = false)
+    private String password;
+
+    @Column(select = false)
+    private String salt;
+
+    private String name;
+    private String birthday;
+    private String address;
+
+    @Column(columnName = "mobile_phone")
+    private String mobilePhone;
+
+    private String email;
+    private Integer sex;
+    private Integer status;
+
+    @Column(columnName = "head_img_url")
+    private String headImgUrl;
 
     private String description;
-    private Integer enabled;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -47,6 +63,11 @@ public class GroupModel {
     private String attr3;
     private String attr4;
     private String attr5;
+    private String attr6;
+    private String attr7;
+    private String attr8;
+    private String attr9;
+    private String attr10;
 
     public int getId() {
         return id;
@@ -56,20 +77,92 @@ public class GroupModel {
         this.id = id;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public int getOrderNum() {
-        return orderNum;
+    public String getPassword() {
+        return password;
     }
 
-    public void setOrderNum(int orderNum) {
-        this.orderNum = orderNum;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
     }
 
     public String getDescription() {
@@ -78,14 +171,6 @@ public class GroupModel {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(int enabled) {
-        this.enabled = enabled;
     }
 
     public String getCreateTime() {
@@ -190,5 +275,45 @@ public class GroupModel {
 
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
+    }
+
+    public String getAttr6() {
+        return attr6;
+    }
+
+    public void setAttr6(String attr6) {
+        this.attr6 = attr6;
+    }
+
+    public String getAttr7() {
+        return attr7;
+    }
+
+    public void setAttr7(String attr7) {
+        this.attr7 = attr7;
+    }
+
+    public String getAttr8() {
+        return attr8;
+    }
+
+    public void setAttr8(String attr8) {
+        this.attr8 = attr8;
+    }
+
+    public String getAttr9() {
+        return attr9;
+    }
+
+    public void setAttr9(String attr9) {
+        this.attr9 = attr9;
+    }
+
+    public String getAttr10() {
+        return attr10;
+    }
+
+    public void setAttr10(String attr10) {
+        this.attr10 = attr10;
     }
 }

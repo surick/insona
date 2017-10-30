@@ -3,22 +3,31 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
-@Entity(tableName = "base_role_authority")
-public class RoleAuthorityModel {
+@Entity(tableName = "base_menu")
+public class Menu {
     @Column(primaryKey = true)
     private int id = -1;
 
-    @Column(columnName = "role_id")
-    private Integer roleId;
+    private String code;
+    private String title;
 
-    @Column(columnName = "resource_id")
-    private Integer resourceId;
+    @Column(columnName = "parent_id")
+    private int parentId;
 
-    @Column(columnName = "resource_type")
-    private String resourceType;
+    private String href;
+    private String icon;
+    private String type;
+
+    @Column(columnName = "order_num")
+    private int orderNum;
 
     private String description;
+    private String path;
+    private int enabled;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -49,6 +58,9 @@ public class RoleAuthorityModel {
     private String attr3;
     private String attr4;
     private String attr5;
+    private String attr6;
+    private String attr7;
+    private String attr8;
 
     public int getId() {
         return id;
@@ -58,28 +70,60 @@ public class RoleAuthorityModel {
         this.id = id;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public String getCode() {
+        return code;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public int getResourceId() {
-        return resourceId;
+    public String getTitle() {
+        return title;
     }
 
-    public void setResourceId(int resourceId) {
-        this.resourceId = resourceId;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getResourceType() {
-        return resourceType;
+    public int getParentId() {
+        return parentId;
     }
 
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(int orderNum) {
+        this.orderNum = orderNum;
     }
 
     public String getDescription() {
@@ -88,6 +132,22 @@ public class RoleAuthorityModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public int getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(int enabled) {
+        this.enabled = enabled;
     }
 
     public String getCreateTime() {
@@ -192,5 +252,36 @@ public class RoleAuthorityModel {
 
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
+    }
+
+    public String getAttr6() {
+        return attr6;
+    }
+
+    public void setAttr6(String attr6) {
+        this.attr6 = attr6;
+    }
+
+    public String getAttr7() {
+        return attr7;
+    }
+
+    public void setAttr7(String attr7) {
+        this.attr7 = attr7;
+    }
+
+    public String getAttr8() {
+        return attr8;
+    }
+
+    public void setAttr8(String attr8) {
+        this.attr8 = attr8;
+    }
+
+    @Column(insert = false, update = false)
+    private List<Menu> children = new ArrayList<>();
+
+    public List<Menu> getChildren() {
+        return children;
     }
 }

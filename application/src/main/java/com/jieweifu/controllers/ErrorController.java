@@ -1,7 +1,7 @@
 package com.jieweifu.controllers;
 
 import com.jieweifu.common.utils.ClientUtil;
-import com.jieweifu.models.ResultModel;
+import com.jieweifu.models.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
 
     @RequestMapping(ERROR_PATH)
     @ResponseBody
-    public ResultModel error(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public Result error(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> map = errorAttributes.getErrorAttributes(new ServletRequestAttributes(request), false);
         Integer status = (Integer) map.get("status");
         response.setStatus(HttpStatus.OK.value());
@@ -51,7 +51,7 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
             message = error != null ? error.getLocalizedMessage() : String.valueOf(map.get("message"));
         }
 
-        return new ResultModel().setError(status, message);
+        return new Result().setError(status, message);
     }
 
     @Override

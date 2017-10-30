@@ -3,9 +3,9 @@ package com.jieweifu.services.admin.impl;
 import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
-import com.jieweifu.models.admin.ElementModel;
-import com.jieweifu.models.admin.LogModel;
-import com.jieweifu.models.admin.MenuModel;
+import com.jieweifu.models.admin.Element;
+import com.jieweifu.models.admin.Log;
+import com.jieweifu.models.admin.Menu;
 import com.jieweifu.services.admin.LogService;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +19,16 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public void log(String path, String method, boolean hasAuthorization) {
-        LogModel logModel = new LogModel();
-        logModel.setActionTime(BaseContextHandler.getActionEndTime().toEpochMilli() - BaseContextHandler.getActionStartTime().toEpochMilli() + "ms");
-        logModel.setUri(path);
-        OperateHandler.assignCreateUser(logModel);
+        Log log = new Log();
+        log.setActionTime(BaseContextHandler.getActionEndTime().toEpochMilli() - BaseContextHandler.getActionStartTime().toEpochMilli() + "ms");
+        log.setUri(path);
+        OperateHandler.assignCreateUser(log);
         new Thread(() -> {
             TitleName titleName = new TitleName();
             db.select()
                     .columns("menu.title, element.element_name as elementName, element.type")
-                    .from(ElementModel.class, "element")
-                    .leftOuterJoin(MenuModel.class, "menu", "element.menu_id = menu.id")
+                    .from(Element.class, "element")
+                    .leftOuterJoin(Menu.class, "menu", "element.menu_id = menu.id")
                     .where("element.path = ? AND element.method = ?", path, method)
                     .queryForList(p -> {
                         titleName.title = p.getString(p.findColumn("title"));
@@ -38,8 +38,8 @@ public class LogServiceImpl implements LogService {
             if (titleName.title == null) {
                 return;
             }
-            logModel.setMenu(titleName.title);
-            logModel.setOpt(logModel.getCreateUserName()
+            log.setMenu(titleName.title);
+            log.setOpt(log.getCreateUserName()
                     .concat("用户")
                     .concat(method)
                     .concat(titleName.title)
@@ -48,9 +48,9 @@ public class LogServiceImpl implements LogService {
                     .concat(", ")
                     .concat(hasAuthorization ? "正常" : "无权限")
                     .concat(", 响应时间")
-                    .concat(logModel.getActionTime()));
+                    .concat(log.getActionTime()));
             db.insert()
-                    .save(logModel)
+                    .save(log)
                     .execute();
         }).start();
     }

@@ -3,24 +3,18 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
-import java.io.Serializable;
-
 @SuppressWarnings("unused")
-@Entity(tableName = "base_element")
-public class ElementModel implements Serializable {
+@Entity(tableName = "base_role_user")
+public class RoleUser {
     @Column(primaryKey = true)
     private int id = -1;
 
-    private String code;
-    private String type;
-    @Column(columnName = "element_name")
-    private String elementName;
+    @Column(columnName = "user_id")
+    private Integer userId;
 
-    @Column(columnName = "menu_id")
-    private Integer menuId;
+    @Column(columnName = "role_id")
+    private Integer roleId;
 
-    private String path;
-    private String method;
     private String description;
 
     @Column(columnName = "crt_time")
@@ -52,11 +46,6 @@ public class ElementModel implements Serializable {
     private String attr3;
     private String attr4;
     private String attr5;
-    private String attr6;
-    private String attr7;
-    private String attr8;
-    private String attr9;
-    private String attr10;
 
     public int getId() {
         return id;
@@ -66,52 +55,20 @@ public class ElementModel implements Serializable {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public String getType() {
-        return type;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getElementName() {
-        return elementName;
-    }
-
-    public void setElementName(String elementName) {
-        this.elementName = elementName;
-    }
-
-    public int getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(int menuId) {
-        this.menuId = menuId;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public String getDescription() {
@@ -224,45 +181,5 @@ public class ElementModel implements Serializable {
 
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
-    }
-
-    public String getAttr6() {
-        return attr6;
-    }
-
-    public void setAttr6(String attr6) {
-        this.attr6 = attr6;
-    }
-
-    public String getAttr7() {
-        return attr7;
-    }
-
-    public void setAttr7(String attr7) {
-        this.attr7 = attr7;
-    }
-
-    public String getAttr8() {
-        return attr8;
-    }
-
-    public void setAttr8(String attr8) {
-        this.attr8 = attr8;
-    }
-
-    public String getAttr9() {
-        return attr9;
-    }
-
-    public void setAttr9(String attr9) {
-        this.attr9 = attr9;
-    }
-
-    public String getAttr10() {
-        return attr10;
-    }
-
-    public void setAttr10(String attr10) {
-        this.attr10 = attr10;
     }
 }
