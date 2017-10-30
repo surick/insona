@@ -9,9 +9,7 @@ import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class RoleController {
      * 查找全部角色
      * @return
      */
-    @PostMapping("getAllRoles")
+    @GetMapping("getAllRoles")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
     public ResultModel getAllRoles(){
@@ -66,7 +64,7 @@ public class RoleController {
      * @param id
      * @return
      */
-    @PostMapping("getRoleById")
+    @GetMapping("getRoleById")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
     public ResultModel getRoleById(int id){
@@ -83,10 +81,10 @@ public class RoleController {
      * @param roleModel
      * @return
      */
-    @PostMapping("putRole")
+    @PutMapping("updateRole")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
-    public ResultModel putRole(RoleModel roleModel){
+    public ResultModel updateRole(RoleModel roleModel){
         int row = 0;
        if(roleService.getRoleById(roleModel.getId())!=null
                 &&roleModel.getRoleName()!=null
@@ -104,7 +102,7 @@ public class RoleController {
      * @param id
      * @return
      */
-    @PostMapping("deleteRole")
+    @DeleteMapping("deleteRole")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
     public ResultModel deleteRole(int id){
@@ -131,10 +129,10 @@ public class RoleController {
      * @param
      * @return
      */
-    @PostMapping("postRole")
+    @PostMapping("addRole")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
-    public ResultModel postRole(RoleModel roleModel){
+    public ResultModel addRole(RoleModel roleModel){
         boolean flag = true;
         if(roleService.getRoleById(roleModel.getId())==null
                 &&roleModel.getRoleName()!=null
@@ -152,10 +150,10 @@ public class RoleController {
      * @param roleAuthorityModel
      * @return
      */
-    @PostMapping("postAuthority")
+    @PostMapping("addAuthority")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
-    public ResultModel postAuthority(RoleAuthorityModel roleAuthorityModel){
+    public ResultModel addAuthority(RoleAuthorityModel roleAuthorityModel){
         int count = 0;
         if(roleAuthorityModel.getRoleId()!=0
                 &&roleAuthorityModel.getResourceId()!=0

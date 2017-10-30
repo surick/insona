@@ -6,9 +6,7 @@ import com.jieweifu.models.admin.MenuModel;
 import com.jieweifu.services.admin.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class MenuController {
      * 查询全部menu生成tree
      * @return
      */
-    @PostMapping("getAllMenus")
+    @GetMapping("getAllMenus")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
     public ResultModel getAllMenus(){
@@ -60,7 +58,7 @@ public class MenuController {
      * @param id
      * @return
      */
-    @PostMapping("getMenuById")
+    @GetMapping("getMenuById")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
     public ResultModel getMenuById(int id){
@@ -76,7 +74,7 @@ public class MenuController {
      * 更新menu信息,
      * @param menuModel
      */
-    @PostMapping("updateMenu")
+    @PutMapping("updateMenu")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
     public ResultModel updateMenu(MenuModel menuModel){
@@ -96,7 +94,7 @@ public class MenuController {
      * 删除菜单
      * @param id
      */
-    @PostMapping("deleteMenu")
+    @DeleteMapping("deleteMenu")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
     public ResultModel deleteMenu(int id){
@@ -118,7 +116,7 @@ public class MenuController {
      * @param
      * @return
      */
-    @PostMapping("addMenu")
+    @GetMapping("addMenu")
     @AdminAuthAnnotation(check = false)
     @ResponseBody
     public ResultModel addMenu(MenuModel menuModel){
