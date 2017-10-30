@@ -46,12 +46,10 @@ export default {
     },
     methods: {
         changeMenu (active) {
-            if (active !== 'accesstest_index') {
-                util.openNewPage(this, active);
-                this.$router.push({
-                    name: active
-                });
-            }
+            util.openNewPage(this, active);
+            this.$router.push({
+                name: active
+            });
         },
         itemTitle (item) {
             if (typeof item.title === 'object') {

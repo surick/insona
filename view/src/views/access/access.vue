@@ -46,7 +46,7 @@ export default {
     name: 'access_index',
     data () {
         return {
-            access: JSON.parse(localStorage.access || '{}')
+            access: this.$store.state.access
         };
     },
     computed: {
@@ -57,13 +57,13 @@ export default {
     methods: {
         changeAccess (res) {
             this.access.test = res;
-            localStorage.access = JSON.stringify(this.access);
+            this.$store.state.access = this.access;
             this.$store.commit('updateMenulist');
         },
 
         changeAccess2 (res) {
             this.access.test2 = res;
-            localStorage.access = JSON.stringify(this.access);
+            this.$store.state.access = this.access;
             this.$store.commit('updateMenulist');
         }
     }

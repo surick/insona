@@ -71,6 +71,7 @@ util.setCurrentPath = function (vm, name) {
     let title = '';
     let isOtherRouter = false;
     vm.$store.state.routers.forEach(item => {
+        if (!item.children) return;
         if (item.children.length === 1) {
             if (item.children[0].name === name) {
                 title = util.handleTitle(vm, item);
@@ -231,6 +232,17 @@ util.toDefaultPage = function (routers, name, route, next) {
         i++;
     }
     if (notHandle) {
+        next();
+    }
+};
+
+util.verifyAccess = function(access, routers, name, router, next) {
+    if (access) {
+        this.toDefaultPage(routers, name, router, next);  // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
+    } else {
+        router.replace({
+            name: 'error_401'
+        });
         next();
     }
 };

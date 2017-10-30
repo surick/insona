@@ -12,7 +12,7 @@
 
         data () {
             return {
-                access: JSON.parse(localStorage.access || '{}')
+                access: this.$store.state.access
             };
         },
 
@@ -23,11 +23,6 @@
         methods: {
             getAccess() {
                 return this.access[this.name];
-            },
-
-            updateAccess() {
-                this.access[this.name] = !this.access[this.name];
-                localStorage.access = JSON.stringify(this.access);
             }
         }
     };

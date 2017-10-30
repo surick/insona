@@ -69,7 +69,7 @@
 
 <script>
 export default {
-    name: 'international_index',
+    name: 'international',
     data () {
         return {
             lang: 'zh-CN',
