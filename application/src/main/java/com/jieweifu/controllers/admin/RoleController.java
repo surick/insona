@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+
 @SuppressWarnings("unused")
 @Controller("SystemRole")
 @RequestMapping("sys/role")
@@ -117,10 +118,10 @@ public class RoleController {
         if(roleUserService.getRoleUserByRoleId(id)!=null)
             return new ResultModel().setMessage("角色下用户不为空,不允许删除");
         //删除菜单
-            roleService.deleteRole(id);
-            //删除权限
-            roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
-            return new ResultModel().setMessage("删除角色成功");
+        roleService.deleteRole(id);
+        //删除权限
+        roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
+        return new ResultModel().setMessage("删除角色成功");
 
     }
 
@@ -146,21 +147,52 @@ public class RoleController {
     }
 
     /**
+     * 显示该角色所有权限
+     * @param roleId
+     * @return
+     */
+    @GetMapping("getAuthority")
+    @ResponseBody
+    @AdminAuthAnnotation(check = false)
+    public ResultModel getAuthority(int roleId){
+        if(roleId==0)
+            throw new RuntimeException("该角色不存在");
+        List<RoleAuthorityModel> roleAuthorityModelList
+                = roleAuthorityService.getRoleAuthority(roleId);
+        return new ResultModel().setData(roleAuthorityModelList);
+    }
+
+    /**
      * 添加权限
-     * @param roleAuthorityModel
+     * @param id,resourceIds
      * @return
      */
     @PostMapping("addAuthority")
     @ResponseBody
     @AdminAuthAnnotation(check = false)
-    public ResultModel addAuthority(RoleAuthorityModel roleAuthorityModel){
-        int count = 0;
-        if(roleAuthorityModel.getRoleId()!=0
-                &&roleAuthorityModel.getResourceId()!=0
-                &&roleAuthorityModel.getResourceType()!=null){
+    public ResultModel addAuthority(int id,String resourceIds){
+        boolean count = false;
+        if(resourceIds==null)
+            throw new RuntimeException("权限不能为空");
+        String[] resourceId = resourceIds.split(",");
+        for(String rId:resourceId){
+            roleAuthorityService.addRoleAuthority(id,Integer.parseInt(rId));
+            count = true;
         }
-        count = roleAuthorityService.addRoleAuthority(roleAuthorityModel);
-        return new ResultModel().setMessage(count!=0?"添加权限成功":"添加权限失败");
+        return new ResultModel().setMessage(count?"修改权限成功":"修改权限失败");
     }
 
+    /**
+     * 修改权限
+     * @param id
+     * @param resourceIds
+     * @return
+     */
+    @PutMapping("updateAuthority")
+    @ResponseBody
+    @AdminAuthAnnotation(check = false)
+    public ResultModel updateAuthority(int id,String resourceIds){
+        roleAuthorityService.deleteRoleAuthority(id);
+        return addAuthority(id,resourceIds);
+    }
 }

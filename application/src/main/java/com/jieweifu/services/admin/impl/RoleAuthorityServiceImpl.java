@@ -3,6 +3,7 @@ package com.jieweifu.services.admin.impl;
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.admin.RoleAuthorityModel;
+import com.jieweifu.services.admin.MenuService;
 import com.jieweifu.services.admin.RoleAuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,25 +14,32 @@ import java.util.List;
 public class RoleAuthorityServiceImpl implements RoleAuthorityService {
 
     private DB db;
+    private MenuService menuService;
 
     @Autowired
-    public RoleAuthorityServiceImpl(DB db){
-        this.db = db;
+    public RoleAuthorityServiceImpl(DB db,MenuService menuService){
+        this.db = db;this.menuService = menuService;
     }
 
 
     @Override
-    public List<RoleAuthorityModel> getRoleAuthority(int pageIndex, int pageSize) {
+    public List<RoleAuthorityModel> getRoleAuthority(int roleId) {
         return db.select()
                 .from(RoleAuthorityModel.class)
-                .limit(pageIndex,pageSize)
+                .where("role_id = ?",roleId)
                 .queryForList(RoleAuthorityModel.class);
     }
 
     @Override
-    public int addRoleAuthority(RoleAuthorityModel roleAuthorityModel) {
-        OperateHandler.assignCreateUser(roleAuthorityModel);
-        return db.insert().save(roleAuthorityModel).execute();
+    public int addRoleAuthority(int roleId,int rId) {
+        int rows =0;
+           String resourceType = menuService.getMenuById(rId).getTitle();
+           RoleAuthorityModel roleAuthorityModel = new RoleAuthorityModel();
+           roleAuthorityModel.setRoleId(roleId);
+           roleAuthorityModel.setResourceId(rId);
+           roleAuthorityModel.setResourceType(resourceType);
+          rows = db.insert().save(roleAuthorityModel).execute();
+        return rows;
     }
 
     @Override
