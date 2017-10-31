@@ -78,8 +78,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserPassword(int userId, String password) {
-        db.update()
-                .set("password = MD5(CONCAT(salt, ?))", password)
+        db.update().table(User.class)
+                .set("password = MD5(CONCAT(salt,?))",password)
                 .where("id = ?", userId)
                 .execute();
     }
@@ -161,6 +161,14 @@ public class UserServiceImpl implements UserService {
                 .from(User.class)
                 .where("user_name = ?",userName)
                 .queryForEntity(User.class);
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        db.delete()
+                .from(User.class)
+                .where("id = ?",id)
+                .execute();
     }
 
     private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {

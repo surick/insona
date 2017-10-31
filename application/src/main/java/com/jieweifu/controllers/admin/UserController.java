@@ -64,6 +64,8 @@ public class UserController {
         if(user.getName()==null||user.getUserName()==null||
                 user.getEmail()==null||user.getPassword()==null)
             throw new RuntimeException("缺省信息不可为空");
+        if(userService.getUserByUserName(user.getUserName())!=null)
+            throw new RuntimeException("用户名已存在");
         userService.addUser(user);
         return new Result().setMessage("新增成功");
     }
@@ -80,6 +82,21 @@ public class UserController {
             throw new RuntimeException("用户名不能为空");
         userService.updateUser(user);
         return new Result().setMessage("修改成功");
+    }
+
+    /**
+     * 删除用户
+     * @param id
+     * @return
+     */
+    @DeleteMapping("deleteUser/{id}")
+    @AdminAuthAnnotation(check = false)
+    public Result deleteUser(@PathVariable("id") int id){
+        if(id==0||userService.getUserById(id)==null)
+            throw new RuntimeException("用户不存在");
+        userService.deleteUser(id);
+        return new Result().setMessage("删除成功");
+
     }
 
     /**
@@ -106,18 +123,17 @@ public class UserController {
     @AdminAuthAnnotation(check = false)
     public Result updateRoleUser(@RequestBody RoleInfo roleInfo){
         boolean flag = false;
-        if(roleInfo.getUserId()!=0 && roleInfo.getRoleIds()!=null){
+        if(roleInfo.getUserId()!=0 && roleInfo.getRoleId()!=0){
             roleUserService.deleteRoleUser(roleInfo.getUserId());
-            String[] roleId = roleInfo.getRoleIds().split(",");
-            for(String role:roleId){
                 RoleUser roleUser = new RoleUser();
                 roleUser.setUserId(roleInfo.getUserId());
-                roleUser.setRoleId(Integer.parseInt(role));
-                roleUser.setDescription(roleService.getRoleById(Integer.parseInt(role)).getDescription());
+                roleUser.setRoleId(roleInfo.getRoleId());
+                roleUser.setDescription(roleService.getRoleById(roleInfo.getRoleId()).getDescription());
                 roleUserService.addRoleUser(roleUser);
+                flag = true;
             }
-            flag = true;
-        }
+
+
         return new Result().setMessage(flag?"配置角色成功":"配置角色失败");
     }
 
@@ -125,7 +141,7 @@ public class UserController {
         @NotEmpty(message = "userId不合法")
         private int userId;
         @NotEmpty(message = "角色不能为空")
-        private String roleIds;
+        private int roleId;
 
         public int getUserId() {
             return userId;
@@ -135,12 +151,14 @@ public class UserController {
             this.userId = userId;
         }
 
-        public String getRoleIds() {
-            return roleIds;
+        public int getRoleId() {
+            return roleId;
         }
 
-        public void setRoleIds(String roleIds) {
-            this.roleIds = roleIds;
+        public void setRoleId(int roleId) {
+            this.roleId = roleId;
         }
     }
+
+
 }

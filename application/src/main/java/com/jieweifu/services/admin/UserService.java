@@ -22,4 +22,5 @@ public interface UserService {
     List<Element> getAllAuthElements(int userId, boolean isAdmin);
     List<User> getUsersByPage(int pageIndex,int pageSize);
     User getUserByUserName(String userName);
+    void deleteUser(int id);
 }

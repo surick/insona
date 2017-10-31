@@ -7,10 +7,11 @@ import com.jieweifu.models.admin.Role;
 import com.jieweifu.services.admin.RoleAuthorityService;
 import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
+import com.jieweifu.services.admin.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @RestController("SystemRole")
@@ -21,14 +22,17 @@ public class RoleController {
     private RoleService roleService;
     private RoleUserService roleUserService;
     private RoleAuthorityService roleAuthorityService;
+    private UserService userService;
 
     @Autowired
     public RoleController(RoleService roleService,
                           RoleUserService roleUserService,
-                          RoleAuthorityService roleAuthorityService) {
+                          RoleAuthorityService roleAuthorityService,
+                          UserService userService) {
         this.roleService = roleService;
         this.roleUserService = roleUserService;
         this.roleAuthorityService = roleAuthorityService;
+        this.userService = userService;
     }
 
     /**
@@ -42,7 +46,7 @@ public class RoleController {
     /**
      * 角色信息Tree生成方法
      */
-    private Role getRoleTree(@RequestBody int cid) {
+    private Role getRoleTree(int cid) {
         Role pRole = roleService.getRoleById(cid);
         List<Role> cRoleList = roleService.getRoleByParentId(pRole.getId());
         for (Role Role : cRoleList) {
@@ -56,7 +60,7 @@ public class RoleController {
      * 根据id查找角色
      */
     @GetMapping("getRoleById/{id}")
-    public Result getRoleById(@PathVariable("id")  int id) {
+    public Result getRoleById(@PathVariable("id") int id) {
         if (id < 1)
             throw new RuntimeException("id不合法");
         Role Role = roleService.getRoleById(id);
@@ -121,40 +125,48 @@ public class RoleController {
         return new Result().setMessage(flag ? "新增成功" : "新增失败");
     }
 
-    /**
-     * @return 显示该角色所有权限
-     */
-    @GetMapping("getAuthority/{roleId}")
-    public Result getAuthority(@PathVariable("roleId") int roleId) {
-        if (roleId == 0)
-            throw new RuntimeException("该角色不存在");
-        List<RoleAuthority> RoleAuthorityList
-                = roleAuthorityService.getRoleAuthority(roleId);
-        return new Result().setData(RoleAuthorityList);
-    }
 
     /**
      * @return 添加权限
      */
     @PostMapping("addAuthority/{id}")
-    public Result addAuthority(@PathVariable("id") int id, @RequestBody String resourceIds) {
-        boolean count = false;
-        if (resourceIds == null)
-            throw new RuntimeException("权限不能为空");
-        String[] resourceId = resourceIds.split(",");
-        for (String rId : resourceId) {
-            roleAuthorityService.addRoleAuthority(id, Integer.parseInt(rId));
-            count = true;
-        }
-        return new Result().setMessage(count ? "修改权限成功" : "修改权限失败");
+    public Result addAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
+        if (mapList.isEmpty())
+            throw new RuntimeException("权限为空");
+        mapList.forEach(
+                (i, strings) ->
+                {
+                    for (String j : strings) {
+                        RoleAuthority roleAuthority = new RoleAuthority();
+                        roleAuthority.setRoleId(id);
+                        roleAuthority.setResourceId(i);
+                        roleAuthority.setResourceType(j);
+                        roleAuthorityService.addRoleAuthority(roleAuthority);
+                    }
+                }
+        );
+
+        return new Result().setMessage("添加权限成功");
     }
 
     /**
-     * @return 修改权限
+     * @return 修改角色权限
      */
     @PutMapping("updateAuthority/{id}")
-    public Result updateAuthority(@PathVariable("id") int id, @RequestBody String resourceIds) {
+    public Result updateAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
         roleAuthorityService.deleteRoleAuthority(id);
-        return addAuthority(id, resourceIds);
+        return addAuthority(id, mapList);
     }
+
+    /**
+     * 显示角色权限
+     * @param roleId
+     * @return
+     */
+    @GetMapping("getUserPower/{id}")
+    @AdminAuthAnnotation(check = false)
+    public Result getUserPower(@PathVariable("id") int roleId) {
+        return new Result().setData(roleAuthorityService.getMenuElements(roleId));
+    }
+
 }
