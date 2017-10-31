@@ -147,6 +147,22 @@ public class UserServiceImpl implements UserService {
         return elements;
     }
 
+    @Override
+    public List<User> getUsersByPage(int pageIndex, int pageSize) {
+        return db.select()
+                .from(User.class)
+                .limit(pageIndex,pageSize)
+                .queryForList(User.class);
+    }
+
+    @Override
+    public User getUserByUserName(String userName) {
+        return db.select()
+                .from(User.class)
+                .where("user_name = ?",userName)
+                .queryForEntity(User.class);
+    }
+
     private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {
         List<MenuElement> menuElements = new ArrayList<>();
         findNext(-1, menus, menuElements, elements);

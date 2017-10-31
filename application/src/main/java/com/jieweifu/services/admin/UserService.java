@@ -20,4 +20,6 @@ public interface UserService {
     MenuElements getMenuElements(int userId, boolean isAdmin);
     MenuElements getAllMenuElements();
     List<Element> getAllAuthElements(int userId, boolean isAdmin);
+    List<User> getUsersByPage(int pageIndex,int pageSize);
+    User getUserByUserName(String userName);
 }

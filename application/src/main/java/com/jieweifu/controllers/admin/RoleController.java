@@ -55,8 +55,8 @@ public class RoleController {
     /**
      * 根据id查找角色
      */
-    @GetMapping("getRoleById")
-    public Result getRoleById(@RequestBody int id) {
+    @GetMapping("getRoleById/{id}")
+    public Result getRoleById(@PathVariable("id")  int id) {
         if (id < 1)
             throw new RuntimeException("id不合法");
         Role Role = roleService.getRoleById(id);
