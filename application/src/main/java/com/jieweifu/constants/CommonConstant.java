@@ -8,6 +8,6 @@ public class CommonConstant {
     public final static String TOKEN_AUTHORIZATION = "tokenAuthorization";
     public final static String REQUEST_LIMIT = "requestLimit";
     public final static String REQUEST_IP = "requestIp";
-    public final static int LIMIT_TIME = 10;
+    public final static int LIMIT_TIME = 5;
     public final static int LIMIT_COUNT = 10;
 }

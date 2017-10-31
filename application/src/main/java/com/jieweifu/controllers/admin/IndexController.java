@@ -1,17 +1,19 @@
 package com.jieweifu.controllers.admin;
 
 import com.jieweifu.common.business.BaseContextHandler;
+import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.common.utils.TokenUtil;
 import com.jieweifu.constants.UserConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
 import com.jieweifu.services.admin.UserService;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -38,7 +40,10 @@ public class IndexController {
      */
     @AdminAuthAnnotation(check = false)
     @PostMapping("login")
-    public Result doLogin(@Valid @RequestBody LoginInfo loginInfo) {
+    public Result doLogin(@Valid @RequestBody LoginInfo loginInfo, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
         String loginName = loginInfo.loginName;
         String password = loginInfo.password;
         User user = userService.doUserLogin(loginName, password);
@@ -64,6 +69,9 @@ public class IndexController {
         return new Result().setData(tokenUtil.generateToken(userId));
     }
 
+    /**
+     * 更新用户头像
+     */
     @PutMapping("headImage/update")
     public Result updateHeadImg(@RequestBody String headImgUrl) {
         int userId = BaseContextHandler.getUserId();
@@ -75,7 +83,10 @@ public class IndexController {
      * @return 更新用户密码
      */
     @PutMapping("password/update")
-    public Result updatePassword(@Valid @RequestBody PasswordInfo passwordInfo) {
+    public Result updatePassword(@Valid @RequestBody PasswordInfo passwordInfo, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
         int userId = BaseContextHandler.getUserId();
         String oldPassword = passwordInfo.oldPassword;
         String newPassword = passwordInfo.newPassword;
@@ -105,10 +116,10 @@ public class IndexController {
      */
     public static class LoginInfo {
 
-        @NotEmpty(message = "用户名不能为空")
+        @NotNull(message = "用户名不能为空")
         private String loginName;
 
-        @NotEmpty(message = "密码不能为空")
+        @NotNull(message = "密码不能为空")
         private String password;
 
         public String getLoginName() {
@@ -133,10 +144,10 @@ public class IndexController {
      */
     public static class PasswordInfo {
 
-        @NotEmpty(message = "旧密码不能为空")
+        @NotNull(message = "旧密码不能为空")
         private String oldPassword;
 
-        @NotEmpty(message = "新密码不能为空")
+        @NotNull(message = "新密码不能为空")
         private String newPassword;
 
         public String getOldPassword() {
