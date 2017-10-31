@@ -10,6 +10,8 @@ import com.jieweifu.services.admin.RoleUserService;
 import com.jieweifu.services.admin.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +41,9 @@ public class RoleController {
      * 查找全部角色
      */
     @GetMapping("getAllRoles")
+    @AdminAuthAnnotation(check = false)
     public Result getAllRoles() {
-        return new Result().setData(getRoleTree(1));
+        return new Result().setData(getRoleTree(1)).setMessage(roleService.getCrtUser().toString());
     }
 
     /**

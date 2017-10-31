@@ -11,4 +11,5 @@ public interface RoleService {
     int updateRole(Role Role);
     void deleteRole(int id);
     int addRole(Role Role);
+    List<String> getCrtUser();
 }

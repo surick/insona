@@ -56,8 +56,15 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public int addRole(Role Role) {
-        OperateHandler.assignCreateUser(Role);
-        return db.insert().save(Role).execute();
+    public int addRole(Role role) {
+        OperateHandler.assignCreateUser(role);
+        return db.insert().save(role).execute();
+    }
+    @Override
+    public List<String> getCrtUser() {
+        return db.select()
+                .columns("crt_name","upd_name")
+                .from(Role.class)
+                .queryForList(String.class);
     }
 }

@@ -67,6 +67,7 @@ public class UserController {
         if(userService.getUserByUserName(user.getUserName())!=null)
             throw new RuntimeException("用户名已存在");
         userService.addUser(user);
+
         return new Result().setMessage("新增成功");
     }
 
