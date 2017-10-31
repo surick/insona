@@ -1,17 +1,15 @@
 import Vue from 'vue';
 import iView from 'iview';
-import { router } from './router';
+import { router, otherRouter, appRouter } from './router';
 import store from './store';
 import Util from './libs/util';
 import App from './app.vue';
 import 'iview/dist/styles/iview.css';
-
 import VueI18n from 'vue-i18n';
 import Locales from './locale';
 import zhLocale from 'iview/src/locale/lang/zh-CN';
 import enLocale from 'iview/src/locale/lang/en-US';
 import zhTLocale from 'iview/src/locale/lang/zh-TW';
-
 import Loading from './components/loading';
 
 Vue.use(VueI18n);
@@ -47,12 +45,17 @@ router.beforeEach((to, from, next) => {
             next(false);
         } else {
             if (to.name !== 'login') { // 正常情况
-                console.log(store.state.menuList);
-                if (store.state.menuList.length === 0) {
-                    store.dispatch('GenerateRoutes', '').then(() => {
-                        router.addRoutes(store.state.appRouter);
-                        next({ ...to }); // hack方法 确保appRouter已完成
-                    });
+                let access = Util.getRouterObjByName([otherRouter, ...appRouter], to.name).access;
+                if (access) {
+                    if (!store.state.access) {
+                        store.dispatch('sysAccess').then((res) => { // 同步用户权限
+                            store.commit('updateAccess', res);
+                            store.commit('updateMenulist');
+                            Util.verifyAccess(store.state.access[access], [otherRouter, ...appRouter], to.name, router, next);
+                        });
+                    } else {
+                        Util.verifyAccess(store.state.access[access], [otherRouter, ...appRouter], to.name, router, next);
+                    }
                 } else {
                     next();
                 }
@@ -106,9 +109,10 @@ new Vue({
             this.$store.commit('changeFullScreenState');
         });
     },
-    created () {
+
+    created() {
         let tagsList = [];
-        this.$store.state.appRouter.map((item) => {
+        appRouter.map((item) => {
             if (item.children.length <= 1) {
                 tagsList.push(item.children[0]);
             } else {

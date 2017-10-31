@@ -10,10 +10,10 @@
                 个人信息
             </p>
             <div>
-                <Form 
+                <Form
                     ref="userForm"
-                    :model="userForm" 
-                    :label-width="100" 
+                    :model="userForm"
+                    :label-width="100"
                     label-position="right"
                     :rules="inforValidate"
                 >
@@ -173,7 +173,7 @@ export default {
             this.editPasswordModal = true;
         },
         cancelEditUserInfor () {
-            this.$store.commit('removeTag', 'ownspace_index');
+            this.$store.commit('removeTag', 'ownspace');
             localStorage.pageOpenedList = JSON.stringify(this.$store.state.pageOpenedList);
             let lastPageName = '';
             if (this.$store.state.pageOpenedList.length > 1) {

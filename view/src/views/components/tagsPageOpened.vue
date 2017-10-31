@@ -26,7 +26,7 @@
                     :name="item.name"
                     @on-close="closePage"
                     @click.native="linkTo(item)"
-                    :closable="item.name==='home_index'?false:true"
+                    :closable="item.name==='home'?false:true"
                     :color="item.children?(item.children[0].name===currentPageName?'blue':'default'):(item.name===currentPageName?'blue':'default')"
                 >{{ itemTitle(item) }}</Tag>
             </transition-group>
@@ -69,19 +69,21 @@ export default {
             }
         },
         closePage (event, name) {
-            this.$store.commit('removeTag', name);
-            this.$store.commit('closePage', name);
-            localStorage.pageOpenedList = JSON.stringify(this.$store.state.pageOpenedList);
-            if (this.currentPageName === name) {
-                let lastPageName = '';
-                if (this.$store.state.pageOpenedList.length > 1) {
-                    lastPageName = this.$store.state.pageOpenedList[1].name;
-                } else {
-                    lastPageName = this.$store.state.pageOpenedList[0].name;
+            if (this.$store.state.pageOpenedList.length > 1) {
+                this.$store.commit('removeTag', name);
+                this.$store.commit('closePage', name);
+                localStorage.pageOpenedList = JSON.stringify(this.$store.state.pageOpenedList);
+                if (this.currentPageName === name) {
+                    let lastPageName = '';
+                    if (this.$store.state.pageOpenedList.length > 1) {
+                        lastPageName = this.$store.state.pageOpenedList[1].name;
+                    } else {
+                        lastPageName = this.$store.state.pageOpenedList[0].name;
+                    }
+                    this.$router.push({
+                        name: lastPageName
+                    });
                 }
-                this.$router.push({
-                    name: lastPageName
-                });
             }
         },
         linkTo (item) {
@@ -135,7 +137,7 @@ export default {
     mounted () {
         this.refsTag = this.$refs.tagsPageOpened;
         setTimeout(() => {
-            this.refsTag.forEach((item, index) => {
+            this.refsTag && this.refsTag.forEach((item, index) => {
                 if (this.$route.name === item.name) {
                     let tag = this.refsTag[index].$el;
                     this.moveToView(tag);
@@ -148,7 +150,7 @@ export default {
         '$route' (to) {
             this.currentPageName = to.name;
             this.$nextTick(() => {
-                this.refsTag.forEach((item, index) => {
+                this.refsTag && this.refsTag.forEach((item, index) => {
                     if (to.name === item.name) {
                         let tag = this.refsTag[index].$el;
                         this.moveToView(tag);

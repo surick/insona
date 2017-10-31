@@ -51,8 +51,8 @@ public class MenuController {
     /**
      * 根据id查找menu
      */
-    @GetMapping("getMenuById")
-    public Result getMenuById(int id) {
+    @GetMapping("getMenuById/{id}")
+    public Result getMenuById(@PathVariable("id") int id) {
         if (id < 1)
             throw new RuntimeException("id不合法");
         Menu Menu = menuService.getMenuById(id);
@@ -65,7 +65,7 @@ public class MenuController {
      * 更新menu信息,
      */
     @PutMapping("updateMenu")
-    public Result updateMenu(Menu Menu) {
+    public Result updateMenu(@RequestBody Menu Menu) {
         boolean flag = true;
         if (menuService.getMenuById(Menu.getId()) != null //判断分类是否存在
                 && Menu.getTitle() != null
@@ -81,8 +81,8 @@ public class MenuController {
     /**
      * 删除菜单
      */
-    @DeleteMapping("deleteMenu")
-    public Result deleteMenu(int id) {
+    @DeleteMapping("deleteMenu/{id}")
+    public Result deleteMenu(@PathVariable("id") int id) {
         if (id == 1)
             throw new RuntimeException("系统管理不允许删除");
         Menu Menu = menuService.getMenuById(id);
@@ -99,8 +99,8 @@ public class MenuController {
     /**
      * 添加菜单
      */
-    @GetMapping("addMenu")
-    public Result addMenu(Menu Menu) {
+    @PostMapping("addMenu")
+    public Result addMenu(@RequestBody Menu Menu) {
         //判断字段是否为空
         if (menuService.getMenuById(Menu.getId()) == null
                 && Menu.getTitle() != null
