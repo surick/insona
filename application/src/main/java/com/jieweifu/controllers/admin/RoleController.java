@@ -42,7 +42,7 @@ public class RoleController {
     /**
      * 角色信息Tree生成方法
      */
-    private Role getRoleTree(int cid) {
+    private Role getRoleTree(@RequestBody int cid) {
         Role pRole = roleService.getRoleById(cid);
         List<Role> cRoleList = roleService.getRoleByParentId(pRole.getId());
         for (Role Role : cRoleList) {
@@ -55,8 +55,8 @@ public class RoleController {
     /**
      * 根据id查找角色
      */
-    @GetMapping("getRoleById")
-    public Result getRoleById(int id) {
+    @GetMapping("getRoleById/{id}")
+    public Result getRoleById(@PathVariable("id")  int id) {
         if (id < 1)
             throw new RuntimeException("id不合法");
         Role Role = roleService.getRoleById(id);
@@ -69,7 +69,7 @@ public class RoleController {
      * 更新角色
      */
     @PutMapping("updateRole")
-    public Result updateRole(Role role) {
+    public Result updateRole(@RequestBody Role role) {
         int row = 0;
         if (roleService.getRoleById(role.getId()) != null
                 && role.getRoleName() != null
@@ -85,8 +85,8 @@ public class RoleController {
      * 分类下有子分类不允许删除,
      * 角色下有用户在使用,不允许删除
      */
-    @DeleteMapping("deleteRole")
-    public Result deleteRole(int id) {
+    @DeleteMapping("deleteRole/{id}")
+    public Result deleteRole(@PathVariable("id") int id) {
         if (id == 1)
             throw new RuntimeException("超级管理员不允许删除");
         if (roleService.getRoleById(id) == null)
@@ -109,7 +109,7 @@ public class RoleController {
      * @return 添加角色
      */
     @PostMapping("addRole")
-    public Result addRole(Role Role) {
+    public Result addRole(@RequestBody Role Role) {
         boolean flag = true;
         if (roleService.getRoleById(Role.getId()) == null
                 && Role.getRoleName() != null
@@ -124,8 +124,8 @@ public class RoleController {
     /**
      * @return 显示该角色所有权限
      */
-    @GetMapping("getAuthority")
-    public Result getAuthority(int roleId) {
+    @GetMapping("getAuthority/{roleId}")
+    public Result getAuthority(@PathVariable("roleId") int roleId) {
         if (roleId == 0)
             throw new RuntimeException("该角色不存在");
         List<RoleAuthority> RoleAuthorityList
@@ -136,8 +136,8 @@ public class RoleController {
     /**
      * @return 添加权限
      */
-    @PostMapping("addAuthority")
-    public Result addAuthority(int id, String resourceIds) {
+    @PostMapping("addAuthority/{id}")
+    public Result addAuthority(@PathVariable("id") int id, @RequestBody String resourceIds) {
         boolean count = false;
         if (resourceIds == null)
             throw new RuntimeException("权限不能为空");
@@ -152,8 +152,8 @@ public class RoleController {
     /**
      * @return 修改权限
      */
-    @PutMapping("updateAuthority")
-    public Result updateAuthority(int id, String resourceIds) {
+    @PutMapping("updateAuthority/{id}")
+    public Result updateAuthority(@PathVariable("id") int id, @RequestBody String resourceIds) {
         roleAuthorityService.deleteRoleAuthority(id);
         return addAuthority(id, resourceIds);
     }
