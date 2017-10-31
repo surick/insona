@@ -41,7 +41,9 @@ export default {
                             localStorage.token = user.token;
                             localStorage.user = user.name;
                             this.$store.commit('setAvator', user.headImgUrl);
-                            this.$store.dispatch('GenerateRoutes', this).then((res) => {
+                            User.getPower(this).then(res => {
+                                this.$store.state.access = res;
+                                this.$store.commit('updateMenulist');
                                 this.$router.push({
                                     name: 'home'
                                 });
