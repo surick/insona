@@ -1,5 +1,6 @@
 package com.jieweifu.services.admin.impl;
 
+import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.MenuElements;
 import com.jieweifu.models.admin.*;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int addUser(User user) {
+        OperateHandler.assignCreateUser(user);
         return db.insert()
                 .save(user)
                 .execute();
