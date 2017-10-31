@@ -40,7 +40,6 @@ public class LogServiceImpl implements LogService {
             }
             log.setMenu(titleName.title);
             log.setOpt(log.getCreateUserName()
-                    .concat("用户")
                     .concat(method)
                     .concat(titleName.title)
                     .concat(titleName.elementName)
