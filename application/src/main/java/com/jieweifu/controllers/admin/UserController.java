@@ -67,9 +67,11 @@ public class UserController {
         if(userService.getUserByUserName(user.getUserName())!=null)
             throw new RuntimeException("用户名已存在");
         userService.addUser(user);
-
+        User user1 = userService.getUserByUserName(user.getUserName());
+        userService.updateUserPassword(user1.getId(),user.getPassword());
         return new Result().setMessage("新增成功");
     }
+
 
     /**
      * 修改用户
@@ -99,6 +101,8 @@ public class UserController {
         return new Result().setMessage("删除成功");
 
     }
+
+
 
     /**
      * 分页查询用户

@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserPassword(int userId, String password) {
         db.update().table(User.class)
-                .set("password = MD5(CONCAT(salt,?))",password)
+                .set("password = MD5(CONCAT(salt, ? ))",password)
                 .where("id = ?", userId)
                 .execute();
     }

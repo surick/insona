@@ -45,8 +45,10 @@ public class Update {
     }
 
     public Update set(String column, Object value) {
+        String uuidKey = "updateParam" + (this.parameters.getValues().size() + 1);
+        column = column.replaceFirst("\\?", "(:" + uuidKey + ")");
         columns.add(column);
-        parameters.addValue(column, value);
+        parameters.addValue(uuidKey, value);
         return this;
     }
 
@@ -107,7 +109,7 @@ public class Update {
         StringBuilder stringBuilder = new StringBuilder();
 
         List<String> columns = new ArrayList<>();
-        this.columns.forEach(column -> columns.add(column + "=:" + column));
+        this.columns.forEach(column -> columns.add(column));
 
         stringBuilder.append("UPDATE ")
                 .append(tableName)
