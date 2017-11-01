@@ -69,8 +69,6 @@ public class UserController {
         if(userService.getUserByUserName(user.getUserName())!=null)
             return new Result().setError("用户名已存在");
         userService.addUser(user);
-        User user1 = userService.getUserByUserName(user.getUserName());
-        userService.updateUserPassword(user1.getId(),user.getPassword());
         return new Result().setMessage("新增成功");
     }
 

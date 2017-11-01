@@ -6,10 +6,12 @@ import com.jieweifu.models.MenuElements;
 import com.jieweifu.models.admin.*;
 import com.jieweifu.services.admin.UserService;
 import com.jieweifu.vo.admin.MenuElement;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,8 +33,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int addUser(User user) {
         OperateHandler.assignCreateUser(user);
+        String salt = UUID.randomUUID().toString().replace("-", "");
+        user.setPassword(DigestUtils.md5Hex(salt + user.getPassword()));
         return db.insert()
                 .save(user)
+                .set("salt", salt)
                 .execute();
     }
 
@@ -82,8 +87,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserPassword(int userId, String password) {
-        db.update().table(User.class)
-                .set("password = MD5(CONCAT(salt, ? ))",password)
+        db.update()
+                .table(User.class)
+                .set("password = MD5(CONCAT(salt, ?))", password)
                 .where("id = ?", userId)
                 .execute();
     }
@@ -99,7 +105,7 @@ public class UserServiceImpl implements UserService {
                 .total() > 0;
     }
 
-    public MenuElements getMenuElements(int userId, boolean isAdmin){
+    public MenuElements getMenuElements(int userId, boolean isAdmin) {
         List<Menu> menus = getAllMenus();
         List<Element> elements = getAllElements();
 
@@ -155,7 +161,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersByPage(int pageIndex, int pageSize) {
         return db.select()
                 .from(User.class)
-                .limit(pageIndex,pageSize)
+                .limit(pageIndex, pageSize)
                 .queryForList(User.class);
     }
 
@@ -163,7 +169,7 @@ public class UserServiceImpl implements UserService {
     public User getUserByUserName(String userName) {
         return db.select()
                 .from(User.class)
-                .where("user_name = ?",userName)
+                .where("user_name = ?", userName)
                 .queryForEntity(User.class);
     }
 
@@ -171,7 +177,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(int id) {
         db.delete()
                 .from(User.class)
-                .where("id = ?",id)
+                .where("id = ?", id)
                 .execute();
     }
 
