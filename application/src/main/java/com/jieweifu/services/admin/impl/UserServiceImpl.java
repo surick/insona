@@ -185,9 +185,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public int getUserTotal() {
         return db.select()
-                .columns("count(*)")
                 .from(User.class)
-                .queryForEntity(Integer.class);
+                .where("isDelete = ?", 0)
+                .total();
     }
 
     @Override
