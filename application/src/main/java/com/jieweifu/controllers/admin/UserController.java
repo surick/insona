@@ -59,9 +59,12 @@ public class UserController {
      * 新增用户
      */
     @PostMapping("saveUser")
-    public Result saveUser(@RequestBody User user) {
-        if (user.getUserName() == null || user.getPassword() == null||
-                user.getUserName() == "" || user.getPassword() == "")
+    public Result saveUser(@Valid @RequestBody User user, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
+        if (user.getUserName() == null || user.getPassword() == null ||
+                user.getUserName().equals("") || user.getPassword().equals(""))
             return new Result().setError("账户名密码不允许为空");
         if (userService.getUserByUserName(user.getUserName()) != null)
             return new Result().setError("用户名已存在");
@@ -74,9 +77,14 @@ public class UserController {
      * 修改用户
      */
     @PutMapping("updateUser")
-    public Result updateUsers(@RequestBody User user) {
+    public Result updateUsers(@Valid @RequestBody User user, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
         if (userService.getUserById(user.getId()) == null)
             return new Result().setError("用户不存在");
+        if (user.getUserName() != null || user.getPassword() != null)
+            return new Result().setError("登录名密码不允许更改");
         userService.updateUser(user);
         return new Result().setMessage("修改成功");
     }
