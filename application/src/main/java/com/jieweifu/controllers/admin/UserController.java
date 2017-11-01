@@ -78,6 +78,8 @@ public class UserController {
      */
     @PutMapping("updateUser")
     public Result updateUsers(@Valid @RequestBody User user, Errors errors) {
+        if (user.getId() == -1)
+            return new Result().setError("非法id");
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
