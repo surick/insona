@@ -55,13 +55,13 @@ public class AdminAuthInterceptor extends HandlerInterceptorAdapter {
 
         tokenUtil.cacheUserInThreadLocal(Integer.parseInt(userId));
 
-        String path = request.getServletPath();
-        String method = request.getMethod();
-        boolean canAction = tokenUtil.checkAuthorization(path, method);
-        if (!canAction) {
-            writeUnAuthorization(HttpStatus.FORBIDDEN, request, response);
-            return false;
-        }
+//        String path = request.getServletPath();
+//        String method = request.getMethod();
+//        boolean canAction = tokenUtil.checkAuthorization(path, method);
+//        if (!canAction) {
+//            writeUnAuthorization(HttpStatus.FORBIDDEN, request, response);
+//            return false;
+//        }
         return true;
     }
 
