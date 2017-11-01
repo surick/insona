@@ -61,7 +61,6 @@ public class UserController {
      * 新增用户
      */
     @PostMapping("addUser")
-    @AdminAuthAnnotation(check = false)
     public Result addUser(@RequestBody User user) {
         if (user.getUserName() == null || user.getPassword() == null) {
             return new Result().setError("账户名密码不允许为空");
@@ -89,7 +88,6 @@ public class UserController {
      * 删除用户
      */
     @DeleteMapping("deleteUser/{id}")
-    @AdminAuthAnnotation(check = false)
     public Result deleteUser(@PathVariable("id") int id) {
         if (id == 0 || userService.getUserById(id) == null)
             return new Result().setError("用户不存在");
@@ -119,7 +117,6 @@ public class UserController {
      * 配置用户角色
      */
     @PutMapping("updateRoleUser")
-    @AdminAuthAnnotation(check = false)
     public Result updateRoleUser(@Valid @RequestBody RoleInfo roleInfo, Errors errors) {
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
