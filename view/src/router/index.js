@@ -79,7 +79,7 @@ export const otherRouter = {
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
     {
-        path: '/auth',
+        path: '/access',
         icon: 'key',
         name: 'AUTH',
         // access: 'AUTH',
@@ -91,7 +91,7 @@ export const appRouter = [
                 title: '用户管理',
                 name: 'AUTH_USER',
                 // access: 'AUTH_USER',
-                component: resolve => { require(['../views/auth/auth-user.vue'], resolve); }
+                component: resolve => { require(['../views/access/access.vue'], resolve); }
             },
 
             {
@@ -99,7 +99,7 @@ export const appRouter = [
                 title: '角色管理',
                 name: 'AUTH_ROLE',
                 // access: 'AUTH_ROLE',
-                component: resolve => { require(['../views/auth/auth-role.vue'], resolve); }
+                component: resolve => { require(['../views/access/access.vue'], resolve); }
             },
 
             {
@@ -107,7 +107,7 @@ export const appRouter = [
                 title: '用户组管理',
                 name: 'AUTH_GROUP',
                 // access: 'AUTH_GROUP',
-                component: resolve => { require(['../views/auth/auth-group.vue'], resolve); }
+                component: resolve => { require(['../views/access/access.vue'], resolve); }
             }
         ]
     }];
