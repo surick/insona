@@ -33,14 +33,14 @@ public class UserController {
     private RoleUserService roleUserService;
 
     @Autowired
-    public UserController(UserService userService,RoleService roleService,RoleUserService roleUserService) {
+    public UserController(UserService userService, RoleService roleService, RoleUserService roleUserService) {
         this.userService = userService;
         this.roleService = roleService;
         this.roleUserService = roleUserService;
     }
 
     @GetMapping("user")
-    public Result getAllUsers(){
+    public Result getAllUsers() {
         return new Result().setData(userService.getAllUsers());
     }
 
@@ -48,11 +48,11 @@ public class UserController {
      * 根据名称查找用户
      */
     @GetMapping("getUserByUserName/{userName}")
-    public Result getUserByUserName(@PathVariable("userName") String userName){
-        if(userName==null)
-        return new Result().setError("查询信息不能为空");
+    public Result getUserByUserName(@PathVariable("userName") String userName) {
+        if (userName == null)
+            return new Result().setError("查询信息不能为空");
         User user = userService.getUserByUserName(userName);
-        if(user==null)
+        if (user == null)
             return new Result().setError("用户不存在");
         return new Result().setData(user);
     }
@@ -62,11 +62,11 @@ public class UserController {
      */
     @PostMapping("addUser")
     @AdminAuthAnnotation(check = false)
-    public Result addUser(@RequestBody User user){
-       if(user.getUserName()==null||user.getPassword()==null){
-           return new Result().setError("账户名密码不允许为空");
-       }
-        if(userService.getUserByUserName(user.getUserName())!=null)
+    public Result addUser(@RequestBody User user) {
+        if (user.getUserName() == null || user.getPassword() == null) {
+            return new Result().setError("账户名密码不允许为空");
+        }
+        if (userService.getUserByUserName(user.getUserName()) != null)
             return new Result().setError("用户名已存在");
         userService.addUser(user);
         return new Result().setMessage("新增成功");
@@ -78,8 +78,8 @@ public class UserController {
      */
     @PutMapping("updateUser")
 
-    public Result updateUsers(@RequestBody User user){
-        if(user.getUserName()==null||user.getName()==null)
+    public Result updateUsers(@RequestBody User user) {
+        if (user.getUserName() == null || user.getName() == null)
             return new Result().setError("用户名不能为空");
         userService.updateUser(user);
         return new Result().setMessage("修改成功");
@@ -90,9 +90,9 @@ public class UserController {
      */
     @DeleteMapping("deleteUser/{id}")
     @AdminAuthAnnotation(check = false)
-    public Result deleteUser(@PathVariable("id") int id){
-        if(id==0||userService.getUserById(id)==null)
-        return new Result().setError("用户不存在");
+    public Result deleteUser(@PathVariable("id") int id) {
+        if (id == 0 || userService.getUserById(id) == null)
+            return new Result().setError("用户不存在");
         userService.isDelete(id);
         return new Result().setMessage("删除成功");
 
@@ -104,14 +104,14 @@ public class UserController {
      */
     @GetMapping("pageUser/{pageIndex}/{pageSize}")
     public Result getUserByPage(@PathVariable("pageIndex") int pageIndex,
-                                @PathVariable("pageSize") int pageSize){
-        if(pageIndex<0||pageSize<0)
+                                @PathVariable("pageSize") int pageSize) {
+        if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
-        List<User> userList = userService.getUsersByPage(pageIndex,pageSize);
+        List<User> userList = userService.getUsersByPage(pageIndex, pageSize);
         int total = userService.getUserTotal();
-        Map<String,Object> map = new HashMap<>();
-        map.put("list",userList);
-        map.put("total",total);
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", userList);
+        map.put("total", total);
         return new Result().setData(map);
     }
 
@@ -120,12 +120,12 @@ public class UserController {
      */
     @PutMapping("updateRoleUser")
     @AdminAuthAnnotation(check = false)
-    public Result updateRoleUser(@Valid @RequestBody RoleInfo roleInfo, Errors errors){
-        if(errors.hasErrors()){
+    public Result updateRoleUser(@Valid @RequestBody RoleInfo roleInfo, Errors errors) {
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
         boolean flag = false;
-        if(roleInfo.getUserId()!=0 && roleInfo.getRoleId()!=0){
+        if (roleInfo.getUserId() != 0 && roleInfo.getRoleId() != 0) {
             roleUserService.deleteRoleUser(roleInfo.getUserId());
             RoleUser roleUser = new RoleUser();
             roleUser.setUserId(roleInfo.getUserId());
@@ -136,7 +136,7 @@ public class UserController {
         }
 
 
-        return new Result().setMessage(flag?"配置角色成功":"配置角色失败");
+        return new Result().setMessage(flag ? "配置角色成功" : "配置角色失败");
     }
 
     public static class RoleInfo {
@@ -145,7 +145,7 @@ public class UserController {
 
         private int roleId;
 
-        @Min(value = 0,message = "userId不合法")
+        @Min(value = 0, message = "userId不合法")
         public int getUserId() {
             return userId;
         }
@@ -153,7 +153,8 @@ public class UserController {
         public void setUserId(int userId) {
             this.userId = userId;
         }
-        @Min(value = 0,message = "角色不能为空")
+
+        @Min(value = 0, message = "角色不能为空")
         public int getRoleId() {
             return roleId;
         }

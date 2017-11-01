@@ -161,6 +161,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersByPage(int pageIndex, int pageSize) {
         return db.select()
                 .from(User.class)
+                .where("isDelete = ?", 0)
                 .limit(pageIndex, pageSize)
                 .queryForList(User.class);
     }
@@ -192,7 +193,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void isDelete(int id) {
         //db.getJdbcTemplate().execute("ALTER TABLE base_user ADD isDelete int");
-        db.update().table(User.class).set("isDelete = ?",1).where("id = ?",id).execute();
+        db.update().table(User.class).set("isDelete = ?", 1).where("id = ?", id).execute();
     }
 
     private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {

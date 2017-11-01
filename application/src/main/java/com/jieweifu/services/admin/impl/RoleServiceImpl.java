@@ -14,7 +14,7 @@ public class RoleServiceImpl implements RoleService {
     private DB db;
 
     @Autowired
-    public RoleServiceImpl(DB db){
+    public RoleServiceImpl(DB db) {
         this.db = db;
     }
 
@@ -29,7 +29,7 @@ public class RoleServiceImpl implements RoleService {
     public Role getRoleById(int id) {
         return db.select()
                 .from(Role.class)
-                .where("id=?",id)
+                .where("id=?", id)
                 .queryForEntity(Role.class);
     }
 
@@ -37,7 +37,7 @@ public class RoleServiceImpl implements RoleService {
     public List<Role> getRoleByParentId(int ParentId) {
         return db.select()
                 .from(Role.class)
-                .where("parent_id=?",ParentId)
+                .where("parent_id=?", ParentId)
                 .queryForList(Role.class);
     }
 
@@ -51,7 +51,7 @@ public class RoleServiceImpl implements RoleService {
     public void deleteRole(int id) {
         db.delete()
                 .from(Role.class)
-                .where("id = ?",id)
+                .where("id = ?", id)
                 .execute();
     }
 
