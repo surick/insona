@@ -44,7 +44,7 @@ public class User {
     @Email(message = "电子邮箱格式错误")
     private String email;
 
-    @Range(min = 0,max = 1,message = "状态无效")
+    @Range(min = 0,max = 1,message = "性别非法")
     private Integer sex;
 
     @Range(min = 0,max = 1,message = "状态无效")
