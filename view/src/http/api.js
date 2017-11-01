@@ -1,8 +1,9 @@
 import axios from 'axios';
 import env from '@/config/env';
+import { router } from '@/router';
 
 const ajaxUrl = env === 'development'
-    ? 'http://192.168.3.39:8080'
+    ? 'http://127.0.0.1:8080'
     : 'http://api.kyo.hahakeji.com';
 
 const http = axios.create({
@@ -17,21 +18,24 @@ const ajax = (vm, request) => {
             .then(res => {
                 switch (res.data.code) {
                 case 200:
+                    if (!res.data.success && res.data.message) {
+                        vm && vm.$Message.error(res.data.message);
+                    }
                     resolve(res.data);
                     break;
                 case 401:
                     localStorage.clear();
-                    vm && vm.$router.push({
+                    router.push({
                         name: 'login'
                     });
                     break;
                 case 403:
-                    vm && vm.$router.push({
+                    router.push({
                         name: 'error_401'
                     });
                     break;
                 case 404:
-                    vm && vm.$router.push({
+                    router.push({
                         name: 'error_404'
                     });
                     break;

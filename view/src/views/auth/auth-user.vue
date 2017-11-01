@@ -10,7 +10,7 @@
                 用户管理
             </div>
             <div slot="extra">
-                <Button type="primary">
+                <Button type="primary" @click="addUser()">
                     <Icon type="android-add"></Icon>
                     新增
                 </Button>
@@ -33,16 +33,31 @@
 
         <!-- 编辑与新增 -->
         <Modal
-            v-model="editModal"
-            title="用户编辑"
-            @on-ok="saveEdit">
+            v-model="addAndEditModal"
+            :title="['用户新增', '用户编辑'][addOrEdit]">
             <div class="modal-body">
-                <Row class="margin-bottom-10">
+                <Row class="margin-bottom-10" v-if="addOrEdit === 1">
                     <Col span="6">
                         <div class="input-label">头像</div>
                     </Col>
                     <Col span="18">
-                        <Avatar :src="user.head_img_url" />
+                        <Avatar :src="user.headImgUrl" />
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10"  v-if="addOrEdit === 0">
+                    <Col span="6">
+                        <div class="input-label">账号</div>
+                    </Col>
+                    <Col span="18">
+                        <Input v-model="user.userName" placeholder="账号"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10"  v-if="addOrEdit === 0">
+                    <Col span="6">
+                        <div class="input-label">密码</div>
+                    </Col>
+                    <Col span="18">
+                        <Input type="password" v-model="user.password" placeholder="密码"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -77,7 +92,7 @@
                         <div class="input-label">手机号</div>
                     </Col>
                     <Col span="18">
-                        <Input v-model="user.mobile_phone" placeholder="手机号"></Input>
+                        <Input v-model="user.mobilePhone" placeholder="手机号"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -108,6 +123,9 @@
                     </Col>
                 </Row>
             </div>
+            <div slot="footer">
+                <Button type="primary" size="large" @click="saveUser">确定</Button>
+            </div>
         </Modal>
 
         <!-- 配置角色 -->
@@ -124,13 +142,16 @@
 
 <script>
 import expandRow from './auth-user-expand.vue';
+import { User } from '@/http';
 export default {
     name: 'auth_user',
     components: { expandRow },
     data () {
         return {
             access: this.$store.state.access,
-            editModal: false,
+            addAndEditModal: false,
+            addOrEdit: 0,
+            editId: '',
             selectIndex: 0,
             roleModal: false,
             roleIndexs: [],
@@ -157,18 +178,16 @@ export default {
                 }
             ],
             user: {
+                userName: '',
+                password: '',
                 name: '',
-                head_img_url: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                headImgUrl: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
                 birthday: '',
                 address: '',
-                mobile_phone: '',
+                mobilePhone: '',
                 email: '',
                 sex: '女',
-                status: true,
-                crt_time: '',
-                crt_name: '',
-                upd_time: '',
-                upd_name: ''
+                status: true
             },
             columns: [
                 {
@@ -193,7 +212,7 @@ export default {
                 },
                 {
                     title: '手机号',
-                    key: 'mobile_phone',
+                    key: 'mobilePhone',
                     width: 120,
                     align: 'center'
                 },
@@ -228,7 +247,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.edit(params.index);
+                                        this.editUser(params.row);
                                     }
                                 }
                             }, [
@@ -302,37 +321,12 @@ export default {
                     }
                 }
             ],
-            data: [
-                {
-                    name: '王小明',
-                    sex: 0,
-                    address: '北京市朝阳区芍药居',
-                    birthday: '2017-09-09',
-                    mobile_phone: '18860852448',
-                    email: '121211211@qq.com',
-                    status: 1,
-                    crt_name: '郝建',
-                    crt_time: '2016-10-10 10:10',
-                    upd_name: '郝建',
-                    upd_time: '2016-10-10 10:10'
-                },
-                {
-                    name: '张小刚',
-                    age: 25,
-                    address: '北京市海淀区西二旗'
-                },
-                {
-                    name: '李小红',
-                    age: 30,
-                    address: '上海市浦东新区世纪大道'
-                },
-                {
-                    name: '周小伟',
-                    age: 26,
-                    address: '深圳市南山区深南大道'
-                }
-            ]
+            data: []
         };
+    },
+    mounted() {
+        this.current = 1;
+        this.getUser();
     },
     computed: {
         avatorPath () {
@@ -340,6 +334,17 @@ export default {
         }
     },
     methods: {
+        getUser() {
+            User.getUser(this, {
+                pageIndex: this.current,
+                pageSize: 10
+            }).then((res) => {
+                if (res.success) {
+                    this.data = res.data;
+                }
+            });
+        },
+
         selectChange(selection) {
             console.log(selection);
         },
@@ -349,13 +354,63 @@ export default {
             this.roleIndexs = index;
         },
 
-        edit(index) {
-            this.editModal = true;
-            this.editIndex = index;
+        editUser(user) {
+            this.addOrEdit = 1;
+            this.addAndEditModal = true;
+            this.editId = user.id;
+            this.user = {
+                userName: user.userName,
+                password: '',
+                name: user.name,
+                headImgUrl: user.headImgUrl || 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                birthday: user.birthday,
+                address: user.address,
+                mobilePhone: user.mobilePhone,
+                email: user.email,
+                sex: user.sex === 1 ? '男' : '女',
+                status: user.status === 1
+            };
         },
 
-        saveEdit() {
+        addUser() {
+            this.addOrEdit = 0;
+            this.addAndEditModal = true;
+            this.user = {
+                userName: '',
+                password: '',
+                name: '',
+                headImgUrl: '',
+                birthday: '',
+                address: '',
+                mobilePhone: '',
+                email: '',
+                sex: '男',
+                status: true
+            };
+        },
 
+        saveUser() {
+            if (this.addOrEdit === 0) {
+                if (this.$commonFun.checkObject(this.user, ['headImgUrl'])) {
+                    return this.$Message.warning('请将信息填写完整！');
+                }
+
+                User.addUser(this, this.user).then(res => {
+                    if (res.success) {
+                        this.$Modal.remove();
+                    }
+                });
+            } else {
+                if (this.$commonFun.checkObject(this.user, ['password'])) {
+                    return this.$Message.warning('请将信息填写完整！');
+                }
+
+                User.updateUser(this, this.editId, this.user).then(res => {
+                    if (res.success) {
+                        this.$Modal.remove();
+                    }
+                });
+            }
         },
 
         delete(index) {

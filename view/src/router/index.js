@@ -82,7 +82,7 @@ export const appRouter = [
         path: '/auth',
         icon: 'key',
         name: 'AUTH',
-        // access: 'AUTH',
+        access: 'AUTH',
         title: '权限设置',
         component: Main,
         children: [
@@ -90,7 +90,7 @@ export const appRouter = [
                 path: 'user',
                 title: '用户管理',
                 name: 'AUTH_USER',
-                // access: 'AUTH_USER',
+                access: 'AUTH_USER',
                 component: resolve => { require(['../views/auth/auth-user.vue'], resolve); }
             },
 
@@ -98,7 +98,7 @@ export const appRouter = [
                 path: 'role',
                 title: '角色管理',
                 name: 'AUTH_ROLE',
-                // access: 'AUTH_ROLE',
+                access: 'AUTH_ROLE',
                 component: resolve => { require(['../views/auth/auth-role.vue'], resolve); }
             },
 
@@ -106,7 +106,7 @@ export const appRouter = [
                 path: 'group',
                 title: '用户组管理',
                 name: 'AUTH_GROUP',
-                // access: 'AUTH_GROUP',
+                access: 'AUTH_GROUP',
                 component: resolve => { require(['../views/auth/auth-group.vue'], resolve); }
             }
         ]

@@ -16,6 +16,22 @@ Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(Loading);
 
+let commonFun = {};
+commonFun.install = (Vue) => {
+    Vue.prototype.$commonFun = () => {};
+
+    Vue.prototype.$commonFun['checkObject'] = (obj, whiteList) => {
+        let isEmpty = false;
+        for (var key in obj) {
+            if (obj[key] === '' && whiteList.indexOf(key) === -1) {
+                isEmpty = true;
+            }
+        }
+        return isEmpty;
+    };
+};
+Vue.use(commonFun);
+
 // 自动设置语言
 const navLang = navigator.language;
 const localLang = (navLang === 'zh-CN' || navLang === 'en-US') ? navLang : false;
@@ -46,18 +62,22 @@ router.beforeEach((to, from, next) => {
         } else {
             if (to.name !== 'login') { // 正常情况
                 let access = Util.getRouterObjByName([otherRouter, ...appRouter], to.name).access;
-                if (access) {
-                    if (!store.state.access) {
-                        store.dispatch('sysAccess').then((res) => { // 同步用户权限
-                            store.commit('updateAccess', res);
-                            store.commit('updateMenulist');
+                if (!store.state.access) {
+                    store.dispatch('sysAccess').then((res) => { // 同步用户权限
+                        store.commit('updateAccess', res);
+                        store.commit('updateMenulist');
+                        if (access) {
                             Util.verifyAccess(store.state.access[access], [otherRouter, ...appRouter], to.name, router, next);
-                        });
-                    } else {
-                        Util.verifyAccess(store.state.access[access], [otherRouter, ...appRouter], to.name, router, next);
-                    }
+                        } else {
+                            next();
+                        }
+                    });
                 } else {
-                    next();
+                    if (access) {
+                        Util.verifyAccess(store.state.access[access], [otherRouter, ...appRouter], to.name, router, next);
+                    } else {
+                        next();
+                    }
                 }
             } else { // 判断登录状态去登录页面
                 Util.title();
