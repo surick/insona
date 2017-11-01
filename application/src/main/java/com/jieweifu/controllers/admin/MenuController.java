@@ -4,6 +4,7 @@ import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.Menu;
 import com.jieweifu.services.admin.MenuService;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +35,10 @@ public class MenuController {
      * 递归生成Tree
      */
     private Menu MenuTree(int cid) {
-        //根据id获取节点对象
         Menu pMenu = menuService.getMenuById(cid);
-        //查询id下的所有子节点
         List<Menu> cMenuList = menuService.getMenuByParentId(pMenu.getId());
-        //遍历子节点
         for (Menu Menu : cMenuList) {
             Menu m = MenuTree(Menu.getId());
-            //添加一个集合,将子级放入父级集合
             pMenu.getChildren().add(m);
         }
         return pMenu;
@@ -54,10 +51,10 @@ public class MenuController {
     @GetMapping("getMenuById/{id}")
     public Result getMenuById(@PathVariable("id") int id) {
         if (id < 1)
-            throw new RuntimeException("id不合法");
+            return new Result().setError("id不合法");
         Menu Menu = menuService.getMenuById(id);
         if (Menu == null)
-            throw new RuntimeException("查找的数据不存在");
+            return new Result().setError("查找的数据不存在");
         return new Result().setData(Menu);
     }
 
@@ -67,7 +64,7 @@ public class MenuController {
     @PutMapping("updateMenu")
     public Result updateMenu(@RequestBody Menu Menu) {
         boolean flag = true;
-        if (menuService.getMenuById(Menu.getId()) != null //判断分类是否存在
+        if (menuService.getMenuById(Menu.getId()) != null
                 && Menu.getTitle() != null
                 && Menu.getHref() != null
                 && Menu.getIcon() != null) {
@@ -84,14 +81,12 @@ public class MenuController {
     @DeleteMapping("deleteMenu/{id}")
     public Result deleteMenu(@PathVariable("id") int id) {
         if (id == 1)
-            throw new RuntimeException("系统管理不允许删除");
+            return new Result().setError("系统管理不允许删除");
         Menu Menu = menuService.getMenuById(id);
         if (Menu == null)
-            throw new RuntimeException("分类不存在");
-        //分类下不为空则不允许删除
+            return new Result().setError("分类不存在");
         if (menuService.getMenuByParentId(Menu.getId()) != null)
-            return new Result().setMessage("分类下不为空,不允许删除");
-        //删除菜单
+            return new Result().setError("分类下不为空,不允许删除");
         menuService.deleteMenu(id);
         return new Result().setMessage("删除成功");
     }
@@ -101,13 +96,11 @@ public class MenuController {
      */
     @PostMapping("addMenu")
     public Result addMenu(@RequestBody Menu Menu) {
-        //判断字段是否为空
         if (menuService.getMenuById(Menu.getId()) == null
                 && Menu.getTitle() != null
                 && Menu.getHref() != null) {
             return new Result().setMessage(menuService.addMenu(Menu) == 0 ? "新增失败" : "新增成功");
         } else {
-            //为空保存失败
             return new Result().setMessage("字段不能为空");
         }
     }

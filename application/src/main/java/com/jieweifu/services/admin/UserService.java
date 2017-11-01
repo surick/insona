@@ -23,4 +23,6 @@ public interface UserService {
     List<User> getUsersByPage(int pageIndex,int pageSize);
     User getUserByUserName(String userName);
     void deleteUser(int id);
+    int getUserTotal();
+    void isDelete(int id);
 }
