@@ -98,7 +98,6 @@ public class UserController {
      * 分页查询用户
      */
     @GetMapping("pageUser/{pageIndex}/{pageSize}")
-    @AdminAuthAnnotation(check = false)
     public Result getUserByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
         if (pageIndex < 0 || pageSize < 0)
