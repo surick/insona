@@ -202,7 +202,7 @@ public class Select {
         }
 
         if (this.pageIndex != null && !isTotal) {
-            stringBuilder.append(" LIMIT ").append(pageIndex).append(", ").append(pageSize);
+            stringBuilder.append(" LIMIT ").append(pageIndex * pageSize).append(", ").append(pageSize);
         }
 
         String sql = stringBuilder.toString();
