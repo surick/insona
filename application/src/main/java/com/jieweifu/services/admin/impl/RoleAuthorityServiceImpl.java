@@ -62,12 +62,15 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
     @Override
     public int updateRoleAuthority(RoleAuthority RoleAuthority) {
         OperateHandler.assignUpdateUser(RoleAuthority);
-        return db.update().save(RoleAuthority.class).execute();
+        return db.update()
+                .save(RoleAuthority.class)
+                .execute();
     }
 
     @Override
     public List<String> getResourceType(int resourceId) {
-        return db.select().columns("resource_type")
+        return db.select()
+                .columns("resource_type")
                 .from(RoleAuthority.class)
                 .where("resource_id = ?", resourceId)
                 .queryForList(String.class);
@@ -77,11 +80,8 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
     public MenuElements getMenuElements(int roleId) {
         List<Menu> menus = getAllMenus();
         List<Element> elements = getAllElements();
-
-
         List<Menu> _menus = new ArrayList<>();
         List<Element> _elements = new ArrayList<>();
-
         List<RoleAuthority> roleAuthorities = getRoleAuthorityById(roleId);
         menus.forEach(menu -> {
             if (roleAuthorities.stream().filter(p -> p.getResourceId() == menu.getId()
@@ -97,8 +97,6 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
         });
         menus = _menus;
         elements = _elements;
-
-
         return new MenuElements(menus, elements);
     }
 

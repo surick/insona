@@ -40,8 +40,8 @@ public class RoleController {
     /**
      * 查找全部角色
      */
-    @GetMapping("getAllRoles")
-    public Result getAllRoles() {
+    @GetMapping("listAllRoles")
+    public Result listAllRoles() {
         return new Result().setData(getRoleTree(1));
     }
 
@@ -91,10 +91,10 @@ public class RoleController {
      * 分类下有子分类不允许删除,
      * 角色下有用户在使用,不允许删除
      */
-    @DeleteMapping("deleteRole/{id}")
-    public Result deleteRole(@PathVariable("id") int id) {
-        if (id == 1)
-            return new Result().setError("超级管理员不允许删除");
+    @DeleteMapping("removeRole/{id}")
+    public Result removeRole(@PathVariable("id") int id) {
+        if (id <= 1)
+            return new Result().setError("id不合法");
         if (roleService.getRoleById(id) == null)
             return new Result().setError("分类不存在");
         if (!roleService.getRoleByParentId(id).isEmpty())
@@ -110,8 +110,8 @@ public class RoleController {
     /**
      * 添加角色
      */
-    @PostMapping("addRole")
-    public Result addRole(@RequestBody Role Role) {
+    @PostMapping("saveRole")
+    public Result saveRole(@RequestBody Role Role) {
         boolean flag = true;
         if (roleService.getRoleById(Role.getId()) == null
                 && Role.getRoleName() != null
@@ -127,8 +127,9 @@ public class RoleController {
     /**
      * 添加权限
      */
-    @PostMapping("addAuthority/{id}")
-    public Result addAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
+    @PostMapping("saveAuthority/{id}")
+    public Result saveAuthority(@PathVariable("id") int id,
+                                @RequestBody Map<Integer, List<String>> mapList) {
         if (mapList.isEmpty())
             return new Result().setError("权限为空");
         mapList.forEach(
@@ -153,7 +154,7 @@ public class RoleController {
     @PutMapping("updateAuthority/{id}")
     public Result updateAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
         roleAuthorityService.deleteRoleAuthority(id);
-        return addAuthority(id, mapList);
+        return saveAuthority(id, mapList);
     }
 
     /**

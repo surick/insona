@@ -26,8 +26,8 @@ public class MenuController {
     /**
      * 查询全部menu生成tree
      */
-    @GetMapping("getAllMenus")
-    public Result getAllMenus() {
+    @GetMapping("listAllMenus")
+    public Result listAllMenus() {
         return new Result().setData(MenuTree(1));
     }
 
@@ -78,10 +78,10 @@ public class MenuController {
     /**
      * 删除菜单
      */
-    @DeleteMapping("deleteMenu/{id}")
-    public Result deleteMenu(@PathVariable("id") int id) {
-        if (id == 1)
-            return new Result().setError("系统管理不允许删除");
+    @DeleteMapping("removeMenu/{id}")
+    public Result removeMenu(@PathVariable("id") int id) {
+        if (id <= 1)
+            return new Result().setError("非法id");
         Menu Menu = menuService.getMenuById(id);
         if (Menu == null)
             return new Result().setError("分类不存在");
@@ -94,8 +94,8 @@ public class MenuController {
     /**
      * 添加菜单
      */
-    @PostMapping("addMenu")
-    public Result addMenu(@RequestBody Menu Menu) {
+    @PostMapping("saveMenu")
+    public Result saveMenu(@RequestBody Menu Menu) {
         if (menuService.getMenuById(Menu.getId()) == null
                 && Menu.getTitle() != null
                 && Menu.getHref() != null) {
