@@ -2,8 +2,15 @@ package com.jieweifu.models.admin;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "base_user")
@@ -12,26 +19,35 @@ public class User {
     private int id = -1;
 
     @Column(columnName = "user_name")
-    @NotNull(message = "UserName不能为空")
     private String userName;
 
     @Column(select = false)
-    @NotNull(message = "密码不能为空")
+
     private String password;
 
     @Column(select = false)
     private String salt;
-    @NotNull(message = "Name不能为空")
+
+    @NotBlank(message = "name不允许为空")
     private String name;
+
+    @Pattern(regexp = "([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})",message = "日期格式错误")
     private String birthday;
+
+    @NotBlank(message = "address不允许为空")
     private String address;
 
     @Column(columnName = "mobile_phone")
-    @NotNull(message = "手机号不能为空")
+    @Pattern(regexp = "^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")
     private String mobilePhone;
-    @NotNull(message = "邮箱不能为空")
+
+    @Email(message = "电子邮箱格式错误")
     private String email;
+
+    @Range(min = 0,max = 1,message = "性别非法")
     private Integer sex;
+
+    @Range(min = 0,max = 1,message = "状态无效")
     private Integer status;
 
     @Column(columnName = "head_img_url")

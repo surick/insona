@@ -45,10 +45,8 @@ public class Update {
     }
 
     public Update set(String column, Object value) {
-        String uuidKey = "updateParam" + (this.parameters.getValues().size() + 1);
-        column = column.replaceFirst("\\?", "(:" + uuidKey + ")");
         columns.add(column);
-        parameters.addValue(uuidKey, value);
+        parameters.addValue(column, value);
         return this;
     }
 
@@ -75,13 +73,13 @@ public class Update {
                     if (!column.columnName().isEmpty()) {
                         dbName = column.columnName();
                     }
-                    set("`" + dbName + "`", f.get(t));
+                    set(dbName, f.get(t));
                 }
                 if (column == null && f.get(t) != null) {
-                    set("`" + dbName + "`", f.get(t));
+                    set(dbName, f.get(t));
                 }
                 if (column != null && column.primaryKey() && needPrimary) {
-                    where("`" + dbName + "` = ?", f.get(t));
+                    where(dbName + " = ?", f.get(t));
                 }
             } catch (IllegalAccessException ex) {
                 ex.printStackTrace();
@@ -109,7 +107,7 @@ public class Update {
         StringBuilder stringBuilder = new StringBuilder();
 
         List<String> columns = new ArrayList<>();
-        this.columns.forEach(column -> columns.add(column));
+        this.columns.forEach(column -> columns.add("`" + column + "` =:" + column));
 
         stringBuilder.append("UPDATE ")
                 .append(tableName)

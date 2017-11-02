@@ -8,14 +8,12 @@ import com.jieweifu.models.admin.User;
 import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
 import com.jieweifu.services.admin.UserService;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +58,14 @@ public class UserController {
     /**
      * 新增用户
      */
-    @PostMapping("addUser")
-    public Result addUser(@RequestBody User user) {
-        if (user.getUserName() == null || user.getPassword() == null) {
-            return new Result().setError("账户名密码不允许为空");
+    @PostMapping("saveUser")
+    public Result saveUser(@Valid @RequestBody User user, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
         }
+        if (user.getUserName() == null || user.getPassword() == null ||
+                user.getUserName().equals("") || user.getPassword().equals(""))
+            return new Result().setError("账户名密码不允许为空");
         if (userService.getUserByUserName(user.getUserName()) != null)
             return new Result().setError("用户名已存在");
         userService.addUser(user);
@@ -76,10 +77,16 @@ public class UserController {
      * 修改用户
      */
     @PutMapping("updateUser")
-
-    public Result updateUsers(@RequestBody User user) {
-        if (user.getUserName() == null || user.getName() == null)
-            return new Result().setError("用户名不能为空");
+    public Result updateUsers(@Valid @RequestBody User user, Errors errors) {
+        if (user.getId() == -1)
+            return new Result().setError("非法id");
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
+        if (userService.getUserById(user.getId()) == null)
+            return new Result().setError("用户不存在");
+        if (user.getUserName() != null || user.getPassword() != null)
+            return new Result().setError("登录名密码不允许更改");
         userService.updateUser(user);
         return new Result().setMessage("修改成功");
     }
@@ -88,8 +95,9 @@ public class UserController {
      * 删除用户
      */
     @DeleteMapping("deleteUser/{id}")
+
     public Result deleteUser(@PathVariable("id") int id) {
-        if (id == 0 || userService.getUserById(id) == null)
+        if (id < 1 || userService.getUserById(id) == null)
             return new Result().setError("用户不存在");
         userService.isDelete(id);
         return new Result().setMessage("删除成功");

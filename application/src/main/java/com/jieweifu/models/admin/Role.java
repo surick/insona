@@ -2,6 +2,8 @@ package com.jieweifu.models.admin;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,15 +15,18 @@ public class Role {
     private int id = -1;
 
     @Column(columnName = "role_name")
+    @NotBlank(message = "角色名称不能为空")
     private String roleName;
 
     @Column(columnName = "role_code")
+    @NotBlank(message = "角色代码不能为空")
     private String roleCode;
 
     @Column(columnName = "parent_id")
     private int parentId = -1;
 
     @Column(columnName = "order_num")
+    @Range(min = 0,max = 100,message = "排序越界")
     private int orderNum;
 
     private String description;

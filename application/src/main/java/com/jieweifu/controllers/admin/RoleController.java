@@ -1,5 +1,6 @@
 package com.jieweifu.controllers.admin;
 
+import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.RoleAuthority;
@@ -9,9 +10,11 @@ import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
 import com.jieweifu.services.admin.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +43,8 @@ public class RoleController {
     /**
      * 查找全部角色
      */
-    @GetMapping("getAllRoles")
-    public Result getAllRoles() {
+    @GetMapping("listAllRoles")
+    public Result listAllRoles() {
         return new Result().setData(getRoleTree(1));
     }
 
@@ -91,10 +94,10 @@ public class RoleController {
      * 分类下有子分类不允许删除,
      * 角色下有用户在使用,不允许删除
      */
-    @DeleteMapping("deleteRole/{id}")
-    public Result deleteRole(@PathVariable("id") int id) {
-        if (id == 1)
-            return new Result().setError("超级管理员不允许删除");
+    @DeleteMapping("removeRole/{id}")
+    public Result removeRole(@PathVariable("id") int id) {
+        if (id <= 1)
+            return new Result().setError("id不合法");
         if (roleService.getRoleById(id) == null)
             return new Result().setError("分类不存在");
         if (!roleService.getRoleByParentId(id).isEmpty())
@@ -110,35 +113,33 @@ public class RoleController {
     /**
      * 添加角色
      */
-    @PostMapping("addRole")
-    public Result addRole(@RequestBody Role Role) {
-        boolean flag = true;
-        if (roleService.getRoleById(Role.getId()) == null
-                && Role.getRoleName() != null
-                && Role.getRoleCode() != null) {
-            roleService.addRole(Role);
-        } else {
-            flag = false;
+    @PostMapping("saveRole")
+    @AdminAuthAnnotation(check = false)
+    public Result saveRole(@Valid @RequestBody Role Role, Errors errors) {
+        if(errors.hasErrors()){
+            return new Result().setError(ErrorUtil.getErrors(errors));
         }
-        return new Result().setMessage(flag ? "新增成功" : "新增失败");
+            roleService.addRole(Role);
+        return new Result().setMessage("新增成功");
     }
 
 
     /**
      * 添加权限
      */
-    @PostMapping("addAuthority/{id}")
-    public Result addAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
+    @PostMapping("saveAuthority/{id}")
+    public Result saveAuthority(@PathVariable("id") int id,
+                                @RequestBody Map<String, List<Integer>> mapList) {
         if (mapList.isEmpty())
             return new Result().setError("权限为空");
         mapList.forEach(
-                (i, strings) ->
+                (s, integers) ->
                 {
-                    for (String j : strings) {
+                    for (Integer j : integers) {
                         RoleAuthority roleAuthority = new RoleAuthority();
                         roleAuthority.setRoleId(id);
-                        roleAuthority.setResourceId(i);
-                        roleAuthority.setResourceType(j);
+                        roleAuthority.setResourceId(j);
+                        roleAuthority.setResourceType(s);
                         roleAuthorityService.addRoleAuthority(roleAuthority);
                     }
                 }
@@ -151,9 +152,9 @@ public class RoleController {
      * 修改角色权限
      */
     @PutMapping("updateAuthority/{id}")
-    public Result updateAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
+    public Result updateAuthority(@PathVariable("id") int id, @RequestBody Map<String, List<Integer>> mapList) {
         roleAuthorityService.deleteRoleAuthority(id);
-        return addAuthority(id, mapList);
+        return saveAuthority(id, mapList);
     }
 
     /**

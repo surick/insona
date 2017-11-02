@@ -14,7 +14,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -37,18 +40,25 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
         response.setStatus(HttpStatus.OK.value());
 
         Throwable error = errorAttributes.getError(new ServletRequestAttributes(request));
-        logger.error("ip: "
-                .concat(ClientUtil.getClientIp(request))
-                .concat(", status: ")
-                .concat(String.valueOf(map.get("status")))
-                .concat(", path: ")
-                .concat(String.valueOf(map.get("path")))
-                .concat(", message: ")
-                .concat(String.valueOf(map.get("message"))), error);
-
         String message = "出错了, 请稍后再试!";
-        if (logger.isDebugEnabled()) {
-            message = error != null ? error.getLocalizedMessage() : String.valueOf(map.get("message"));
+        if (error instanceof ConstraintViolationException) {
+            if (logger.isDebugEnabled()) {
+                List<String> errors = new ArrayList<>();
+                ((ConstraintViolationException) error).getConstraintViolations().forEach(p -> errors.add(p.getMessage()));
+                message = String.join(", ", errors);
+            }
+        } else {
+            logger.error("ip: "
+                    .concat(ClientUtil.getClientIp(request))
+                    .concat(", status: ")
+                    .concat(String.valueOf(map.get("status")))
+                    .concat(", path: ")
+                    .concat(String.valueOf(map.get("path")))
+                    .concat(", message: ")
+                    .concat(String.valueOf(map.get("message"))), error);
+            if (logger.isDebugEnabled()) {
+                message = error != null ? error.getLocalizedMessage() : String.valueOf(map.get("message"));
+            }
         }
 
         return new Result().setError(status, message);

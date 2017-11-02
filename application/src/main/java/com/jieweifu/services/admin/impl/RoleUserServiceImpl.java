@@ -28,7 +28,9 @@ public class RoleUserServiceImpl implements RoleUserService {
     @Override
     public void addRoleUser(RoleUser roleUser) {
         OperateHandler.assignCreateUser(roleUser);
-        db.insert().save(roleUser).execute();
+        db.insert()
+                .save(roleUser)
+                .execute();
     }
 
     @Override
