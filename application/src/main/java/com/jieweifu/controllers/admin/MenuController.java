@@ -33,7 +33,7 @@ public class MenuController {
         List<Menu> menuList = new ArrayList<>();
         pMenuList.forEach(
                 menu -> {
-                    Menu role1 = menuService.getMenuById(menu.getId());
+                    Menu role1 = getMenuTree(menu.getId());
                     menuList.add(role1);
                 }
         );
@@ -43,11 +43,11 @@ public class MenuController {
     /**
      * 递归生成Tree
      */
-    private Menu MenuTree(int cid) {
+    private Menu getMenuTree(int cid) {
         Menu pMenu = menuService.getMenuById(cid);
         List<Menu> cMenuList = menuService.getMenuByParentId(pMenu.getId());
         for (Menu Menu : cMenuList) {
-            Menu m = MenuTree(Menu.getId());
+            Menu m = getMenuTree(Menu.getId());
             pMenu.getChildren().add(m);
         }
         return pMenu;
