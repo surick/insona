@@ -18,8 +18,12 @@ const ajax = (vm, request) => {
             .then(res => {
                 switch (res.data.code) {
                 case 200:
-                    if (!res.data.success && res.data.message) {
-                        vm && vm.$Message.error(res.data.message);
+                    if (res.data.message) {
+                        if (res.data.success) {
+                            vm && vm.$Message.success(res.data.message);
+                        } else {
+                            vm && vm.$Message.error(res.data.message);
+                        }
                     }
                     resolve(res.data);
                     break;

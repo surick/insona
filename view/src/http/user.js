@@ -47,7 +47,7 @@ export default {
                 address: obj.address,
                 mobilePhone: obj.mobilePhone,
                 email: obj.email,
-                sex: obj.sex === '男' ? 1 : 2,
+                sex: obj.sex === '男' ? 1 : 0,
                 status: obj.status ? 1 : 0
             }
         });
@@ -59,13 +59,12 @@ export default {
             url: '/sys/user/updateUser',
             data: {
                 id: id,
-                userName: obj.userName,
                 name: obj.name,
                 birthday: moment(obj.birthday).format('YYYY-MM-DD'),
                 address: obj.address,
                 mobilePhone: obj.mobilePhone,
                 email: obj.email,
-                sex: obj.sex === '男' ? 1 : 2,
+                sex: obj.sex === '男' ? 1 : 0,
                 status: obj.status ? 1 : 0
             }
         });

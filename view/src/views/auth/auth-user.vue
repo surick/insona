@@ -34,7 +34,8 @@
         <!-- 编辑与新增 -->
         <Modal
             v-model="addAndEditModal"
-            :title="['用户新增', '用户编辑'][addOrEdit]">
+            :title="['用户新增', '用户编辑'][addOrEdit]"
+            :mask-closable="false">
             <div class="modal-body">
                 <Row class="margin-bottom-10" v-if="addOrEdit === 1">
                     <Col span="6">
@@ -132,6 +133,7 @@
         <Modal
             v-model="roleModal"
             title="配置角色"
+            :mask-closable="false"
             @on-ok="saveRole">
             <div class="modal-body">
                 <Tree ref="roleTree" :data="roleData" show-checkbox></Tree>
@@ -155,7 +157,7 @@ export default {
             selectIndex: 0,
             roleModal: false,
             roleIndexs: [],
-            total: 50,
+            total: 0,
             current: 1,
             roleData: [
                 {
@@ -290,7 +292,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.delete(params.index);
+                                        this.delete(params.row.id);
                                     }
                                 }
                             }, [
@@ -336,11 +338,12 @@ export default {
     methods: {
         getUser() {
             User.getUser(this, {
-                pageIndex: this.current,
+                pageIndex: this.current - 1,
                 pageSize: 10
             }).then((res) => {
                 if (res.success) {
-                    this.data = res.data;
+                    this.data = res.data.list;
+                    this.total = res.data.total;
                 }
             });
         },
@@ -397,7 +400,7 @@ export default {
 
                 User.addUser(this, this.user).then(res => {
                     if (res.success) {
-                        this.$Modal.remove();
+                        this.addAndEditModal = false;
                     }
                 });
             } else {
@@ -407,20 +410,20 @@ export default {
 
                 User.updateUser(this, this.editId, this.user).then(res => {
                     if (res.success) {
-                        this.$Modal.remove();
+                        this.addAndEditModal = false;
                     }
                 });
             }
         },
 
-        delete(index) {
+        delete(id) {
             this.$Modal.confirm({
                 title: '提示',
                 content: '确定删除用户？',
                 okText: '确定',
                 cancelText: '取消',
                 onOk: () => {
-                    alert(1);
+                    console.log(id);
                 }
             });
         },
