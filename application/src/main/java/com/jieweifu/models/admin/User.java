@@ -2,6 +2,7 @@ package com.jieweifu.models.admin;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import com.jieweifu.models.regex.Regex;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -15,9 +16,6 @@ import javax.validation.constraints.Pattern;
 @SuppressWarnings("unused")
 @Entity(tableName = "base_user")
 public class User {
-    static final String DATE_REX = "([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})";
-    static final String PHONE_REX = "^1([34578])\\d{9}$";
-
     @Column(primaryKey = true)
     private int id = -1;
 
@@ -33,15 +31,15 @@ public class User {
     @NotBlank(message = "name不允许为空")
     private String name;
 
-
-    @Pattern(regexp = DATE_REX ,message = "日期格式错误")
+    @Pattern(regexp = Regex.DATE_REX,message = "日期格式错误")
     private String birthday;
 
     @NotBlank(message = "address不允许为空")
     private String address;
 
+    @Pattern(regexp =Regex.PHONE_REX ,message = "手机号码格式错误")
     @Column(columnName = "mobile_phone")
-    @Pattern(regexp =PHONE_REX ,message = "手机号码格式错误")
+
     private String mobilePhone;
 
     @Email(message = "电子邮箱格式错误")

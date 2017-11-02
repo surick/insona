@@ -5,6 +5,7 @@ import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.RoleUser;
 import com.jieweifu.models.admin.User;
+import com.jieweifu.models.regex.Regex;
 import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
 import com.jieweifu.services.admin.UserService;
@@ -59,13 +60,14 @@ public class UserController {
      * 新增用户
      */
     @PostMapping("saveUser")
+    @AdminAuthAnnotation(check = false)
     public Result saveUser(@Valid @RequestBody User user, Errors errors) {
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
-        if (user.getUserName() == null || user.getPassword() == null ||
-                user.getUserName().equals("") || user.getPassword().equals(""))
-            return new Result().setError("账户名密码不允许为空");
+        if (!user.getUserName().matches(Regex.USERNAME_REX)||
+                !user.getPassword().matches(Regex.PASSWORD_REX))
+            return new Result().setError("账户名4-16位!密码6-16位!");
         if (userService.getUserByUserName(user.getUserName()) != null)
             return new Result().setError("用户名已存在");
         userService.addUser(user);
@@ -109,6 +111,7 @@ public class UserController {
      * 分页查询用户
      */
     @GetMapping("pageUser/{pageIndex}/{pageSize}")
+    @AdminAuthAnnotation(check = false)
     public Result getUserByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
         if (pageIndex < 0 || pageSize < 0)
