@@ -37,7 +37,6 @@ public class MenuController {
                     menuList.add(role1);
                 }
         );
-        menuList.remove(0);
         return new Result().setData(menuList);
     }
 
