@@ -78,13 +78,15 @@ public class RoleController {
      * 更新角色
      */
     @PutMapping("updateRole")
-    public Result updateRole(@RequestBody Role role) {
-        int row = 0;
-        if (roleService.getRoleById(role.getId()) != null
-                && role.getRoleName() != null
-                && role.getRoleCode() != null) {
-            row = roleService.updateRole(role);
+    public Result updateRole(@Valid @RequestBody Role role, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
         }
+        int row = 0;
+        if (roleService.getRoleById(role.getId()) == null || role.getId() == -1) {
+            return new Result().setError("id不合法");
+        }
+        row = roleService.updateRole(role);
         return new Result().setMessage(row != 0 ? "更新成功" : "更新失败");
     }
 
@@ -116,10 +118,10 @@ public class RoleController {
     @PostMapping("saveRole")
     @AdminAuthAnnotation(check = false)
     public Result saveRole(@Valid @RequestBody Role Role, Errors errors) {
-        if(errors.hasErrors()){
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
-            roleService.addRole(Role);
+        roleService.addRole(Role);
         return new Result().setMessage("新增成功");
     }
 

@@ -26,7 +26,7 @@ public class Role {
     private int parentId = -1;
 
     @Column(columnName = "order_num")
-    @Range(min = 0,max = 100,message = "排序越界")
+    @Range(min = 0, max = 100, message = "排序越界")
     private int orderNum;
 
     private String description;

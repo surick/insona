@@ -2,6 +2,8 @@ package com.jieweifu.models.admin;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +14,20 @@ public class Menu {
     @Column(primaryKey = true)
     private int id = -1;
 
+
     private String code;
+    @NotBlank(message = "名称不能为空")
     private String title;
 
     @Column(columnName = "parent_id")
     private int parentId;
-
+    @NotBlank(message = "链接不能为空")
     private String href;
     private String icon;
     private String type;
 
     @Column(columnName = "order_num")
+    @Range()
     private int orderNum;
 
     private String description;
