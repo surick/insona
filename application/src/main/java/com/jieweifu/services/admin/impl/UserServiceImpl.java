@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersByPage(int pageIndex, int pageSize) {
         return db.select()
                 .from(User.class)
-                .where("isDelete = ? AND id != ?", 0, 1)
+                .where("isDelete = ? AND id != 1", 0)
                 .limit(pageIndex, pageSize)
                 .queryForList(User.class);
     }
