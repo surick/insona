@@ -15,6 +15,9 @@ import javax.validation.constraints.Pattern;
 @SuppressWarnings("unused")
 @Entity(tableName = "base_user")
 public class User {
+    static final String DATE_REX = "([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})";
+    static final String PHONE_REX = "^1([34578])\\d{9}$";
+
     @Column(primaryKey = true)
     private int id = -1;
 
@@ -22,7 +25,6 @@ public class User {
     private String userName;
 
     @Column(select = false)
-
     private String password;
 
     @Column(select = false)
@@ -31,14 +33,15 @@ public class User {
     @NotBlank(message = "name不允许为空")
     private String name;
 
-    @Pattern(regexp = "([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})",message = "日期格式错误")
+
+    @Pattern(regexp = DATE_REX ,message = "日期格式错误")
     private String birthday;
 
     @NotBlank(message = "address不允许为空")
     private String address;
 
     @Column(columnName = "mobile_phone")
-    @Pattern(regexp = "^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")
+    @Pattern(regexp =PHONE_REX ,message = "手机号码格式错误")
     private String mobilePhone;
 
     @Email(message = "电子邮箱格式错误")
