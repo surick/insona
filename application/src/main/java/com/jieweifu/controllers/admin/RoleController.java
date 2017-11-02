@@ -116,7 +116,6 @@ public class RoleController {
      * 添加角色
      */
     @PostMapping("saveRole")
-    @AdminAuthAnnotation(check = false)
     public Result saveRole(@Valid @RequestBody Role Role, Errors errors) {
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));

@@ -60,7 +60,6 @@ public class UserController {
      * 新增用户
      */
     @PostMapping("saveUser")
-    @AdminAuthAnnotation(check = false)
     public Result saveUser(@Valid @RequestBody User user, Errors errors) {
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
@@ -111,7 +110,6 @@ public class UserController {
      * 分页查询用户
      */
     @GetMapping("pageUser/{pageIndex}/{pageSize}")
-    @AdminAuthAnnotation(check = false)
     public Result getUserByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
         if (pageIndex < 0 || pageSize < 0)
