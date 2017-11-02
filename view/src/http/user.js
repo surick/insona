@@ -68,5 +68,13 @@ export default {
                 status: obj.status ? 1 : 0
             }
         });
+    },
+
+    deleteUser(vm, ids) {
+        return ajax(vm, {
+            method: 'DELETE',
+            url: '/sys/user/deleteUser',
+            data: ids
+        });
     }
 };

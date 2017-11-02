@@ -125,6 +125,7 @@
 </template>
 
 <script>
+    import { Role } from '@/http';
     export default {
         name: 'auth_role',
         data() {
@@ -210,7 +211,9 @@
             };
         },
         mounted() {
-
+            Role.getRoleTree(this).then(res => {
+                console.log(res);
+            });
         },
         methods: {
             treeNodeSelect(node) {

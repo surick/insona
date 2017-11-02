@@ -18,7 +18,7 @@
                     <Icon type="android-settings"></Icon>
                     配置角色
                 </Button>
-                <Button type="error">
+                <Button type="error" @click="deleteUser()">
                     <Icon type="trash-a"></Icon>
                     删除
                 </Button>
@@ -144,7 +144,7 @@
 
 <script>
 import expandRow from './auth-user-expand.vue';
-import { User } from '@/http';
+import { User, Role } from '@/http';
 export default {
     name: 'auth_user',
     components: { expandRow },
@@ -154,7 +154,7 @@ export default {
             addAndEditModal: false,
             addOrEdit: 0,
             editId: '',
-            selectIndex: 0,
+            selected: [],
             roleModal: false,
             roleIndexs: [],
             total: 0,
@@ -292,7 +292,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.delete(params.row.id);
+                                        this.deleteUser([params.row.id]);
                                     }
                                 }
                             }, [
@@ -329,6 +329,9 @@ export default {
     mounted() {
         this.current = 1;
         this.getUser();
+        Role.getRoleTree(this).then(res => {
+            console.log(res);
+        });
     },
     computed: {
         avatorPath () {
@@ -349,7 +352,7 @@ export default {
         },
 
         selectChange(selection) {
-            console.log(selection);
+            this.selected = selection;
         },
 
         setRole(index) {
@@ -401,6 +404,7 @@ export default {
                 User.addUser(this, this.user).then(res => {
                     if (res.success) {
                         this.addAndEditModal = false;
+                        this.getUser();
                     }
                 });
             } else {
@@ -411,25 +415,35 @@ export default {
                 User.updateUser(this, this.editId, this.user).then(res => {
                     if (res.success) {
                         this.addAndEditModal = false;
+                        this.getUser();
                     }
                 });
             }
         },
 
-        delete(id) {
+        deleteUser(ids) {
+            if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
+            if (!ids && this.selected.length > 0) {
+                ids = this.selected.map(item => {
+                    return item.id;
+                });
+            }
             this.$Modal.confirm({
                 title: '提示',
                 content: '确定删除用户？',
                 okText: '确定',
                 cancelText: '取消',
                 onOk: () => {
-                    console.log(id);
+                    User.deleteUser(this, ids).then((res) => {
+                        if (res.success) this.getUser();
+                    });
                 }
             });
         },
 
         changePage(page) {
-            console.log(page);
+            this.current = page;
+            this.getUser();
         },
 
         saveRole() {
