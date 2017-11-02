@@ -94,7 +94,6 @@ public class UserController {
      * 删除用户
      */
     @DeleteMapping("deleteUser")
-    @AdminAuthAnnotation(check = false)
     public Result deleteUser(@RequestBody List<String> ids) {
         for (String id : ids) {
             if (userService.getUserById(Integer.parseInt(id)) == null || id.equals("1")) {
