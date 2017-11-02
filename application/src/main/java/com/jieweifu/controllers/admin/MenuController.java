@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -28,7 +29,16 @@ public class MenuController {
      */
     @GetMapping("listAllMenus")
     public Result listAllMenus() {
-        return new Result().setData(MenuTree(1));
+        List<Menu> pMenuList = menuService.getMenuByParentId(-1);
+        List<Menu> menuList = new ArrayList<>();
+        pMenuList.forEach(
+                menu -> {
+                    Menu role1 = menuService.getMenuById(menu.getId());
+                    menuList.add(role1);
+                }
+        );
+        menuList.remove(0);
+        return new Result().setData(menuList);
     }
 
     /**

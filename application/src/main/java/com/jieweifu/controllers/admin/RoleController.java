@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,19 @@ public class RoleController {
      */
     @GetMapping("listAllRoles")
     public Result listAllRoles() {
-        return new Result().setData(getRoleTree(1));
+        List<Role> pRoleList = roleService.getRoleByParentId(-1);
+        List<Role> roleList = new ArrayList<>();
+        pRoleList.forEach(
+                role -> {
+                    Role role1 = getRoleTree(role.getId());
+                    roleList.add(role1);
+                }
+        );
+        roleList.remove(0);
+        return new Result().setData(roleList);
     }
+
+
 
     /**
      * 角色信息Tree生成方法
