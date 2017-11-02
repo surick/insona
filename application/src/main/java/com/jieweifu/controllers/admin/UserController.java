@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 管理用户类
@@ -64,7 +62,7 @@ public class UserController {
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
-        if (!user.getUserName().matches(Regex.USERNAME_REX)||
+        if (!user.getUserName().matches(Regex.USERNAME_REX) ||
                 !user.getPassword().matches(Regex.PASSWORD_REX))
             return new Result().setError("账户名4-16位!密码6-16位!");
         if (userService.getUserByUserName(user.getUserName()) != null)
@@ -95,14 +93,16 @@ public class UserController {
     /**
      * 删除用户
      */
-    @DeleteMapping("deleteUser/{id}")
-
-    public Result deleteUser(@PathVariable("id") int id) {
-        if (id < 1 || userService.getUserById(id) == null)
-            return new Result().setError("用户不存在");
-        userService.isDelete(id);
+    @DeleteMapping("deleteUser")
+    @AdminAuthAnnotation(check = false)
+    public Result deleteUser(@RequestBody List<String> ids) {
+        for (String id : ids) {
+            if (userService.getUserById(Integer.parseInt(id)) == null || id.equals("1")) {
+                return new Result().setError("无效id");
+            }
+            userService.isDelete(Integer.parseInt(id));
+        }
         return new Result().setMessage("删除成功");
-
     }
 
 

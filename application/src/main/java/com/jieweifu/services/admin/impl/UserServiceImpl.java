@@ -191,9 +191,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void isDelete(int id) {
+    public void isDelete(Integer id) {
         //db.getJdbcTemplate().execute("ALTER TABLE base_user ADD isDelete int");
-        db.update().table(User.class).set("isDelete = ?", 1).where("id = ?", id).execute();
+        db.update().table(User.class).set("isDelete", 1).where("id = ?", id).execute();
     }
 
     private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {

@@ -40,5 +40,5 @@ public interface UserService {
 
     int getUserTotal();
 
-    void isDelete(int id);
+    void isDelete(Integer ids);
 }
