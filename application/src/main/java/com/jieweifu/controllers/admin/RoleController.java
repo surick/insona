@@ -41,9 +41,8 @@ public class RoleController {
      * 查找全部角色
      */
     @GetMapping("getAllRoles")
-    @AdminAuthAnnotation(check = false)
     public Result getAllRoles() {
-        return new Result().setData(getRoleTree(1)).setMessage(roleService.getCrtUser().toString());
+        return new Result().setData(getRoleTree(1));
     }
 
     /**
@@ -65,10 +64,10 @@ public class RoleController {
     @GetMapping("getRoleById/{id}")
     public Result getRoleById(@PathVariable("id") int id) {
         if (id < 1)
-            throw new RuntimeException("id不合法");
+            return new Result().setError("id不合法");
         Role Role = roleService.getRoleById(id);
         if (Role == null)
-            throw new RuntimeException("查找的数据不存在");
+            return new Result().setError("查找的数据不存在");
         return new Result().setData(Role);
     }
 
@@ -95,25 +94,21 @@ public class RoleController {
     @DeleteMapping("deleteRole/{id}")
     public Result deleteRole(@PathVariable("id") int id) {
         if (id == 1)
-            throw new RuntimeException("超级管理员不允许删除");
+            return new Result().setError("超级管理员不允许删除");
         if (roleService.getRoleById(id) == null)
-            throw new RuntimeException("分类不存在");
-        //分类下不为空则不允许删除
+            return new Result().setError("分类不存在");
         if (!roleService.getRoleByParentId(id).isEmpty())
-            return new Result().setMessage("分类下不为空,不允许删除");
-        //角色下用户不为空不允许删除
+            return new Result().setError("分类下不为空,不允许删除");
         if (roleUserService.getRoleUserByRoleId(id) != null)
-            return new Result().setMessage("角色下用户不为空,不允许删除");
-        //删除菜单
+            return new Result().setError("角色下用户不为空,不允许删除");
         roleService.deleteRole(id);
-        //删除权限
         roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
         return new Result().setMessage("删除角色成功");
 
     }
 
     /**
-     * @return 添加角色
+     * 添加角色
      */
     @PostMapping("addRole")
     public Result addRole(@RequestBody Role Role) {
@@ -130,12 +125,12 @@ public class RoleController {
 
 
     /**
-     * @return 添加权限
+     * 添加权限
      */
     @PostMapping("addAuthority/{id}")
     public Result addAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
         if (mapList.isEmpty())
-            throw new RuntimeException("权限为空");
+            return new Result().setError("权限为空");
         mapList.forEach(
                 (i, strings) ->
                 {
@@ -153,7 +148,7 @@ public class RoleController {
     }
 
     /**
-     * @return 修改角色权限
+     * 修改角色权限
      */
     @PutMapping("updateAuthority/{id}")
     public Result updateAuthority(@PathVariable("id") int id, @RequestBody Map<Integer, List<String>> mapList) {
@@ -163,11 +158,8 @@ public class RoleController {
 
     /**
      * 显示角色权限
-     * @param roleId
-     * @return
      */
     @GetMapping("getUserPower/{id}")
-    @AdminAuthAnnotation(check = false)
     public Result getUserPower(@PathVariable("id") int roleId) {
         return new Result().setData(roleAuthorityService.getMenuElements(roleId));
     }

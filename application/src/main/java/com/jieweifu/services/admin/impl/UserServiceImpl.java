@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserHeadImg(int userId, String headImgUrl) {
         User user = new User();
+        OperateHandler.assignUpdateUser(user);
         user.setId(userId);
         user.setHeadImgUrl(headImgUrl);
         updateUser(user);
@@ -78,6 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(User user) {
+        OperateHandler.assignUpdateUser(user);
         db.update()
                 .save(user)
                 .execute();
@@ -159,6 +161,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersByPage(int pageIndex, int pageSize) {
         return db.select()
                 .from(User.class)
+                .where("isDelete = ?", 0)
                 .limit(pageIndex, pageSize)
                 .queryForList(User.class);
     }
@@ -177,6 +180,20 @@ public class UserServiceImpl implements UserService {
                 .from(User.class)
                 .where("id = ?", id)
                 .execute();
+    }
+
+    @Override
+    public int getUserTotal() {
+        return db.select()
+                .columns("count(*)")
+                .from(User.class)
+                .queryForEntity(Integer.class);
+    }
+
+    @Override
+    public void isDelete(int id) {
+        //db.getJdbcTemplate().execute("ALTER TABLE base_user ADD isDelete int");
+        db.update().table(User.class).set("isDelete = ?", 1).where("id = ?", id).execute();
     }
 
     private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {

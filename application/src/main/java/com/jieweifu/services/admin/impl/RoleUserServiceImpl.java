@@ -21,7 +21,7 @@ public class RoleUserServiceImpl implements RoleUserService {
     public RoleUser getRoleUserByRoleId(int roleId) {
         return db.select()
                 .from(RoleUser.class)
-                .where("role_id = ?",roleId)
+                .where("role_id = ?", roleId)
                 .queryForEntity(RoleUser.class);
     }
 
@@ -33,6 +33,6 @@ public class RoleUserServiceImpl implements RoleUserService {
 
     @Override
     public void deleteRoleUser(int userId) {
-        db.delete().from(RoleUser.class).where("user_id = ?",userId).execute();
+        db.delete().from(RoleUser.class).where("user_id = ?", userId).execute();
     }
 }

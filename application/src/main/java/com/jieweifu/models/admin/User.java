@@ -3,6 +3,8 @@ package com.jieweifu.models.admin;
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
 
+import javax.validation.constraints.NotNull;
+
 @SuppressWarnings("unused")
 @Entity(tableName = "base_user")
 public class User {
@@ -10,21 +12,24 @@ public class User {
     private int id = -1;
 
     @Column(columnName = "user_name")
+    @NotNull(message = "UserName不能为空")
     private String userName;
 
     @Column(select = false)
+    @NotNull(message = "密码不能为空")
     private String password;
 
     @Column(select = false)
     private String salt;
-
+    @NotNull(message = "Name不能为空")
     private String name;
     private String birthday;
     private String address;
 
     @Column(columnName = "mobile_phone")
+    @NotNull(message = "手机号不能为空")
     private String mobilePhone;
-
+    @NotNull(message = "邮箱不能为空")
     private String email;
     private Integer sex;
     private Integer status;

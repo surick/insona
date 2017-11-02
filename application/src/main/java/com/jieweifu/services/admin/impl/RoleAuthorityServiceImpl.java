@@ -25,7 +25,6 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
     }
 
 
-
     @Override
     public int addRoleAuthority(RoleAuthority roleAuthority) {
         int rows = 0;
@@ -45,7 +44,7 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
     public List<RoleAuthority> getRoleAuthorityById(int roleId) {
         return db.select()
                 .from(RoleAuthority.class)
-                .where("role_id = ?",roleId)
+                .where("role_id = ?", roleId)
                 .queryForList(RoleAuthority.class);
     }
 
@@ -60,7 +59,6 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
     }
 
 
-
     @Override
     public int updateRoleAuthority(RoleAuthority RoleAuthority) {
         OperateHandler.assignUpdateUser(RoleAuthority);
@@ -71,34 +69,34 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
     public List<String> getResourceType(int resourceId) {
         return db.select().columns("resource_type")
                 .from(RoleAuthority.class)
-                .where("resource_id = ?",resourceId)
+                .where("resource_id = ?", resourceId)
                 .queryForList(String.class);
     }
 
     @Override
-    public MenuElements getMenuElements(int roleId){
+    public MenuElements getMenuElements(int roleId) {
         List<Menu> menus = getAllMenus();
         List<Element> elements = getAllElements();
 
 
-            List<Menu> _menus = new ArrayList<>();
-            List<Element> _elements = new ArrayList<>();
+        List<Menu> _menus = new ArrayList<>();
+        List<Element> _elements = new ArrayList<>();
 
-            List<RoleAuthority> roleAuthorities = getRoleAuthorityById(roleId);
-            menus.forEach(menu -> {
-                if (roleAuthorities.stream().filter(p -> p.getResourceId() == menu.getId()
-                        && p.getResourceType().equalsIgnoreCase("MENU")).count() > 0) {
-                    _menus.add(menu);
-                }
-            });
-            elements.forEach(element -> {
-                if (roleAuthorities.stream().filter(p -> p.getResourceId() == element.getId()
-                        && p.getResourceType().equalsIgnoreCase("ELEMENT")).count() > 0) {
-                    _elements.add(element);
-                }
-            });
-            menus = _menus;
-            elements = _elements;
+        List<RoleAuthority> roleAuthorities = getRoleAuthorityById(roleId);
+        menus.forEach(menu -> {
+            if (roleAuthorities.stream().filter(p -> p.getResourceId() == menu.getId()
+                    && p.getResourceType().equalsIgnoreCase("MENU")).count() > 0) {
+                _menus.add(menu);
+            }
+        });
+        elements.forEach(element -> {
+            if (roleAuthorities.stream().filter(p -> p.getResourceId() == element.getId()
+                    && p.getResourceType().equalsIgnoreCase("ELEMENT")).count() > 0) {
+                _elements.add(element);
+            }
+        });
+        menus = _menus;
+        elements = _elements;
 
 
         return new MenuElements(menus, elements);
