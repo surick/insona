@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserService {
     public int getUserTotal() {
         return db.select()
                 .from(User.class)
-                .where("isDelete = ?", 0)
+                .where("isDelete = ? AND id != 1", 0)
                 .total();
     }
 
