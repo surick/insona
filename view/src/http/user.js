@@ -1,4 +1,5 @@
 import ajax from './api';
+import moment from 'moment';
 
 export default {
     login(vm, obj) {
@@ -24,6 +25,48 @@ export default {
                     resolve(access);
                 }
             });
+        });
+    },
+
+    getUser(vm, obj) {
+        return ajax(vm, {
+            method: 'GET',
+            url: '/sys/user/pageUser/' + obj.pageIndex + '/' + obj.pageSize
+        });
+    },
+
+    addUser(vm, obj) {
+        return ajax(vm, {
+            method: 'POST',
+            url: '/sys/user/addUser',
+            data: {
+                userName: obj.userName,
+                name: obj.name,
+                password: obj.password,
+                birthday: moment(obj.birthday).format('YYYY-MM-DD'),
+                address: obj.address,
+                mobilePhone: obj.mobilePhone,
+                email: obj.email,
+                sex: obj.sex === '男' ? 1 : 0,
+                status: obj.status ? 1 : 0
+            }
+        });
+    },
+
+    updateUser(vm, id, obj) {
+        return ajax(vm, {
+            method: 'PUT',
+            url: '/sys/user/updateUser',
+            data: {
+                id: id,
+                name: obj.name,
+                birthday: moment(obj.birthday).format('YYYY-MM-DD'),
+                address: obj.address,
+                mobilePhone: obj.mobilePhone,
+                email: obj.email,
+                sex: obj.sex === '男' ? 1 : 0,
+                status: obj.status ? 1 : 0
+            }
         });
     }
 };
