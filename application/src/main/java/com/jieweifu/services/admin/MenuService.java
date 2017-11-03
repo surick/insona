@@ -17,4 +17,8 @@ public interface MenuService {
     void deleteMenu(int id);
 
     int addMenu(Menu menu);
+
+    Menu getMenuByTitle(String title);
+
+    Menu getMenuByCode(String code);
 }

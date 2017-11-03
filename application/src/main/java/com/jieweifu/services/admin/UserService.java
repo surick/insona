@@ -34,6 +34,8 @@ public interface UserService {
 
     List<User> getUsersByPage(int pageIndex, int pageSize);
 
+    List<User> getUserByName(String Name);
+
     User getUserByUserName(String userName);
 
     void deleteUser(int id);

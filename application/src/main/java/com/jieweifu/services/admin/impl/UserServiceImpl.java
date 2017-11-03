@@ -167,6 +167,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getUserByName(String Name) {
+        return db.select()
+                .from(User.class)
+                .where("name LIKE ?", "%" + Name + "%")
+                .queryForList(User.class);
+    }
+
+    @Override
     public User getUserByUserName(String userName) {
         return db.select()
                 .from(User.class)

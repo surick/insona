@@ -14,7 +14,7 @@ public class Menu {
     @Column(primaryKey = true)
     private int id = -1;
 
-
+    @NotBlank(message = "code不能为空")
     private String code;
     @NotBlank(message = "名称不能为空")
     private String title;
@@ -24,14 +24,17 @@ public class Menu {
     @NotBlank(message = "链接不能为空")
     private String href;
     private String icon;
+    @NotBlank(message = "类型不能为空")
     private String type;
 
     @Column(columnName = "order_num")
-    @Range()
     private int orderNum;
 
     private String description;
+    @NotBlank(message = "路径不能为空")
     private String path;
+
+    @Range(min = 0,max = 1,message = "状态无效")
     private int enabled;
 
     @Column(columnName = "crt_time")

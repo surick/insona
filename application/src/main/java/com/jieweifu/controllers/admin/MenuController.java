@@ -1,19 +1,20 @@
 package com.jieweifu.controllers.admin;
 
+import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.Menu;
 import com.jieweifu.services.admin.MenuService;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-@Controller("SystemMenu")
+@RestController("SystemMenu")
 @RequestMapping("sys/menu")
 @AdminAuthAnnotation
 public class MenuController {
@@ -71,12 +72,12 @@ public class MenuController {
      * 更新menu信息,
      */
     @PutMapping("updateMenu")
-    public Result updateMenu(@RequestBody Menu Menu) {
+    public Result updateMenu(@Valid @RequestBody Menu Menu, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
         boolean flag = true;
-        if (menuService.getMenuById(Menu.getId()) != null
-                && Menu.getTitle() != null
-                && Menu.getHref() != null
-                && Menu.getIcon() != null) {
+        if (menuService.getMenuById(Menu.getId()) != null) {
             menuService.updateMenu(Menu);
         } else {
             flag = false;
@@ -91,10 +92,9 @@ public class MenuController {
     public Result removeMenu(@PathVariable("id") int id) {
         if (id <= 1)
             return new Result().setError("非法id");
-        Menu Menu = menuService.getMenuById(id);
-        if (Menu == null)
+        if (menuService.getMenuById(id) == null)
             return new Result().setError("分类不存在");
-        if (menuService.getMenuByParentId(Menu.getId()) != null)
+        if (menuService.getMenuByParentId(id) != null)
             return new Result().setError("分类下不为空,不允许删除");
         menuService.deleteMenu(id);
         return new Result().setMessage("删除成功");
@@ -104,13 +104,20 @@ public class MenuController {
      * 添加菜单
      */
     @PostMapping("saveMenu")
-    public Result saveMenu(@RequestBody Menu Menu) {
-        if (menuService.getMenuById(Menu.getId()) == null
-                && Menu.getTitle() != null
-                && Menu.getHref() != null) {
-            return new Result().setMessage(menuService.addMenu(Menu) == 0 ? "新增失败" : "新增成功");
-        } else {
-            return new Result().setMessage("字段不能为空");
+    public Result saveMenu(@Valid @RequestBody Menu menu, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
         }
+        if (menuService.getMenuByTitle(menu.getTitle()) != null) {
+            return new Result().setMessage("角色title已存在");
+        }
+        if (menuService.getMenuByCode(menu.getCode()) != null) {
+            return new Result().setMessage("角色code已存在");
+        }
+        if (menuService.getMenuById(menu.getParentId()) == null) {
+            return new Result().setMessage("父级不存在");
+        }
+        menuService.addMenu(menu);
+        return new Result().setMessage("新增成功");
     }
 }

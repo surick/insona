@@ -44,11 +44,11 @@ public class UserController {
     /**
      * 根据名称查找用户
      */
-    @GetMapping("getUserByUserName/{userName}")
-    public Result getUserByUserName(@PathVariable("userName") String userName) {
-        if (userName == null)
+    @GetMapping("getUserByName/{Name}")
+    public Result getUserByUserName(@PathVariable("Name") String Name) {
+        if (Name == null)
             return new Result().setError("查询信息不能为空");
-        User user = userService.getUserByUserName(userName);
+        List<User> user = userService.getUserByName(Name);
         if (user == null)
             return new Result().setError("用户不存在");
         return new Result().setData(user);
@@ -130,7 +130,8 @@ public class UserController {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
         boolean flag = false;
-        if (roleInfo.getUserId() != 0 && roleInfo.getRoleId() != 0) {
+        if (userService.getUserById(roleInfo.getUserId())!=null&&
+                roleService.getRoleById(roleInfo.getRoleId())!=null) {
             roleUserService.deleteRoleUser(roleInfo.getUserId());
             RoleUser roleUser = new RoleUser();
             roleUser.setUserId(roleInfo.getUserId());

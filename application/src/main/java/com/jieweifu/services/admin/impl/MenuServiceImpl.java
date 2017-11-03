@@ -66,5 +66,21 @@ public class MenuServiceImpl implements MenuService {
                 .execute();
     }
 
+    @Override
+    public Menu getMenuByTitle(String title) {
+        return db.select()
+                .from(Menu.class)
+                .where("title = ?", title)
+                .queryForEntity(Menu.class);
+    }
+
+    @Override
+    public Menu getMenuByCode(String code) {
+        return db.select()
+                .from(Menu.class)
+                .where("code = ?", code)
+                .queryForEntity(Menu.class);
+    }
+
 
 }

@@ -59,7 +59,6 @@ public class RoleController {
     }
 
 
-
     /**
      * 角色信息Tree生成方法
      */
@@ -118,8 +117,10 @@ public class RoleController {
             return new Result().setError("分类下不为空,不允许删除");
         if (roleUserService.getRoleUserByRoleId(id) != null)
             return new Result().setError("角色下用户不为空,不允许删除");
+        if (roleAuthorityService.getRoleAuthorityById(roleService.getRoleById(id).getId()) != null) {
+            roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
+        }
         roleService.deleteRole(id);
-        roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
         return new Result().setMessage("删除角色成功");
 
     }
@@ -128,11 +129,17 @@ public class RoleController {
      * 添加角色
      */
     @PostMapping("saveRole")
-    public Result saveRole(@Valid @RequestBody Role Role, Errors errors) {
+    public Result saveRole(@Valid @RequestBody Role role, Errors errors) {
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
-        roleService.addRole(Role);
+        if (roleService.getRoleByName(role.getRoleName()) != null) {
+            return new Result().setMessage("角色已存在");
+        }
+        if (roleService.getRoleById(role.getParentId()) == null) {
+            return new Result().setMessage("父级不存在");
+        }
+        roleService.addRole(role);
         return new Result().setMessage("新增成功");
     }
 
@@ -158,7 +165,7 @@ public class RoleController {
                 }
         );
 
-        return new Result().setMessage("添加权限成功");
+        return new Result().setMessage("添加/修改权限成功");
     }
 
     /**

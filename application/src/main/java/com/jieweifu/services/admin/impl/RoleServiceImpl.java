@@ -29,7 +29,7 @@ public class RoleServiceImpl implements RoleService {
     public Role getRoleById(int id) {
         return db.select()
                 .from(Role.class)
-                .where("id=?", id)
+                .where("id = ?", id)
                 .queryForEntity(Role.class);
     }
 
@@ -59,6 +59,14 @@ public class RoleServiceImpl implements RoleService {
     public int addRole(Role role) {
         OperateHandler.assignCreateUser(role);
         return db.insert().save(role).execute();
+    }
+
+    @Override
+    public Role getRoleByName(String roleName) {
+        return db.select()
+                .from(Role.class)
+                .where("role_name = ?", roleName)
+                .queryForEntity(Role.class);
     }
 
 }
