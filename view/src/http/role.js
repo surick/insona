@@ -36,5 +36,41 @@ export default {
             }
         });
         return list;
+    },
+    updateRole(vm, obj) {
+        return ajax(vm, {
+            method: 'PUT',
+            url: '/sys/role/updateRole',
+            data: {
+                roleName: obj.roleName,
+                code: obj.code,
+                parent: obj.parent,
+                orderNum: obj.orderNum,
+                status: obj.status ? 1 : 0
+            }
+        });
+    },
+    addRole(vm, obj) {
+        console.log(obj);
+        return ajax(vm, {
+            method: 'POST',
+            url: '/sys/role/saveRole',
+            data: {
+                roleName: obj.roleName,
+                roleCode: obj.roleCode,
+                parentId: obj.parentId,
+                orderNum: obj.orderNum,
+                enabled: obj.enabled ? 1 : 0
+            }
+        });
+    },
+
+    deleteRole(vm, ids) {
+        return ajax(vm, {
+            method: 'DELETE',
+            url: '/sys/role/removeRole',
+            data: ids
+        });
     }
+
 };

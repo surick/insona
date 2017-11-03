@@ -107,20 +107,24 @@ public class RoleController {
      * 分类下有子分类不允许删除,
      * 角色下有用户在使用,不允许删除
      */
-    @DeleteMapping("removeRole/{id}")
-    public Result removeRole(@PathVariable("id") int id) {
-        if (id <= 1)
-            return new Result().setError("id不合法");
-        if (roleService.getRoleById(id) == null)
-            return new Result().setError("分类不存在");
-        if (!roleService.getRoleByParentId(id).isEmpty())
-            return new Result().setError("分类下不为空,不允许删除");
-        if (roleUserService.getRoleUserByRoleId(id) != null)
-            return new Result().setError("角色下用户不为空,不允许删除");
-        if (roleAuthorityService.getRoleAuthorityById(roleService.getRoleById(id).getId()) != null) {
-            roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
+    @DeleteMapping("removeRole")
+    public Result removeRole(@RequestBody List<Integer> ids) {
+        for (int id : ids) {
+            if (id <= 1)
+                return new Result().setError("id不合法");
+            if (roleService.getRoleById(id) == null)
+                return new Result().setError("分类不存在");
+            if (!roleService.getRoleByParentId(id).isEmpty())
+                return new Result().setError("分类下不为空,不允许删除");
+            if (roleUserService.getRoleUserByRoleId(id) != null)
+                return new Result().setError("角色下用户不为空,不允许删除");
         }
-        roleService.deleteRole(id);
+        for(int id :ids){
+            if (roleAuthorityService.getRoleAuthorityById(roleService.getRoleById(id).getId()) != null) {
+                roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
+            }
+            roleService.deleteRole(id);
+        }
         return new Result().setMessage("删除角色成功");
 
     }
@@ -133,10 +137,13 @@ public class RoleController {
         if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
+        if (role.getParentId() == 0) {
+            role.setParentId(-1);
+        }
         if (roleService.getRoleByName(role.getRoleName()) != null) {
             return new Result().setMessage("角色已存在");
         }
-        if (roleService.getRoleById(role.getParentId()) == null) {
+        if (roleService.getRoleById(role.getParentId()) == null && role.getParentId() != -1) {
             return new Result().setMessage("父级不存在");
         }
         roleService.addRole(role);
