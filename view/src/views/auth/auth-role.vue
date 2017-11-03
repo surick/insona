@@ -32,7 +32,7 @@
                             </Col>
                             <Col span="21">
                                 <Select v-model="roleDetail.parent" filterable style="width: 250px">
-                                    <Option v-for="item in roleList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                    <Option v-for="item in roleList" :value="item.id" :key="item.id">{{ item.roleName }}</Option>
                                 </Select>
                             </Col>
                         </Row>
@@ -79,6 +79,7 @@
         <Modal
             v-model="addModal"
             title="新增角色"
+            :mask-closable="false"
             @on-ok="saveAdd">
             <div class="modal-body">
                 <Row class="margin-bottom-10">
@@ -87,7 +88,7 @@
                     </Col>
                     <Col span="21">
                         <Select v-model="addRoleDetail.parent" filterable style="width: 250px">
-                            <Option v-for="item in roleList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            <Option v-for="item in roleList" :value="item.id" :key="item.id">{{ item.roleName }}</Option>
                         </Select>
                     </Col>
                 </Row>
@@ -116,6 +117,7 @@
         <Modal
             v-model="authModal"
             title="配置权限"
+            :mask-closable="false"
             @on-ok="saveAuth">
             <div class="modal-body">
                 <Tree ref="authTree" :data="authData" show-checkbox></Tree>
@@ -130,26 +132,7 @@
         name: 'auth_role',
         data() {
             return {
-                roleData: [
-                    {
-                        title: '超级管理员',
-                        expand: false
-                    },
-                    {
-                        title: '客服管理',
-                        expand: false,
-                        children: [
-                            {
-                                title: '售后客服',
-                                expand: false
-                            },
-                            {
-                                title: '售前客服',
-                                expand: false
-                            }
-                        ]
-                    }
-                ],
+                roleData: [],
                 roleDetail: {
                     parent: '',
                     name: '',
@@ -182,37 +165,15 @@
                         ]
                     }
                 ],
-                roleList: [
-                    {
-                        value: 'beijing',
-                        label: '北京市'
-                    },
-                    {
-                        value: 'shanghai',
-                        label: '上海市'
-                    },
-                    {
-                        value: 'shenzhen',
-                        label: '深圳市'
-                    },
-                    {
-                        value: 'hangzhou',
-                        label: '杭州市'
-                    },
-                    {
-                        value: 'nanjing',
-                        label: '南京市'
-                    },
-                    {
-                        value: 'chongqing',
-                        label: '重庆市'
-                    }
-                ]
+                roleList: []
             };
         },
         mounted() {
             Role.getRoleTree(this).then(res => {
-                console.log(res);
+                if (res.success) {
+                    this.roleData = Role.dealRoleTree(res.data);
+                    this.roleList = Role.dealRoleTreeToList(res.data);
+                }
             });
         },
         methods: {

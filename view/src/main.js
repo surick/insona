@@ -11,25 +11,11 @@ import zhLocale from 'iview/src/locale/lang/zh-CN';
 import enLocale from 'iview/src/locale/lang/en-US';
 import zhTLocale from 'iview/src/locale/lang/zh-TW';
 import Loading from './components/loading';
+import commonFun from './libs/commonFun';
 
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(Loading);
-
-let commonFun = {};
-commonFun.install = (Vue) => {
-    Vue.prototype.$commonFun = () => {};
-
-    Vue.prototype.$commonFun['checkObject'] = (obj, whiteList) => {
-        let isEmpty = false;
-        for (var key in obj) {
-            if (obj[key] === '' && whiteList.indexOf(key) === -1) {
-                isEmpty = true;
-            }
-        }
-        return isEmpty;
-    };
-};
 Vue.use(commonFun);
 
 // 自动设置语言

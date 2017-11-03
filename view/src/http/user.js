@@ -29,9 +29,20 @@ export default {
     },
 
     getUser(vm, obj) {
-        return ajax(vm, {
-            method: 'GET',
-            url: '/sys/user/pageUser/' + obj.pageIndex + '/' + obj.pageSize
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/sys/user/pageUser/' + obj.pageIndex + '/' + obj.pageSize
+            }).then(res => {
+                if (res.success) {
+                    res.data.list.forEach(item => {
+                        console.log(Number(item.updateTime));
+                        item.createTime && (item.createTime = moment(Number(item.createTime)).format('YYYY-MM-DD HH:mm'));
+                        item.updateTime && (item.updateTime = moment(Number(item.updateTime)).format('YYYY-MM-DD HH:mm'));
+                    });
+                    resolve(res);
+                }
+            });
         });
     },
 

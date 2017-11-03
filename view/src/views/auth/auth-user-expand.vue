@@ -11,19 +11,19 @@
             </Col>
             <Col span="6">
                 <span class="expand-key">创建人：</span>
-                <span class="expand-value">{{ row.crt_name }}</span>
+                <span class="expand-value">{{ row.createUserName }}</span>
             </Col>
             <Col span="6">
                 <span class="expand-key">创建时间：</span>
-                <span class="expand-value">{{ row.crt_time }}</span>
+                <span class="expand-value">{{ row.createTime }}</span>
             </Col>
             <Col span="6" class="margin-top-10">
                 <span class="expand-key">更新人：</span>
-                <span class="expand-value">{{ row.upd_name }}</span>
+                <span class="expand-value">{{ row.updateUserName }}</span>
             </Col>
             <Col span="6" class="margin-top-10">
                 <span class="expand-key">更新时间：</span>
-                <span class="expand-value">{{ row.upd_time }}</span>
+                <span class="expand-value">{{ row.updateTime }}</span>
             </Col>
         </Row>
     </div>

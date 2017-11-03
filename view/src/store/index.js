@@ -192,7 +192,6 @@ const store = new Vuex.Store({
                     }
                 }
             });
-            console.log(menuList);
             state.menuList = menuList;
         },
         setAvator (state, path) {
