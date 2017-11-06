@@ -59,7 +59,7 @@
                     <Row>
                         <Col span="3">&nbsp;</Col>
                         <Col span="21">
-                        <Button type="primary">
+                        <Button type="primary" @click="updateRole()">
                             修改
                         </Button>
                         <Button type="info" @click="authSet()">
@@ -209,6 +209,17 @@
                 enabled: true
             };
         },
+        updateRole() {
+            this.addRoleEdit = 1;
+            this.addModal = true;
+            this.addRoleDetail = {
+                roleName: '',
+                roleCode: '',
+                parentId: '',
+                orderNum: '',
+                enabled: true
+            };
+        },
         mounted() {
             this.getRoleTree();
         },
@@ -222,6 +233,8 @@
                 });
             },
             treeNodeSelect(node) {
+                this.roleDetail = node;
+
                 console.log(node);
             },
             saveAdd() {
@@ -259,6 +272,7 @@
             saveAuth() {
 
             },
+
             deleteRoles() {
                 let roles = this.$refs.roleTree.getCheckedNodes();
                 let ids = roles.map(item => { return item.id; });
