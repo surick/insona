@@ -111,7 +111,7 @@ public class HttpUtil {
      * @param url
      * @return
      */
-    public static String sendPost(String url,String appId,String token,String auth,Map<String, String> map) {
+    public static JSONObject sendPost(String url,String appId,String token,String auth,Map<String, String> map) {
 
         HttpPost httppost = new HttpPost(url);
         httppost.setHeader("X-Gizwits-Application-Id",appId);
@@ -136,10 +136,10 @@ public class HttpUtil {
             e.printStackTrace();
         }
         HttpEntity entity1 = response.getEntity();
-        String result = null;
+        JSONObject result = null;
         try {
-            result = EntityUtils.toString(entity1);
-        } catch (ParseException | IOException e) {
+            result = JSONObject.fromObject(entity1);
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return result;
@@ -151,7 +151,7 @@ public class HttpUtil {
      * @param map
      * @return
      */
-    public static String sendPut(String url,String appId,String token,String auth, Map<String, String> map) {
+    public static JSONObject sendPut(String url,String appId,String token,String auth, Map<String, String> map) {
         List<NameValuePair> formparams = new ArrayList<>();
         for (Map.Entry<String, String> entry : map.entrySet()) {
             formparams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
@@ -173,10 +173,10 @@ public class HttpUtil {
             e.printStackTrace();
         }
         HttpEntity entity1 = response.getEntity();
-        String result = null;
+        JSONObject result = null;
         try {
-            result = EntityUtils.toString(entity1);
-        } catch (ParseException | IOException e) {
+            result = JSONObject.fromObject(entity1);
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return result;
