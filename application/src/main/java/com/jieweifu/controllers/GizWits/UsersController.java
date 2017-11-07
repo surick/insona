@@ -16,7 +16,7 @@ import java.util.Map;
 public class UsersController {
 
     public static String Token = null;
-    public static String Time = null;
+    public static Integer Time = null;
 
 
     /**
@@ -126,7 +126,7 @@ public class UsersController {
         String auth = Md5Util.encrypt32(id + appsecret);
         JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/request_token", id, null, auth, null);
         Token = jsonObject.get("token").toString();
-        Time = jsonObject.get("expired_at").toString();
+        Time = Integer.valueOf(jsonObject.get("expired_at").toString());
         return new Result().setData(jsonObject);
     }
 
