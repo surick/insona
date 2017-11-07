@@ -6,7 +6,10 @@ import com.jieweifu.models.Result;
 import com.jieweifu.models.regex.Regex;
 import net.sf.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -15,8 +18,8 @@ import java.util.Map;
 @RequestMapping("giz/users")
 public class UsersController {
 
-    public static String Token = null;
-    public static Integer Time = null;
+    public static String Token ;
+    public static String Time;
 
 
     /**
@@ -25,13 +28,13 @@ public class UsersController {
      * @param id
      * @return
      */
-    @GetMapping("getAppUsers/{id}/{appsecret}")
-    public Result getAppUsers(@PathVariable("id") String id, @PathVariable("appsecret") String appsecret) {
+    @GetMapping("getAppUsers/{id}")
+    public Result getAppUsers(@PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
         Map<String, String> map = new HashMap<>();
-        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/users", id, Token, null);
+        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/users", id,Token, null);
         return new Result().setData(jsonObject);
     }
 
@@ -60,15 +63,14 @@ public class UsersController {
      * @param id
      * @return
      */
-    @PutMapping("putAppUsers/{id}/{appsecret}")
+    @PutMapping("putAppUsers/{id}")
     public Result putAppUsers(@RequestBody Map<String, String> map,
-                              @PathVariable("id") String id,
-                              @PathVariable("appsecret") String appsecret) {
+                              @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject result = HttpUtil.sendPut("http://api.gizwits.com/app/users", id, Token, null, json);
+        JSONObject result = HttpUtil.sendPut("http://api.gizwits.com/app/users", id,Token, null, json);
         return new Result().setData(result);
     }
 
@@ -79,17 +81,17 @@ public class UsersController {
      * @param id
      * @return
      */
-    @PostMapping("postAppLogin/{id}/{appsecret}")
+    @PostMapping("postAppLogin/{id}")
     public Result postAppLogin(@RequestBody Map<String, String> map,
-                               @PathVariable("id") String id,
-                               @PathVariable("appsecret") String appsecret) {
+                               @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)
                 || map.get("username").matches(Regex.NOTNULL_REX) || map.get("password").matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/login", id, Token, null, json);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/login", id,Token, null, json);
         return new Result().setData(jsonObject);
+
     }
 
     /**
@@ -99,14 +101,18 @@ public class UsersController {
      * @param appsecret
      * @return
      */
-    public String getToken(String id, String appsecret) {
+    public static List<String> getToken(String id, String appsecret) {
         if (id.matches(Regex.NOTNULL_REX) || appsecret.matches(Regex.NOTNULL_REX)) {
             return null;
         }
         String auth = Md5Util.encrypt32(id + appsecret);
         JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/request_token", id, null, auth, null);
         String token = jsonObject.get("token").toString();
-        return token;
+        String time = jsonObject.get("expired_at").toString();
+        List<String> list = new ArrayList<>();
+        list.add(token);
+        list.add(time);
+        return list;
     }
 
     /**
@@ -126,7 +132,7 @@ public class UsersController {
         String auth = Md5Util.encrypt32(id + appsecret);
         JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/request_token", id, null, auth, null);
         Token = jsonObject.get("token").toString();
-        Time = Integer.valueOf(jsonObject.get("expired_at").toString());
+        Time = jsonObject.get("expired_at").toString();
         return new Result().setData(jsonObject);
     }
 
@@ -160,16 +166,15 @@ public class UsersController {
      * @param map
      * @return
      */
-    @PostMapping("postAppSmsCode/{id}/{appsecret}")
+    @PostMapping("postAppSmsCode/{id}")
     public Result postAppSmsCode(@RequestBody Map<String, String> map,
-                                 @PathVariable("id") String id,
-                                 @PathVariable("appsecret") String appsecret) {
+                                 @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
         if (map.get("phone").matches(Regex.PHONE_REX) && !map.get("code").matches(Regex.NOTNULL_REX)) {
             JSONObject json = JSONObject.fromObject(map);
-            JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/sms_code", id, Token, null, json);
+            JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/sms_code", id,Token, null, json);
             return new Result().setData(jsonObject);
         }
         return new Result().setMessage("手机号或验证码有误");
@@ -179,16 +184,14 @@ public class UsersController {
      * 获取图片验证码
      *
      * @param id
-     * @param appsecret
      * @return
      */
-    @GetMapping("getAppVerifyCodes/{id}/{appsecret}")
-    public Result getAppVerifyCodes(@PathVariable String id,
-                                    @PathVariable("appsecret") String appsecret) {
+    @GetMapping("getAppVerifyCodes/{id}/")
+    public Result getAppVerifyCodes(@PathVariable String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
-        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/verify/codes", id, Token, null);
+        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/verify/codes", id,Token, null);
         return new Result().setData(jsonObject);
     }
 
@@ -197,13 +200,11 @@ public class UsersController {
      *
      * @param map
      * @param id
-     * @param appsecret
      * @return
      */
-    @PostMapping("postAppVerifyCodes/{id}/{appsecret}")
+    @PostMapping("postAppVerifyCodes/{id}")
     public Result postAppVerifyCodes(@RequestBody Map<String, String> map,
-                                     @PathVariable("id") String id,
-                                     @PathVariable("appsecret") String appsecret) {
+                                     @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX) ||
                 map.get("captcha_id").matches(Regex.NOTNULL_REX) ||
                 map.get("captcha_code").matches(Regex.NOTNULL_REX) ||
@@ -211,7 +212,7 @@ public class UsersController {
             return new Result().setError("请完善信息");
         }
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/verify/codes", id, Token, null, json);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/verify/codes", id,Token, null, json);
         return new Result().setData(jsonObject);
 
     }
@@ -222,14 +223,12 @@ public class UsersController {
      * @param id
      * @param phone
      * @param code
-     * @param appsecret
      * @return
      */
-    @GetMapping("putAppVerifyCodes/{id}/{phone}/{code}/{appsecret}")
+    @GetMapping("putAppVerifyCodes/{id}/{phone}/{code}")
     public Result putAppVerifyCodes(@PathVariable("id") String id,
                                     @PathVariable("phone") String phone,
-                                    @PathVariable("code") String code,
-                                    @PathVariable("appsecret") String appsecret) {
+                                    @PathVariable("code") String code) {
         if (!id.matches(Regex.NOTNULL_REX) &&
                 !phone.matches(Regex.NOTNULL_REX) && !code.matches(Regex.NOTNULL_REX)) {
             Map<String, String> map = new HashMap<>();
@@ -240,4 +239,5 @@ public class UsersController {
         }
         return new Result().setError("校验失败");
     }
+
 }

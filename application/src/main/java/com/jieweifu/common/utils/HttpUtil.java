@@ -32,8 +32,6 @@ package com.jieweifu.common.utils; /**
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-
-
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
