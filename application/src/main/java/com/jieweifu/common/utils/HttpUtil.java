@@ -122,8 +122,8 @@ public class HttpUtil {
             StringEntity s = null;
             try {
                 s = new StringEntity(json.toString());
-                s.setContentEncoding("UTF-8");
                 s.setContentType("application/json");
+                s.setContentEncoding("UTF-8");
                 httppost.setEntity(s);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();

@@ -1,14 +1,11 @@
 package com.jieweifu.controllers.GizWits;
 
-
 import com.jieweifu.common.utils.HttpUtil;
 import com.jieweifu.common.utils.Md5Util;
 import com.jieweifu.models.Result;
-
 import com.jieweifu.models.regex.Regex;
 import net.sf.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +16,7 @@ import java.util.Map;
 public class UsersController {
 
     public static String Token = null;
+    public static String Time = null;
 
 
     /**
@@ -33,7 +31,7 @@ public class UsersController {
             return new Result().setError("参数错误");
         }
         Map<String, String> map = new HashMap<>();
-        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/users", id, getToken(id, appsecret), null);
+        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/users", id, Token, null);
         return new Result().setData(jsonObject);
     }
 
@@ -70,7 +68,7 @@ public class UsersController {
             return new Result().setError("参数错误");
         }
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject result = HttpUtil.sendPut("http://api.gizwits.com/app/users", id, getToken(id, appsecret), null, json);
+        JSONObject result = HttpUtil.sendPut("http://api.gizwits.com/app/users", id, Token, null, json);
         return new Result().setData(result);
     }
 
@@ -90,7 +88,7 @@ public class UsersController {
             return new Result().setError("参数错误");
         }
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/login", id, getToken(id, appsecret), null, json);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/login", id, Token, null, json);
         return new Result().setData(jsonObject);
     }
 
@@ -102,7 +100,7 @@ public class UsersController {
      * @return
      */
     public String getToken(String id, String appsecret) {
-        if ((id.matches(Regex.NOTNULL_REX)) || (appsecret.matches(Regex.NOTNULL_REX))) {
+        if (id.matches(Regex.NOTNULL_REX) || appsecret.matches(Regex.NOTNULL_REX)) {
             return null;
         }
         String auth = Md5Util.encrypt32(id + appsecret);
@@ -128,6 +126,7 @@ public class UsersController {
         String auth = Md5Util.encrypt32(id + appsecret);
         JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/request_token", id, null, auth, null);
         Token = jsonObject.get("token").toString();
+        Time = jsonObject.get("expired_at").toString();
         return new Result().setData(jsonObject);
     }
 
@@ -170,7 +169,7 @@ public class UsersController {
         }
         if (map.get("phone").matches(Regex.PHONE_REX) && !map.get("code").matches(Regex.NOTNULL_REX)) {
             JSONObject json = JSONObject.fromObject(map);
-            JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/sms_code", id, getToken(id, appsecret), null, json);
+            JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/sms_code", id, Token, null, json);
             return new Result().setData(jsonObject);
         }
         return new Result().setMessage("手机号或验证码有误");
@@ -189,7 +188,7 @@ public class UsersController {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
-        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/verify/codes", id, getToken(id, appsecret), null);
+        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/verify/codes", id, Token, null);
         return new Result().setData(jsonObject);
     }
 
@@ -212,8 +211,8 @@ public class UsersController {
             return new Result().setError("请完善信息");
         }
         JSONObject json = JSONObject.fromObject(map);
-        HttpUtil.sendPost("http://api.gizwits.com/app/verify/codes", id, getToken(id, appsecret), null, json);
-        return new Result().setMessage("短信已发送");
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/verify/codes", id, Token, null, json);
+        return new Result().setData(jsonObject);
 
     }
 
@@ -236,7 +235,7 @@ public class UsersController {
             Map<String, String> map = new HashMap<>();
             map.put("phone", phone);
             map.put("sms_code", code);
-            JSONObject jsonObject = HttpUtil.sendGet("https://api.gizwits.com/app/verify/codes", id, getToken(id, appsecret), map);
+            JSONObject jsonObject = HttpUtil.sendGet("https://api.gizwits.com/app/verify/codes", id, Token, map);
             return new Result().setData(jsonObject);
         }
         return new Result().setError("校验失败");
