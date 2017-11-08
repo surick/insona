@@ -255,7 +255,7 @@ public class UsersController {
                 JSONObject json = JSONObject.fromObject(map);
                 JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/reset_password", id, null, null, null, json);
                 return new Result().setData(jsonObject);
-            }else {
+            } else {
                 return new Result().setError("验证码不能为空");
             }
         }
