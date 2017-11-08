@@ -1,10 +1,10 @@
 package com.jieweifu.controllers.GizWits;
 
 import com.jieweifu.common.utils.HttpUtil;
-import com.jieweifu.common.utils.Md5Util;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.regex.Regex;
 import net.sf.json.JSONObject;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -17,35 +17,23 @@ import java.util.Map;
 @RestController("GizWitsUsers")
 @RequestMapping("giz/users")
 public class UsersController {
-    /*由appid和appsecret生成的token*/
+    /* 由appid和appsecret生成的token */
     private static String Token;
-    /*用户登录的token*/
+    /*用户登录的token */
     private static String userToken;
-    /**
-     * 微信的appid
-     */
+    /* 微信的appid */
     private static String WeChatAppid = "1";
-    /**
-     * 微信的secret
-     */
-    private static String WeChatSecret = "1";
-    /**
-     * QQ的appid
-     */
+    /* QQ的appi */
     private static String appid = "1";
-    /**
-     * QQ的appkey
-     */
-    private static String appkey = "1";
-    /*状态验证码*/
+    /* 状态验证码 */
     private static String state = "1";
-    /*accesstoken用于注册*/
+    /* accesstoken用于注册 */
     private static String accessToken;
-    /*uid用于注册*/
+    /* uid用于注册 */
     private static String openId;
-    /*第三方识别*/
+    /* 第三方识别 */
     private static String src;
-    /*图片验证码id*/
+    /* 图片验证码id */
     private static String captcha_id;
 
 
@@ -68,11 +56,9 @@ public class UsersController {
      * remar    	string	备注
      * uid      	string	用户唯一id
      * is_anonymous	boolean	是否匿名用户
-     *
-     * @return
      */
-    @GetMapping("getAppUsers/{id}")
-    public Result getAppUsers(@PathVariable("id") String id) {
+    @GetMapping("getUser/{id}")
+    public Result getUser(@PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
@@ -97,13 +83,9 @@ public class UsersController {
      * src	    string	否	body	平台类型:qq,sina,baidu,wechat,twitter,facebook,google, amazon
      * uid	    string	否	body	第三方登录平台返回的uid
      * token	string	否	body	第三方登录平台返回的token
-     *
-     * @param map
-     * @param id
-     * @return
      */
-    @PostMapping("postAppUsers/{id}")
-    public Result postAppUsers(@RequestBody Map<String, String> map, @PathVariable("id") String id) {
+    @PostMapping("postUser/{id}")
+    public Result postUser(@RequestBody Map<String, String> map, @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数不能为空");
         }
@@ -140,9 +122,9 @@ public class UsersController {
      * token	    string	用户token
      * expire_at	integer	token过期时间（时间戳）
      */
-    @PutMapping("putAppUsers/{id}")
-    public Result putAppUsers(@RequestBody Map<String, String> map,
-                              @PathVariable("id") String id) {
+    @PutMapping("putUser/{id}")
+    public Result putUser(@RequestBody Map<String, String> map,
+                          @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
@@ -169,9 +151,9 @@ public class UsersController {
      * token	    string	用户token
      * expire_at	integer	token过期时间（时间戳）
      */
-    @PostMapping("postAppLogin/{id}")
-    public Result postAppLogin(@RequestBody Map<String, String> map,
-                               @PathVariable("id") String id) {
+    @PostMapping("login/{id}")
+    public Result login(@RequestBody Map<String, String> map,
+                        @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)
                 || map.get("username").matches(Regex.NOTNULL_REX) || map.get("password").matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
@@ -204,19 +186,16 @@ public class UsersController {
      * 响应参数	    类型  	描述
      * uid	        string	用户唯一id
      * expire_at	integer	token过期时间（时间戳）
-     *
-     * @param map
-     * @return
      */
-    @PostMapping("postAppRequestToken")
-    public Result postAppRequestToken(@RequestBody Map<String, String> map) {
+    @PostMapping("requestToken")
+    public Result requestToken(@RequestBody Map<String, String> map) {
 
         String id = map.get("id");
         String appsecret = map.get("appsecret");
         if ((id.matches(Regex.NOTNULL_REX)) || (appsecret.matches(Regex.NOTNULL_REX))) {
             return new Result().setError("参数不合法");
         }
-        String auth = Md5Util.encrypt32(id + appsecret);
+        String auth = DigestUtils.md5Hex(id + appsecret);
         JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/request_token", id, null, null, auth, null);
         Token = jsonObject.get("token").toString();
         return new Result().setData(jsonObject);
@@ -239,13 +218,9 @@ public class UsersController {
      * <p>
      * 响应参数
      * 无
-     *
-     * @param map
-     * @param id
-     * @return
      */
-    @PostMapping("postAppResetPassword/{id}")
-    public Result postAppResetPassword(@RequestBody Map<String, String> map, @PathVariable("id") String id) {
+    @PostMapping("resetPassword/{id}")
+    public Result resetPassword(@RequestBody Map<String, String> map, @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
@@ -282,13 +257,10 @@ public class UsersController {
      * <p>
      * 响应参数
      * 无
-     *
-     * @param map
-     * @return
      */
-    @PostMapping("postAppSmsCode/{id}")
-    public Result postAppSmsCode(@RequestBody Map<String, String> map,
-                                 @PathVariable("id") String id) {
+    @PostMapping("smsCode/{id}")
+    public Result smsCode(@RequestBody Map<String, String> map,
+                          @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
@@ -313,12 +285,9 @@ public class UsersController {
      * 响应参数	    类型	    描述
      * captcha_url	string	图片验证码URL地址
      * captcha_id	string	图片验证码id
-     *
-     * @param id
-     * @return
      */
-    @GetMapping("getAppVerifyCodes/{id}")
-    public Result getAppVerifyCodes(@PathVariable String id) {
+    @GetMapping("getCodes/{id}")
+    public Result getCodes(@PathVariable String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
@@ -343,14 +312,10 @@ public class UsersController {
      * <p>
      * 响应参数
      * 无
-     *
-     * @param map
-     * @param id
-     * @return
      */
-    @PostMapping("postAppVerifyCodes/{id}")
-    public Result postAppVerifyCodes(@RequestBody Map<String, String> map,
-                                     @PathVariable("id") String id) {
+    @PostMapping("postCodes/{id}")
+    public Result postCodes(@RequestBody Map<String, String> map,
+                            @PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX) &&
                 map.get("phone").matches(Regex.NOTNULL_REX)) {
             return new Result().setError("请完善信息");
@@ -375,16 +340,11 @@ public class UsersController {
      * <p>
      * 响应参数
      * 无
-     *
-     * @param id
-     * @param phone
-     * @param code
-     * @return
      */
-    @GetMapping("putAppVerifyCodes/{id}/{phone}/{code}")
-    public Result putAppVerifyCodes(@PathVariable("id") String id,
-                                    @PathVariable("phone") String phone,
-                                    @PathVariable("code") String code) {
+    @GetMapping("putCodes/{id}/{phone}/{code}")
+    public Result putCodes(@PathVariable("id") String id,
+                           @PathVariable("phone") String phone,
+                           @PathVariable("code") String code) {
         if (!id.matches(Regex.NOTNULL_REX) &&
                 !phone.matches(Regex.NOTNULL_REX) && !code.matches(Regex.NOTNULL_REX)) {
             Map<String, String> map = new HashMap<>();
@@ -403,8 +363,8 @@ public class UsersController {
      * 请求方法：
      * GET
      */
-    @GetMapping("getAuthorizationCode")
-    public void getAuthorizationCode() {
+    @GetMapping("getAuthCode")
+    public void getAuthCode() {
         Map<String, String> map = new HashMap<>();
         try {
             map.put("response_type", "code");
@@ -415,7 +375,6 @@ public class UsersController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return;
     }
 
     /**
@@ -425,16 +384,14 @@ public class UsersController {
      * PC网站：https://graph.qq.com/oauth2.0/token
      * 请求方法：
      * GET
-     *
-     * @param code
-     * @param state
-     * @return
      */
     @GetMapping("getAccessToken?code={code}&state={state}")
     public void getAccessToken(@PathVariable("code") String code, @PathVariable("state") String state) {
         Map<String, String> map = new HashMap<>();
         map.put("grant_type", "authorization_code");
         map.put("client_id", appid);
+        /*QQ的appkey*/
+        String appkey = "1";
         map.put("client_secret", appkey);
         map.put("code", code);
         map.put("redirect_uri", "getAccessToken");
@@ -442,7 +399,6 @@ public class UsersController {
         accessToken = jsonObject.get("access_token").toString();
         getOpenId();
         src = "qq";
-        return;
     }
 
     /**
@@ -452,24 +408,20 @@ public class UsersController {
      * 请求方法
      * GET
      */
-    public void getOpenId() {
+    private void getOpenId() {
         Map<String, String> map = new HashMap<>();
         map.put("access_token", accessToken);
         JSONObject jsonObject = HttpUtil.getSSL("https://graph.qq.com/oauth2.0/me", map);
         openId = jsonObject.get("openid").toString();
-        return;
     }
 
     /**
      * 第三方登录
      * 第三方登录用户创建，通过authData内的 src、 uid 和 token 创建用户。
      * 目前支持腾讯QQ、微信
-     *
-     * @param id
-     * @return
      */
-    @PostMapping("postAppUsersByOther/{id}")
-    public Result postAppUsersByQQ(@PathVariable("id") String id) {
+    @PostMapping("postUsersByOther/{id}")
+    public Result postUsersByOther(@PathVariable("id") String id) {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数不能为空");
         }
@@ -506,7 +458,6 @@ public class UsersController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return;
     }
 
     /**
@@ -520,29 +471,24 @@ public class UsersController {
      * openid	授权用户唯一标识
      * scope	用户授权的作用域，使用逗号（,）分隔
      * unionid	当且仅当该网站应用已获得该用户的userinfo授权时，才会出现该字段。
-     *
-     * @param code
-     * @param state
      */
     @GetMapping("getWeChatToken?code={code}&state={state}")
     public void getWeChatToken(@PathVariable("code") String code, @PathVariable("state") String state) {
         Map<String, String> map = new HashMap<>();
         map.put("appid", WeChatAppid);
-        map.put("secret", WeChatSecret);
+        /*微信的secret*/
+        String weChatSecret = "1";
+        map.put("secret", weChatSecret);
         map.put("code", code);
         map.put("grant_type", "authorization_code");
         JSONObject jsonObject = HttpUtil.getSSL("https://api.weixin.qq.com/sns/oauth2/access_token", map);
         accessToken = jsonObject.get("access_token").toString();
         openId = jsonObject.get("openid").toString();
         src = "wechat";
-        return;
     }
 
     /**
      * 微信取消授权
-     *
-     * @param state
-     * @return
      */
     @GetMapping("getWeChatToken?state={state}")
     public Result getFailedAuth(@PathVariable("state") String state) {

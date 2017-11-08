@@ -1,33 +1,4 @@
-package com.jieweifu.common.utils; /**
- * *************************************************************************************
- * <p>
- * Project:        ZXQ
- * <p>
- * Copyright ©     2014-2017 Banma Technologies Co.,Ltd
- * All rights reserved.
- * <p>
- * This software is supplied only under the terms of a license agreement,
- * nondisclosure agreement or other written agreement with Banma Technologies
- * Co.,Ltd. Use, redistribution or other disclosure of any parts of this
- * software is prohibited except in accordance with the terms of such written
- * agreement with Banma Technologies Co.,Ltd. This software is confidential
- * and proprietary information of Banma Technologies Co.,Ltd.
- * <p>
- * *************************************************************************************
- * <p>
- * Class Name: com.test.MyTest.java
- * <p>
- * General Description:
- * <p>
- * Revision History:
- * Modification
- * Author                Date(MM/DD/YYYY)   JiraID           Description of Changes
- * ---------------------   ------------    ----------     -----------------------------
- * LZY                   2017年8月29日
- * <p>
- * **************************************************************************************
- */
-
+package com.jieweifu.common.utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -55,11 +26,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-
 /**
- *
+ * Http工具集
  */
-
 public class HttpUtil {
 
     private static final CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -77,7 +46,7 @@ public class HttpUtil {
         if (map != null) {
             map.forEach(
                     (s, s2) ->
-                            params.append(s + ":" + s2 + "&&")
+                            params.append(s).append(":").append(s2).append("&&")
             );
             httpget = new HttpGet(url + "?" + params);
         } else {
@@ -97,31 +66,14 @@ public class HttpUtil {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        String result = "";
-        JSONObject jsonObject = null;
-        try {
-            HttpEntity entity1 = response.getEntity();
-            if (entity1 != null) {
-                result = EntityUtils.toString(entity1);
-                jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
-            }
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                response.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return jsonObject;
+        return getResult(response);
     }
 
     /**
      * 发送参数的HttpPost请求
      *
-     * @param url
-     * @return
+     * @param url 请求链接
+     * @return json
      */
     public static JSONObject sendPost(String url, String appId, String userToken, String token, String auth, JSONObject json) {
 
@@ -154,26 +106,17 @@ public class HttpUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        HttpEntity entity1 = response.getEntity();
-        JSONObject jsonObject = null;
-        String result = "";
-        try {
-            result = EntityUtils.toString(entity1);
-            jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
+        return getJson(response);
     }
 
     /**
      * 发送HttpPut请求，参数为map
      *
-     * @param url
-     * @param json
-     * @return
+     * @param url 请求链接
+     * @param json json数据
+     * @return json
      */
-    public static JSONObject sendPut(String url, String appId,String userToken, String token, String auth, JSONObject json) {
+    public static JSONObject sendPut(String url, String appId, String userToken, String token, String auth, JSONObject json) {
 
         HttpPut httpPut = new HttpPut(url);
         httpPut.setHeader("X-Gizwits-Application-Id", appId);
@@ -204,32 +147,25 @@ public class HttpUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        HttpEntity entity1 = response.getEntity();
-        JSONObject jsonObject = null;
-        String result = "";
-        try {
-            result = EntityUtils.toString(entity1);
-            jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
+        return getJson(response);
+
     }
 
     /**
      * 发起https请求
-     * @param url
-     * @param map
-     * @return
+     *
+     * @param url 请求链接
+     * @param map 封装的map参数
+     * @return json
      */
-    public static JSONObject sendGet(String url,Map<String,String> map){
+    public static JSONObject sendGet(String url, Map<String, String> map) {
 
         HttpGet httpGet = null;
         StringBuilder params = new StringBuilder();
         if (map != null) {
             map.forEach(
                     (s, s2) ->
-                            params.append(s + ":" + s2 + "&&")
+                            params.append(s).append(":").append(s2).append("&&")
             );
             httpGet = new HttpGet(url + "?" + params);
         } else {
@@ -241,32 +177,16 @@ public class HttpUtil {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        String result = "";
-        JSONObject jsonObject = null;
-        try {
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                result = EntityUtils.toString(entity);
-                jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
-            }
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                response.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return jsonObject;
+        return getResult(response);
 
     }
 
     /**
      * https请求跳过证书验证
-     * @return
+     *
+     * @return httpclient
      */
-    public static HttpClient wrapClient() {
+    private static HttpClient wrapClient() {
         try {
             SSLContext ctx = SSLContext.getInstance("TLS");
             X509TrustManager tm = new X509TrustManager() {
@@ -282,11 +202,11 @@ public class HttpUtil {
                                                String arg1) throws CertificateException {
                 }
             };
-            ctx.init(null, new TrustManager[] { tm }, null);
+            ctx.init(null, new TrustManager[]{tm}, null);
             SSLConnectionSocketFactory ssf = new SSLConnectionSocketFactory(
                     ctx, NoopHostnameVerifier.INSTANCE);
-            CloseableHttpClient httpclient = HttpClients.custom()
-                    .setSSLSocketFactory(ssf).build();
+            CloseableHttpClient httpclient = null;
+            httpclient= HttpClients.custom().setSSLSocketFactory(ssf).build();
             return httpclient;
         } catch (Exception e) {
             return HttpClients.createDefault();
@@ -295,52 +215,87 @@ public class HttpUtil {
 
     /**
      * https免证书get请求
-     * @param url
-     * @param map
-     * @return
+     *
+     * @param url 请求链接
+     * @param map 封装的map数据
+     * @return json
      */
-    public static JSONObject getSSL(String url, Map<String,String> map) {
+    public static JSONObject getSSL(String url, Map<String, String> map) {
         CloseableHttpClient httpClient = null;
         HttpGet httpGet = null;
-            httpClient = (CloseableHttpClient) wrapClient();
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setSocketTimeout(4000).setConnectTimeout(4000).build();
-            StringBuilder params = new StringBuilder();
-            if (map != null) {
-                map.forEach(
-                        (s, s2) ->
-                                params.append(s + ":" + s2 + "&&")
-                );
-                httpGet = new HttpGet(url + "?" + params);
-            } else {
-                httpGet = new HttpGet(url);
+        httpClient = (CloseableHttpClient) wrapClient();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(4000).setConnectTimeout(4000).build();
+        StringBuilder params = new StringBuilder();
+        if (map != null) {
+            map.forEach(
+                    (s, s2) ->
+                            params.append(s).append(":").append(s2).append("&&")
+            );
+            httpGet = new HttpGet(url + "?" + params);
+        } else {
+            httpGet = new HttpGet(url);
+        }
+        httpGet.setConfig(requestConfig);
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(httpGet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getResult(response);
+
+    }
+
+    /**
+     * 封装
+     *
+     * @param response 响应
+     * @return json
+     */
+    private static JSONObject getResult(CloseableHttpResponse response) {
+        JSONObject jsonObject = null;
+        String result = "";
+        try {
+            HttpEntity entity = response.getEntity();
+
+            if (entity != null) {
+                result = EntityUtils.toString(entity);
+                jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
             }
-            httpGet.setConfig(requestConfig);
-            CloseableHttpResponse response = null;
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        } finally {
             try {
-                response = httpClient.execute(httpGet);
+                response.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            String result = "";
+        }
+        return jsonObject;
+    }
+
+    /**
+     *
+     * @param response 响应
+     * @return json
+     */
+    private static JSONObject getJson(CloseableHttpResponse response) {
+        if (response != null) {
+            HttpEntity entity1 = response.getEntity();
             JSONObject jsonObject = null;
+            String result = "";
             try {
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    result = EntityUtils.toString(entity);
-                    jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
-                }
+                result = EntityUtils.toString(entity1);
+                jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
             } catch (ParseException | IOException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
             return jsonObject;
-
+        } else {
+            return null;
+        }
     }
+
 }
   
