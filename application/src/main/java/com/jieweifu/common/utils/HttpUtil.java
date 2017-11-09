@@ -2,6 +2,7 @@ package com.jieweifu.common.utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
@@ -11,10 +12,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
@@ -39,7 +37,7 @@ public class HttpUtil {
      * @param url
      * @return
      */
-    public static JSONObject sendGet(String url, String appId, String userToken, String token, Map<String, String> map) {
+    public static JSONObject sendGet(String url,Map<String,String> headMap, Map<String, String> map) {
 
         StringBuilder params = new StringBuilder();
         HttpGet httpget = null;
@@ -52,13 +50,10 @@ public class HttpUtil {
         } else {
             httpget = new HttpGet(url);
         }
-        httpget.setHeader("X-Gizwits-Application-Id", appId);
-        if (token != null) {
-            System.out.println("token=" + token);
-            httpget.setHeader("X-Gizwits-Application-Token", token);
-        }
-        if (userToken != null) {
-            httpget.setHeader("X-Gizwits-User-Token", userToken);
+        if(headMap!=null){
+            headMap.forEach(
+                    httpget::setHeader
+            );
         }
         CloseableHttpResponse response = null;
         try {
@@ -75,19 +70,13 @@ public class HttpUtil {
      * @param url 请求链接
      * @return json
      */
-    public static JSONObject sendPost(String url, String appId, String userToken, String token, String auth, JSONObject json) {
+    public static JSONObject sendPost(String url,Map<String,String> map,JSONObject json) {
 
         HttpPost httppost = new HttpPost(url);
-        httppost.setHeader("X-Gizwits-Application-Id", appId);
-        if (userToken != null) {
-            httppost.setHeader("X-Gizwits-User-token", userToken);
-        }
-        if (token != null) {
-            System.out.println("token=" + token);
-            httppost.setHeader("X-Gizwits-Application-Token", token);
-        }
-        if (auth != null) {
-            httppost.setHeader("X-Gizwits-Application-Auth", auth);
+        if(map!=null){
+            map.forEach(
+                    httppost::setHeader
+            );
         }
         if (json != null) {
             StringEntity s = null;
@@ -95,6 +84,7 @@ public class HttpUtil {
                 s = new StringEntity(json.toString());
                 s.setContentType("application/json");
                 s.setContentEncoding("UTF-8");
+                System.out.println(s);
                 httppost.setEntity(s);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -116,20 +106,15 @@ public class HttpUtil {
      * @param json json数据
      * @return json
      */
-    public static JSONObject sendPut(String url, String appId, String userToken, String token, String auth, JSONObject json) {
+    public static JSONObject sendPut(String url,Map<String,String> map,JSONObject json) {
 
         HttpPut httpPut = new HttpPut(url);
-        httpPut.setHeader("X-Gizwits-Application-Id", appId);
-        if (userToken != null) {
-            httpPut.setHeader("X-Gizwits-User-token", userToken);
+        if(map!=null){
+            map.forEach(
+                    httpPut::setHeader
+            );
         }
-        if (token != null) {
-            System.out.println("token=" + token);
-            httpPut.setHeader("X-Gizwits-Application-Token", token);
-        }
-        if (auth != null) {
-            httpPut.setHeader("X-Gizwits-Application-Auth", auth);
-        }
+
         if (json != null) {
             StringEntity s = null;
             try {
@@ -152,7 +137,7 @@ public class HttpUtil {
     }
 
     /**
-     * 发起https请求
+     * 发起http请求
      *
      * @param url 请求链接
      * @param map 封装的map参数
@@ -179,6 +164,34 @@ public class HttpUtil {
         }
         return getResult(response);
 
+    }
+
+    public static JSONObject sendDelete(String url,Map<String,String> map,JSONObject json) {
+
+        HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
+        if(map!=null){
+            map.forEach(
+                    httpDelete::setHeader
+            );
+        }
+        if (json != null) {
+            StringEntity s = null;
+            try {
+                s = new StringEntity(json.toString());
+                s.setContentEncoding("utf-8");
+                s.setContentType("application/json");
+                httpDelete.setEntity(s);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        CloseableHttpResponse response = null;
+        try {
+            response = httpclient.execute(httpDelete);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getJson(response);
     }
 
     /**
@@ -220,13 +233,14 @@ public class HttpUtil {
      * @param map 封装的map数据
      * @return json
      */
-    public static JSONObject getSSL(String url, Map<String, String> map) {
+    public static JSONObject getSSL(String url,Map<String,String> map1, Map<String, String> map) {
         CloseableHttpClient httpClient = null;
         HttpGet httpGet = null;
         httpClient = (CloseableHttpClient) wrapClient();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(4000).setConnectTimeout(4000).build();
         StringBuilder params = new StringBuilder();
+
         if (map != null) {
             map.forEach(
                     (s, s2) ->
@@ -235,6 +249,11 @@ public class HttpUtil {
             httpGet = new HttpGet(url + "?" + params);
         } else {
             httpGet = new HttpGet(url);
+        }
+        if(map1!=null){
+            map1.forEach(
+                    httpGet::setHeader
+            );
         }
         httpGet.setConfig(requestConfig);
         CloseableHttpResponse response = null;
@@ -245,6 +264,40 @@ public class HttpUtil {
         }
         return getResult(response);
 
+    }
+
+    public static JSONObject postSSL(String url,Map<String,String> map,JSONObject json) {
+
+        CloseableHttpClient httpClient = null;
+        HttpPost httpPost = new HttpPost(url);
+        httpClient = (CloseableHttpClient) wrapClient();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(4000).setConnectTimeout(4000).build();
+        if(map!=null){
+            map.forEach(
+                    httpPost::setHeader
+            );
+        }
+        if (json != null) {
+            StringEntity s = null;
+            try {
+                s = new StringEntity(json.toString());
+                s.setContentType("application/json");
+                s.setContentEncoding("utf-8");
+                httpPost.setEntity(s);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        CloseableHttpResponse response = null;
+        httpPost.setConfig(requestConfig);
+        try {
+            response = httpClient.execute(httpPost);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getJson(response);
     }
 
     /**
@@ -295,6 +348,24 @@ public class HttpUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 重写delete,使其可以传body参数
+     */
+    static class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
+        static final String METHOD_NAME = "DELETE";
+        public String getMethod() { return METHOD_NAME; }
+
+        HttpDeleteWithBody(final String uri) {
+            super();
+            setURI(URI.create(uri));
+        }
+        public HttpDeleteWithBody(final URI uri) {
+            super();
+            setURI(uri);
+        }
+        public HttpDeleteWithBody() { super(); }
     }
 
 }

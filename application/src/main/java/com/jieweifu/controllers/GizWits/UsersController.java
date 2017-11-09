@@ -1,40 +1,38 @@
 package com.jieweifu.controllers.GizWits;
 
 import com.jieweifu.common.utils.HttpUtil;
+import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.regex.Regex;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 @SuppressWarnings("unused")
 @RestController("GizWitsUsers")
 @RequestMapping("giz/users")
 public class UsersController {
-    /* 由appid和appsecret生成的token */
-    private static String Token;
-    /*用户登录的token */
-    private static String userToken;
     /* 微信的appid */
     private static String WeChatAppid = "1";
     /* QQ的appi */
     private static String appid = "1";
     /* 状态验证码 */
     private static String state = "1";
-    /* accesstoken用于注册 */
-    private static String accessToken;
-    /* uid用于注册 */
-    private static String openId;
-    /* 第三方识别 */
-    private static String src;
-    /* 图片验证码id */
-    private static String captcha_id;
+
+    private RedisUtil redisUtil;
+
+    @Autowired
+    public UsersController(RedisUtil redisUtil){
+        this.redisUtil = redisUtil;
+    }
 
 
     /**
@@ -57,12 +55,17 @@ public class UsersController {
      * uid      	string	用户唯一id
      * is_anonymous	boolean	是否匿名用户
      */
-    @GetMapping("getUser/{id}")
-    public Result getUser(@PathVariable("id") String id) {
-        if (id.matches(Regex.NOTNULL_REX)) {
-            return new Result().setError("参数错误");
+    @GetMapping("getUser")
+    public Result getUser() {
+        String token = String.valueOf(redisUtil.get("GWUserToken"));
+        Map<String,String> map = new HashMap<>();
+        String appid = String.valueOf(redisUtil.get("GWappid"));
+        if(appid==null||appid.equals("")){
+            return new Result().setError("请先登录");
         }
-        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/users", id, userToken, null, null);
+        map.put("X-Gizwits-Application-Id",appid);
+        map.put("X-Gizwits-User-Token",token);
+        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/users",map,null);
         return new Result().setData(jsonObject);
     }
 
@@ -84,13 +87,16 @@ public class UsersController {
      * uid	    string	否	body	第三方登录平台返回的uid
      * token	string	否	body	第三方登录平台返回的token
      */
-    @PostMapping("postUser/{id}")
-    public Result postUser(@RequestBody Map<String, String> map, @PathVariable("id") String id) {
-        if (id.matches(Regex.NOTNULL_REX)) {
-            return new Result().setError("参数不能为空");
-        }
+    @PostMapping("postUser")
+    public Result postUser(@RequestBody Map<String, String> map) {
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/users", id, null, null, null, json);
+        Map<String,String> map1 = new HashMap<>();
+        String appid = String.valueOf(redisUtil.get("GWappid"));
+        if(appid==null||appid.equals("")){
+            return new Result().setError("请先登录");
+        }
+        map1.put("X-Gizwits-Application-Id",appid);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/users",map1,json);
         return new Result().setData(jsonObject);
     }
 
@@ -122,14 +128,18 @@ public class UsersController {
      * token	    string	用户token
      * expire_at	integer	token过期时间（时间戳）
      */
-    @PutMapping("putUser/{id}")
-    public Result putUser(@RequestBody Map<String, String> map,
-                          @PathVariable("id") String id) {
-        if (id.matches(Regex.NOTNULL_REX)) {
-            return new Result().setError("参数错误");
-        }
+    @PutMapping("putUser}")
+    public Result putUser(@RequestBody Map<String, String> map) {
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject result = HttpUtil.sendPut("http://api.gizwits.com/app/users", id, userToken, null, null, json);
+        String token = String.valueOf(redisUtil.get("GWUserToken"));
+        Map<String,String> map1 = new HashMap<>();
+        String appid = String.valueOf(redisUtil.get("GWappid"));
+        if(appid==null||appid.equals("")){
+            return new Result().setError("请先登录");
+        }
+        map1.put("X-Gizwits-Application-Id",appid);
+        map1.put("X-Gizwits-User-Token",token);
+        JSONObject result = HttpUtil.sendPut("http://api.gizwits.com/app/users",map1, json);
         return new Result().setData(result);
     }
 
@@ -137,7 +147,7 @@ public class UsersController {
      * 用户登录
      * POST
      * http://api.gizwits.com/app/login
-     * 请求参数                   	类型	   必填	参数类型	描述
+     * 请求参数                   类型	必填	参数类型	描述
      * X-Gizwits-Application-Id	string	是	header	appid
      * X-Gizwits-User-token 	string	是	header	用户token
      * username             	string	是	body	用户名，可以是用户的 username/email/phone
@@ -154,23 +164,18 @@ public class UsersController {
     @PostMapping("login/{id}")
     public Result login(@RequestBody Map<String, String> map,
                         @PathVariable("id") String id) {
-        if (id.matches(Regex.NOTNULL_REX)
-                || map.get("username").matches(Regex.NOTNULL_REX) || map.get("password").matches(Regex.NOTNULL_REX)) {
+        if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
-        if (map.get("username").matches(Regex.NOTNULL_REX) &&
-                map.get("password").matches(Regex.NOTNULL_REX) &&
-                !map.get("phone_id").matches(Regex.NOTNULL_REX)) {
-            JSONObject json = JSONObject.fromObject(map);
-            JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/login", id, null, null, null, json);
-        }
+        Map<String,String> map1 = new HashMap<>();
+        map1.put("X-Gizwits-Application-Id",id);
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/login", id, null, null, null, json);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/login", map1, json);
         String userToken = jsonObject.get("token").toString();
-        System.out.println(userToken);
-        UsersController.userToken = userToken;
+        Integer timeValue = Integer.valueOf(jsonObject.get("expire_at").toString())-20;
+        redisUtil.setEX("GWUserToken",userToken,timeValue, TimeUnit.SECONDS);
+        redisUtil.set("GWappid",id);
         return new Result().setData(jsonObject);
-
     }
 
     /**
@@ -196,8 +201,13 @@ public class UsersController {
             return new Result().setError("参数不合法");
         }
         String auth = DigestUtils.md5Hex(id + appsecret);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/request_token", id, null, null, auth, null);
-        Token = jsonObject.get("token").toString();
+        Map<String,String> map1 = new HashMap<>();
+        map1.put("X-Gizwits-Application-Id",id);
+        map1.put("X-Gizwits-Application-Auth",auth);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/request_token",map1,null);
+        String GWToken = jsonObject.get("token").toString();
+        Integer timeValue = Integer.valueOf(String.valueOf(jsonObject.get("expired_at")))-20;
+        redisUtil.setEX("GWToken",GWToken,timeValue, TimeUnit.MILLISECONDS);
         return new Result().setData(jsonObject);
     }
 
@@ -219,16 +229,19 @@ public class UsersController {
      * 响应参数
      * 无
      */
-    @PostMapping("resetPassword/{id}")
-    public Result resetPassword(@RequestBody Map<String, String> map, @PathVariable("id") String id) {
-        if (id.matches(Regex.NOTNULL_REX)) {
-            return new Result().setError("参数错误");
+    @PostMapping("resetPassword")
+    public Result resetPassword(@RequestBody Map<String, String> map) {
+        Map<String,String> map1 = new HashMap<>();
+        String appid = String.valueOf(redisUtil.get("GWappid"));
+        if(appid==null||appid.equals("")){
+            return new Result().setError("请先登录");
         }
+        map1.put("X-Gizwits-Application-Id",appid);
         if (map.get("email") != null
                 || map.get("phone") != null) {
             if (!map.get("code").matches(Regex.NOTNULL_REX)) {
                 JSONObject json = JSONObject.fromObject(map);
-                JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/reset_password", id, null, null, null, json);
+                JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/reset_password",map1,json);
                 return new Result().setData(jsonObject);
             } else {
                 return new Result().setError("验证码不能为空");
@@ -258,15 +271,20 @@ public class UsersController {
      * 响应参数
      * 无
      */
-    @PostMapping("smsCode/{id}")
-    public Result smsCode(@RequestBody Map<String, String> map,
-                          @PathVariable("id") String id) {
-        if (id.matches(Regex.NOTNULL_REX)) {
-            return new Result().setError("参数错误");
-        }
+    @PostMapping("smsCode")
+    public Result smsCode(@RequestBody Map<String, String> map) {
+
         if (map.get("phone").matches(Regex.PHONE_REX)) {
             JSONObject json = JSONObject.fromObject(map);
-            JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/sms_code", id, null, Token, null, json);
+            String token = String.valueOf(redisUtil.get("GWToken"));
+            Map<String,String> map1 = new HashMap<>();
+            String appid = String.valueOf(redisUtil.get("GWappid"));
+            if(appid==null||appid.equals("")){
+                return new Result().setError("请先登录");
+            }
+            map1.put("X-Gizwits-Application-Id",appid);
+            map1.put("X-Gizwits-Application-Token",token);
+            JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/sms_code",map1,json);
             return new Result().setData(jsonObject);
         }
         return new Result().setMessage("手机号或验证码有误");
@@ -291,9 +309,17 @@ public class UsersController {
         if (id.matches(Regex.NOTNULL_REX)) {
             return new Result().setError("参数错误");
         }
-        System.out.println(Token);
-        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/verify/codes", id, null, Token, null);
-        captcha_id = jsonObject.get("captcha_id").toString();
+        String token = String.valueOf(redisUtil.get("GWToken"));
+        Map<String,String> map1 = new HashMap<>();
+        String appid = String.valueOf(redisUtil.get("GWappid"));
+        if(appid==null||appid.equals("")){
+            return new Result().setError("请先登录");
+        }
+        map1.put("X-Gizwits-Application-Id",appid);
+        map1.put("X-Gizwits-Application-Token",token);
+        JSONObject jsonObject = HttpUtil.sendGet("http://api.gizwits.com/app/verify/codes",map1,null);
+        String captcha_id = jsonObject.get("captcha_id").toString();
+        redisUtil.set("captcha_id",captcha_id);
         return new Result().setData(jsonObject);
     }
 
@@ -314,15 +340,19 @@ public class UsersController {
      * 无
      */
     @PostMapping("postCodes/{id}")
-    public Result postCodes(@RequestBody Map<String, String> map,
-                            @PathVariable("id") String id) {
-        if (id.matches(Regex.NOTNULL_REX) &&
-                map.get("phone").matches(Regex.NOTNULL_REX)) {
-            return new Result().setError("请完善信息");
-        }
+    public Result postCodes(@RequestBody Map<String, String> map) {
+        String captcha_id = String.valueOf(redisUtil.get("captcha_id"));
         map.put("captcha_id", captcha_id);
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/verify/codes", id, null, Token, null, json);
+        String token = String.valueOf(redisUtil.get("GWToken"));
+        Map<String,String> map1 = new HashMap<>();
+        String appid = String.valueOf(redisUtil.get("GWappid"));
+        if(appid==null||appid.equals("")){
+            return new Result().setError("请先登录");
+        }
+        map1.put("X-Gizwits-Application-Id",appid);
+        map1.put("X-Gizwits-Application-Token",token);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/verify/codes",map1,json);
         return new Result().setData(jsonObject);
 
     }
@@ -341,16 +371,22 @@ public class UsersController {
      * 响应参数
      * 无
      */
-    @GetMapping("putCodes/{id}/{phone}/{code}")
-    public Result putCodes(@PathVariable("id") String id,
-                           @PathVariable("phone") String phone,
+    @GetMapping("putCodes/{phone}/{code}")
+    public Result putCodes(@PathVariable("phone") String phone,
                            @PathVariable("code") String code) {
-        if (!id.matches(Regex.NOTNULL_REX) &&
-                !phone.matches(Regex.NOTNULL_REX) && !code.matches(Regex.NOTNULL_REX)) {
+        if (!phone.matches(Regex.NOTNULL_REX) && !code.matches(Regex.NOTNULL_REX)) {
             Map<String, String> map = new HashMap<>();
             map.put("phone", phone);
             map.put("sms_code", code);
-            JSONObject jsonObject = HttpUtil.sendGet("https://api.gizwits.com/app/verify/codes", id, null, Token, map);
+            String token = String.valueOf(redisUtil.get("GWToken"));
+            Map<String,String> map1 = new HashMap<>();
+            String appid = String.valueOf(redisUtil.get("GWappid"));
+            if(appid==null||appid.equals("")){
+                return new Result().setError("请先登录");
+            }
+            map1.put("X-Gizwits-Application-Id",appid);
+            map1.put("X-Gizwits-Application-Token",token);
+            JSONObject jsonObject = HttpUtil.sendGet("https://api.gizwits.com/app/verify/codes",map1,map);
             return new Result().setData(jsonObject);
         }
         return new Result().setError("校验失败");
@@ -371,7 +407,7 @@ public class UsersController {
             map.put("redirect_uri", URLEncoder.encode("url/getAccessToken", "utf-8"));
             map.put("client_id", appid);
             map.put("state", state);
-            HttpUtil.getSSL("https://graph.qq.com/oauth2.0/authorize", map);
+            HttpUtil.getSSL("https://graph.qq.com/oauth2.0/authorize",null, map);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -395,10 +431,11 @@ public class UsersController {
         map.put("client_secret", appkey);
         map.put("code", code);
         map.put("redirect_uri", "getAccessToken");
-        JSONObject jsonObject = HttpUtil.getSSL("https://graph.qq.com/oauth2.0/token", map);
-        accessToken = jsonObject.get("access_token").toString();
+        JSONObject jsonObject = HttpUtil.getSSL("https://graph.qq.com/oauth2.0/token",null, map);
+        String accessToken = jsonObject.get("access_token").toString();
+        redisUtil.set("accessToken",accessToken);
         getOpenId();
-        src = "qq";
+        redisUtil.set("src","wechat");
     }
 
     /**
@@ -410,9 +447,10 @@ public class UsersController {
      */
     private void getOpenId() {
         Map<String, String> map = new HashMap<>();
-        map.put("access_token", accessToken);
-        JSONObject jsonObject = HttpUtil.getSSL("https://graph.qq.com/oauth2.0/me", map);
-        openId = jsonObject.get("openid").toString();
+        map.put("access_token", String.valueOf(redisUtil.get("accessToken")));
+        JSONObject jsonObject = HttpUtil.getSSL("https://graph.qq.com/oauth2.0/me",null, map);
+        String openId = jsonObject.get("openid").toString();
+        redisUtil.set("openId",openId);
     }
 
     /**
@@ -427,14 +465,20 @@ public class UsersController {
         }
         Map<String, String> authDate = new HashMap<>();
         Map<String, Map<String, String>> map = new HashMap<>();
-
+        String src = String.valueOf(redisUtil.get("src"));
+        String accessToken = String.valueOf(redisUtil.get("accessToken"));
+        String openId = String.valueOf(redisUtil.get("openId"));
         authDate.put("src", src);
         authDate.put("uid", openId);
         authDate.put("token", accessToken);
         map.put("authData", authDate);
         JSONObject json = JSONObject.fromObject(map);
-        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/users", id, null, null, null, json);
-        Token = jsonObject.get("token").toString();
+        Map<String,String> map1 = new HashMap<>();
+        map1.put("X-Gizwits-Application-Id",id);
+        JSONObject jsonObject = HttpUtil.sendPost("http://api.gizwits.com/app/users",map1,json);
+        String GWToken = jsonObject.get("token").toString();
+        Integer timeValue = Integer.valueOf(jsonObject.get("expire_at").toString())-20000;
+        redisUtil.setEX("GWToken",GWToken,timeValue,TimeUnit.MILLISECONDS);
         return new Result().setData(jsonObject);
     }
 
@@ -454,7 +498,7 @@ public class UsersController {
             map.put("response_type", "code");
             map.put("scope", "snsapi_login");
             map.put("state", state);
-            HttpUtil.getSSL("https://open.weixin.qq.com/connect/qrconnect", map);
+            HttpUtil.getSSL("https://open.weixin.qq.com/connect/qrconnect",null, map);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -481,10 +525,12 @@ public class UsersController {
         map.put("secret", weChatSecret);
         map.put("code", code);
         map.put("grant_type", "authorization_code");
-        JSONObject jsonObject = HttpUtil.getSSL("https://api.weixin.qq.com/sns/oauth2/access_token", map);
-        accessToken = jsonObject.get("access_token").toString();
-        openId = jsonObject.get("openid").toString();
-        src = "wechat";
+        JSONObject jsonObject = HttpUtil.getSSL("https://api.weixin.qq.com/sns/oauth2/access_token",null, map);
+        String accessToken = jsonObject.get("access_token").toString();
+        String openId = jsonObject.get("openid").toString();
+        redisUtil.set("accessToken",accessToken);
+        redisUtil.set("openId",openId);
+        redisUtil.set("src","wechat");
     }
 
     /**
