@@ -339,7 +339,7 @@ public class UsersController {
      * 响应参数
      * 无
      */
-    @PostMapping("postCodes/{id}")
+    @PostMapping("postCodes")
     public Result postCodes(@RequestBody Map<String, String> map) {
         String captcha_id = String.valueOf(redisUtil.get("captcha_id"));
         map.put("captcha_id", captcha_id);
