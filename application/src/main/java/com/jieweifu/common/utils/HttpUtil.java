@@ -266,8 +266,14 @@ public class HttpUtil {
 
     }
 
+    /**
+     * post的https请求
+     * @param url
+     * @param map
+     * @param json
+     * @return
+     */
     public static JSONObject postSSL(String url,Map<String,String> map,JSONObject json) {
-
         CloseableHttpClient httpClient = null;
         HttpPost httpPost = new HttpPost(url);
         httpClient = (CloseableHttpClient) wrapClient();
@@ -301,7 +307,86 @@ public class HttpUtil {
     }
 
     /**
-     * 封装
+     * put的https请求
+     * @param url
+     * @param map
+     * @param json
+     * @return
+     */
+    public static JSONObject putSSL(String url,Map<String,String> map,JSONObject json) {
+        CloseableHttpClient httpClient = null;
+        HttpPut httpPut = new HttpPut(url);
+        httpClient = (CloseableHttpClient) wrapClient();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(4000).setConnectTimeout(4000).build();
+        if(map!=null){
+            map.forEach(
+                    httpPut::setHeader
+            );
+        }
+        StringEntity s = null;
+        if (json != null) {
+            try {
+                s = new StringEntity(json.toString());
+                s.setContentEncoding("UTF-8");
+                s.setContentType("application/json");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        httpPut.setEntity(s);
+        CloseableHttpResponse response = null;
+        httpPut.setConfig(requestConfig);
+        try {
+            response = httpClient.execute(httpPut);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getJson(response);
+
+    }
+
+    /**
+     * delete的https请求
+     * @param url
+     * @param map
+     * @param json
+     * @return
+     */
+    public static JSONObject DeleteSSL(String url,Map<String,String> map,JSONObject json) {
+        HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
+        CloseableHttpClient httpClient = null;
+        httpClient = (CloseableHttpClient) wrapClient();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(4000).setConnectTimeout(4000).build();
+        if(map!=null){
+            map.forEach(
+                    httpDelete::setHeader
+            );
+        }
+        if (json != null) {
+            StringEntity s = null;
+            try {
+                s = new StringEntity(json.toString());
+                s.setContentType("application/json");
+                s.setContentEncoding("UTF-8");
+                httpDelete.setEntity(s);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        CloseableHttpResponse response = null;
+        httpDelete.setConfig(requestConfig);
+        try {
+            response = httpClient.execute(httpDelete);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getJson(response);
+    }
+
+    /**
+     * 封装结果集
      *
      * @param response 响应
      * @return json
@@ -314,7 +399,13 @@ public class HttpUtil {
 
             if (entity != null) {
                 result = EntityUtils.toString(entity);
-                jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
+                if(result.startsWith("[") && result.endsWith("]")){
+                    String object = "{'devices':"+result+"}";
+                    jsonObject = JSONObject.fromObject(object.replaceAll("null", "''"));
+                }else {
+                    jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
+                }
+
             }
         } catch (ParseException | IOException e) {
             e.printStackTrace();
@@ -340,7 +431,15 @@ public class HttpUtil {
             String result = "";
             try {
                 result = EntityUtils.toString(entity1);
-                jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
+                if(result.startsWith("[") && result.endsWith("]")){
+                    String object = "{'devices':"+result+"}";
+                    jsonObject = JSONObject.fromObject(object.replaceAll("null", "''"));
+                }else {
+                    if (result.equals(""))
+                        result = "{}";
+                    jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
+                }
+
             } catch (ParseException | IOException e) {
                 e.printStackTrace();
             }
