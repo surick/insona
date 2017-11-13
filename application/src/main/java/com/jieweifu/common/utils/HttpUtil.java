@@ -80,15 +80,11 @@ public class HttpUtil {
         }
         if (json != null) {
             StringEntity s = null;
-            try {
-                s = new StringEntity(json.toString());
-                s.setContentType("application/json");
-                s.setContentEncoding("UTF-8");
-                System.out.println(s);
-                httppost.setEntity(s);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            s = new StringEntity(json.toString(),"utf-8");
+            s.setContentType("application/json");
+            s.setContentEncoding("UTF-8");
+            System.out.println(s);
+            httppost.setEntity(s);
         }
         CloseableHttpResponse response = null;
         try {
@@ -117,14 +113,10 @@ public class HttpUtil {
 
         if (json != null) {
             StringEntity s = null;
-            try {
-                s = new StringEntity(json.toString());
-                s.setContentEncoding("UTF-8");
-                s.setContentType("application/json");
-                httpPut.setEntity(s);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            s = new StringEntity(json.toString(),"utf-8");
+            s.setContentEncoding("UTF-8");
+            s.setContentType("application/json");
+            httpPut.setEntity(s);
         }
         CloseableHttpResponse response = null;
         try {
@@ -176,14 +168,10 @@ public class HttpUtil {
         }
         if (json != null) {
             StringEntity s = null;
-            try {
-                s = new StringEntity(json.toString());
-                s.setContentEncoding("utf-8");
-                s.setContentType("application/json");
-                httpDelete.setEntity(s);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            s = new StringEntity(json.toString(),"utf-8");
+            s.setContentEncoding("utf-8");
+            s.setContentType("application/json");
+            httpDelete.setEntity(s);
         }
         CloseableHttpResponse response = null;
         try {
@@ -323,13 +311,9 @@ public class HttpUtil {
         }
         StringEntity s = null;
         if (json != null) {
-            try {
-                s = new StringEntity(json.toString());
-                s.setContentEncoding("utf-8");
-                s.setContentType("application/json");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            s = new StringEntity(json.toString(),"utf-8");
+            s.setContentEncoding("utf-8");
+            s.setContentType("application/json");
         }
         httpPut.setEntity(s);
         CloseableHttpResponse response = null;
@@ -364,14 +348,10 @@ public class HttpUtil {
         }
         if (json != null) {
             StringEntity s = null;
-            try {
-                s = new StringEntity(json.toString());
-                s.setContentType("application/json");
-                s.setContentEncoding("UTF-8");
-                httpDelete.setEntity(s);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            s = new StringEntity(json.toString(),"utf-8");
+            s.setContentType("application/json");
+            s.setContentEncoding("UTF-8");
+            httpDelete.setEntity(s);
         }
         CloseableHttpResponse response = null;
         httpDelete.setConfig(requestConfig);
