@@ -287,14 +287,9 @@ public class HttpUtil {
         }
         if (json != null) {
             StringEntity s = null;
-            try {
-                s = new StringEntity(json.toString());
-                s.setContentType("application/json");
-                s.setContentEncoding("utf-8");
-                httpPost.setEntity(s);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            s = new StringEntity(json.toString(), "utf-8");
+            s.setContentType("application/json");
+            httpPost.setEntity(s);
         }
         CloseableHttpResponse response = null;
         httpPost.setConfig(requestConfig);
