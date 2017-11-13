@@ -120,12 +120,7 @@ public class SceneController {
     public Result removeScene(@PathVariable("id") String id) {
         JSONObject jsonObject = HttpUtil.DeleteSSL("https://api.gizwits.com/app/scene/" + id, getHead(), null);
         String result = null;
-        if (((Integer) jsonObject.get("code")) == 200) {
-            result = "删除成功";
-        } else {
-            result = "删除失败";
-        }
-        return new Result().setMessage(result);
+        return new Result().setMessage("删除成功");
     }
 
     /**
@@ -159,13 +154,7 @@ public class SceneController {
             return new Result().setError("请设置必要的参数");
         }
         JSONObject jsonObject = HttpUtil.putSSL("https://api.gizwits.com/app/scene/" + id, getHead(), object);
-        String result = null;
-        if (((Integer) jsonObject.get("code")) == 200) {
-            result = "修改成功";
-        } else {
-            result = "修改失败";
-        }
-        return new Result().setMessage(result);
+        return new Result().setMessage("修改成功");
     }
 
     /**
@@ -213,13 +202,7 @@ public class SceneController {
     @PostMapping("postTask/{id}")
     public Result postTask(@PathVariable("id") String id) {
         JSONObject jsonObject = HttpUtil.postSSL("https://api.gizwits.com/app/scene/" + id + "/task", getHead(), null);
-        String result = null;
-        if (((Integer) jsonObject.get("code")) == 200) {
-            result = "场景任务开始执行";
-        } else {
-            result = "场景任务执行失败";
-        }
-        return new Result().setMessage(result);
+        return new Result().setMessage("开始执行任务");
     }
 
     /**
