@@ -37,7 +37,7 @@ public class HttpUtil {
      * @param url
      * @return
      */
-    public static JSONObject sendGet(String url,Map<String,String> headMap, Map<String, String> map) {
+    public static JSONObject sendGet(String url, Map<String, String> headMap, Map<String, String> map) {
 
         StringBuilder params = new StringBuilder();
         HttpGet httpget = null;
@@ -50,7 +50,7 @@ public class HttpUtil {
         } else {
             httpget = new HttpGet(url);
         }
-        if(headMap!=null){
+        if (headMap != null) {
             headMap.forEach(
                     httpget::setHeader
             );
@@ -70,10 +70,10 @@ public class HttpUtil {
      * @param url 请求链接
      * @return json
      */
-    public static JSONObject sendPost(String url,Map<String,String> map,JSONObject json) {
+    public static JSONObject sendPost(String url, Map<String, String> map, JSONObject json) {
 
         HttpPost httppost = new HttpPost(url);
-        if(map!=null){
+        if (map != null) {
             map.forEach(
                     httppost::setHeader
             );
@@ -102,14 +102,14 @@ public class HttpUtil {
     /**
      * 发送HttpPut请求，参数为map
      *
-     * @param url 请求链接
+     * @param url  请求链接
      * @param json json数据
      * @return json
      */
-    public static JSONObject sendPut(String url,Map<String,String> map,JSONObject json) {
+    public static JSONObject sendPut(String url, Map<String, String> map, JSONObject json) {
 
         HttpPut httpPut = new HttpPut(url);
-        if(map!=null){
+        if (map != null) {
             map.forEach(
                     httpPut::setHeader
             );
@@ -166,10 +166,10 @@ public class HttpUtil {
 
     }
 
-    public static JSONObject sendDelete(String url,Map<String,String> map,JSONObject json) {
+    public static JSONObject sendDelete(String url, Map<String, String> map, JSONObject json) {
 
         HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
-        if(map!=null){
+        if (map != null) {
             map.forEach(
                     httpDelete::setHeader
             );
@@ -219,7 +219,7 @@ public class HttpUtil {
             SSLConnectionSocketFactory ssf = new SSLConnectionSocketFactory(
                     ctx, NoopHostnameVerifier.INSTANCE);
             CloseableHttpClient httpclient = null;
-            httpclient= HttpClients.custom().setSSLSocketFactory(ssf).build();
+            httpclient = HttpClients.custom().setSSLSocketFactory(ssf).build();
             return httpclient;
         } catch (Exception e) {
             return HttpClients.createDefault();
@@ -233,7 +233,7 @@ public class HttpUtil {
      * @param map 封装的map数据
      * @return json
      */
-    public static JSONObject getSSL(String url,Map<String,String> map1, Map<String, String> map) {
+    public static JSONObject getSSL(String url, Map<String, String> map1, Map<String, String> map) {
         CloseableHttpClient httpClient = null;
         HttpGet httpGet = null;
         httpClient = (CloseableHttpClient) wrapClient();
@@ -250,7 +250,7 @@ public class HttpUtil {
         } else {
             httpGet = new HttpGet(url);
         }
-        if(map1!=null){
+        if (map1 != null) {
             map1.forEach(
                     httpGet::setHeader
             );
@@ -268,18 +268,19 @@ public class HttpUtil {
 
     /**
      * post的https请求
+     *
      * @param url
      * @param map
      * @param json
      * @return
      */
-    public static JSONObject postSSL(String url,Map<String,String> map,JSONObject json) {
+    public static JSONObject postSSL(String url, Map<String, String> map, JSONObject json) {
         CloseableHttpClient httpClient = null;
         HttpPost httpPost = new HttpPost(url);
         httpClient = (CloseableHttpClient) wrapClient();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(4000).setConnectTimeout(4000).build();
-        if(map!=null){
+        if (map != null) {
             map.forEach(
                     httpPost::setHeader
             );
@@ -308,18 +309,19 @@ public class HttpUtil {
 
     /**
      * put的https请求
+     *
      * @param url
      * @param map
      * @param json
      * @return
      */
-    public static JSONObject putSSL(String url,Map<String,String> map,JSONObject json) {
+    public static JSONObject putSSL(String url, Map<String, String> map, JSONObject json) {
         CloseableHttpClient httpClient = null;
         HttpPut httpPut = new HttpPut(url);
         httpClient = (CloseableHttpClient) wrapClient();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(4000).setConnectTimeout(4000).build();
-        if(map!=null){
+        if (map != null) {
             map.forEach(
                     httpPut::setHeader
             );
@@ -328,7 +330,7 @@ public class HttpUtil {
         if (json != null) {
             try {
                 s = new StringEntity(json.toString());
-                s.setContentEncoding("UTF-8");
+                s.setContentEncoding("utf-8");
                 s.setContentType("application/json");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -348,18 +350,19 @@ public class HttpUtil {
 
     /**
      * delete的https请求
+     *
      * @param url
      * @param map
      * @param json
      * @return
      */
-    public static JSONObject DeleteSSL(String url,Map<String,String> map,JSONObject json) {
+    public static JSONObject DeleteSSL(String url, Map<String, String> map, JSONObject json) {
         HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
         CloseableHttpClient httpClient = null;
         httpClient = (CloseableHttpClient) wrapClient();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(4000).setConnectTimeout(4000).build();
-        if(map!=null){
+        if (map != null) {
             map.forEach(
                     httpDelete::setHeader
             );
@@ -399,10 +402,10 @@ public class HttpUtil {
 
             if (entity != null) {
                 result = EntityUtils.toString(entity);
-                if(result.startsWith("[") && result.endsWith("]")){
-                    String object = "{'devices':"+result+"}";
+                if (result.startsWith("[") && result.endsWith("]")) {
+                    String object = "{'devices':" + result + "}";
                     jsonObject = JSONObject.fromObject(object.replaceAll("null", "''"));
-                }else {
+                } else {
                     jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
                 }
 
@@ -420,7 +423,6 @@ public class HttpUtil {
     }
 
     /**
-     *
      * @param response 响应
      * @return json
      */
@@ -431,10 +433,10 @@ public class HttpUtil {
             String result = "";
             try {
                 result = EntityUtils.toString(entity1);
-                if(result.startsWith("[") && result.endsWith("]")){
-                    String object = "{'devices':"+result+"}";
+                if (result.startsWith("[") && result.endsWith("]")) {
+                    String object = "{'devices':" + result + "}";
                     jsonObject = JSONObject.fromObject(object.replaceAll("null", "''"));
-                }else {
+                } else {
                     if (result.equals(""))
                         result = "{}";
                     jsonObject = JSONObject.fromObject(result.replaceAll("null", "''"));
@@ -454,17 +456,24 @@ public class HttpUtil {
      */
     static class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
         static final String METHOD_NAME = "DELETE";
-        public String getMethod() { return METHOD_NAME; }
+
+        public String getMethod() {
+            return METHOD_NAME;
+        }
 
         HttpDeleteWithBody(final String uri) {
             super();
             setURI(URI.create(uri));
         }
+
         public HttpDeleteWithBody(final URI uri) {
             super();
             setURI(uri);
         }
-        public HttpDeleteWithBody() { super(); }
+
+        public HttpDeleteWithBody() {
+            super();
+        }
     }
 
 }
