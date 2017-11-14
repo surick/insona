@@ -1,10 +1,12 @@
 package com.jieweifu.controllers.GizWits;
 
-import com.jieweifu.common.utils.HttpUtil;
 import com.jieweifu.common.utils.RedisUtil;
+import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
 import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,6 +19,7 @@ public class GroupController {
 
     private RedisUtil redisUtil;
 
+    @Autowired
     public GroupController(RedisUtil redisUtil) {
         this.redisUtil = redisUtil;
     }
@@ -26,7 +29,7 @@ public class GroupController {
      * GET
      * https://api.gizwits.com/app/group
      * <p>
-     * 请求参数	                    类型	   必填	参数类型	描述
+     * 请求参数	                类型	   必填	参数类型	描述
      * X-Gizwits-Application-Id	string	是	header	appid
      * X-Gizwits-User-token	    string	是	header	用户token
      * <p>
@@ -42,8 +45,8 @@ public class GroupController {
      */
     @GetMapping("getGroup")
     public Result getGroup() {
-        Map<String, String> map = getMap();
-        JSONObject jsonObject = HttpUtil.getSSL("https://api.gizwits.com/app/group", map, null);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group", getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -72,7 +75,7 @@ public class GroupController {
         }
         Map<String, String> map = getMap();
         JSONObject jsonObject =
-                HttpUtil.postSSL("https://api.gizwits.com/app/group", map, object);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group", getMap(), object, HttpMethod.POST);
         return new Result().setData(jsonObject);
     }
 
@@ -94,9 +97,8 @@ public class GroupController {
      */
     @DeleteMapping("removeGroup/{id}")
     public Result removeGroup(@PathVariable("id") String id) {
-        Map<String, String> map = getMap();
         JSONObject jsonObject =
-                HttpUtil.DeleteSSL("https://api.gizwits.com/app/group/" + id, map, null);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group/" + id, getMap(), null, HttpMethod.DELETE);
         return new Result().setData(jsonObject);
     }
 
@@ -123,9 +125,8 @@ public class GroupController {
         if (String.valueOf(object.get("group_name")) == null) {
             return new Result().setError("请填写分组名称");
         }
-        Map<String, String> map = getMap();
         JSONObject jsonObject =
-                HttpUtil.putSSL("https://api.gizwits.com/app/group/" + id, map, object);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group/" + id, getMap(), object, HttpMethod.PUT);
         return new Result().setData(jsonObject);
     }
 
@@ -151,9 +152,8 @@ public class GroupController {
      */
     @GetMapping("getDevices/{id}")
     public Result getDevices(@PathVariable("id") String id) {
-        Map<String, String> map = getMap();
         JSONObject jsonObject =
-                HttpUtil.getSSL("https://api.gizwits.com/app/group/" + id + "/devices", map, null);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group/" + id + "/devices", getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -190,9 +190,8 @@ public class GroupController {
         if (showDetail == null || String.valueOf(object.get("dids")).equals("[]")) {
             return new Result().setError("请输入正确的参数");
         }
-        Map<String, String> map = getMap();
         JSONObject jsonObject =
-                HttpUtil.postSSL("https://api.gizwits.com/app/group/" + id + "/devices?show_detail=" + showDetail, map, object);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group/" + id + "/devices?show_detail=" + showDetail, getMap(), object, HttpMethod.POST);
         return new Result().setData(jsonObject);
     }
 
@@ -221,9 +220,8 @@ public class GroupController {
         if (String.valueOf(object.get("dids")).equals("[]")) {
             return new Result().setError("请输入正确的参数");
         }
-        Map<String, String> map = getMap();
         JSONObject jsonObject =
-                HttpUtil.DeleteSSL("https://api.gizwits.com/app/group/" + id + "/devices", map, object);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group/" + id + "/devices", getMap(), object, HttpMethod.DELETE);
         return new Result().setData(jsonObject);
     }
 
@@ -265,9 +263,8 @@ public class GroupController {
         if (String.valueOf(object.get("raw")).equals("[]") || String.valueOf(object.get("attrs")).equals("{}")) {
             return new Result().setError("请输入指令");
         }
-        Map<String, String> map = getMap();
         JSONObject jsonObject =
-                HttpUtil.postSSL("https://api.gizwits.com/app/group/" + id + "/control", map, object);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/group/" + id + "/control", getMap(), object, HttpMethod.POST);
         return new Result().setData(jsonObject);
     }
 

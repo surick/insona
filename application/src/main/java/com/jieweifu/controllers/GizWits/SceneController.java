@@ -1,12 +1,12 @@
 package com.jieweifu.controllers.GizWits;
 
-import com.jieweifu.common.utils.HttpUtil;
 import com.jieweifu.common.utils.RedisUtil;
+import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,6 @@ import java.util.Map;
 public class SceneController {
 
     private RedisUtil redisUtil;
-    private RestTemplate restTemplate;
 
     @Autowired
     public SceneController(RedisUtil redisUtil) {
@@ -57,9 +56,8 @@ public class SceneController {
      */
     @GetMapping("getScene")
     public Result getScene() {
-        // JSONObject jsonObject= TemplateUtil.restHttp("https://api.gizwits.com/app/scene",getHead(),null,HttpMethod.GET,null);
         JSONObject jsonObject =
-                HttpUtil.getSSL("https://api.gizwits.com/app/scene", getHead(), null);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/scene", getHead(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -95,7 +93,7 @@ public class SceneController {
             return new Result().setError("请设置必要的参数");
         }
         JSONObject jsonObject =
-                HttpUtil.postSSL("https://api.gizwits.com/app/scene", getHead(), object);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/scene", getHead(), object, HttpMethod.POST);
         return new Result().setData(jsonObject);
     }
 
@@ -118,8 +116,8 @@ public class SceneController {
      */
     @DeleteMapping("removeScene/{id}")
     public Result removeScene(@PathVariable("id") String id) {
-        JSONObject jsonObject = HttpUtil.DeleteSSL("https://api.gizwits.com/app/scene/" + id, getHead(), null);
-        String result = null;
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/scene/" + id, getHead(), null, HttpMethod.DELETE);
         return new Result().setMessage("删除成功");
     }
 
@@ -153,7 +151,8 @@ public class SceneController {
                 String.valueOf(object.get("task_type")) == null) {
             return new Result().setError("请设置必要的参数");
         }
-        JSONObject jsonObject = HttpUtil.putSSL("https://api.gizwits.com/app/scene/" + id, getHead(), object);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/scene/" + id, getHead(), object, HttpMethod.PUT);
         return new Result().setMessage("修改成功");
     }
 
@@ -178,7 +177,7 @@ public class SceneController {
     @GetMapping("getTask/{id}")
     public Result getTask(@PathVariable("id") String id) {
         JSONObject jsonObject =
-                HttpUtil.getSSL("https://api.gizwits.com/app/scene/" + id + "/task", getHead(), null);
+                TemplateUtil.restHttp("https://api.gizwits.com/app/scene/" + id + "/task", getHead(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -201,7 +200,8 @@ public class SceneController {
      */
     @PostMapping("postTask/{id}")
     public Result postTask(@PathVariable("id") String id) {
-        JSONObject jsonObject = HttpUtil.postSSL("https://api.gizwits.com/app/scene/" + id + "/task", getHead(), null);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/scene/" + id + "/task", getHead(), null, HttpMethod.POST);
         return new Result().setMessage("开始执行任务");
     }
 

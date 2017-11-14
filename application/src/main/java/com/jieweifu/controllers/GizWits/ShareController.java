@@ -1,11 +1,12 @@
 package com.jieweifu.controllers.GizWits;
 
-import com.jieweifu.common.utils.HttpUtil;
 import com.jieweifu.common.utils.RedisUtil;
+import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class ShareController {
     @PostMapping("postShare")
     public Result postShare(@RequestBody JSONObject json) {
         JSONObject jsonObject = null;
-        if(String.valueOf(json.get("did")).equals("")){
+        if (String.valueOf(json.get("did")).equals("")) {
             return new Result().setError("设备id不能为空");
         }
         if (String.valueOf(json.get("type")).equals("0")) {
@@ -64,8 +65,8 @@ public class ShareController {
                     json.get("phone") == null) {
                 return new Result().setError("参数不合法");
             } else {
-                Map<String, String> map = getMap();
-                jsonObject = HttpUtil.postSSL("https://api.gizwits.com/app/sharing", map, json);
+                jsonObject =
+                        TemplateUtil.restHttp("https://api.gizwits.com/app/sharing", getMap(), json, HttpMethod.POST);
             }
         } else if (String.valueOf(json.get("type")).equals("1")) {
             if (json.get("uid") != null &&
@@ -74,8 +75,8 @@ public class ShareController {
                     json.get("phone") != null) {
                 return new Result().setError("参数不合法");
             } else {
-                Map<String, String> map = getMap();
-                jsonObject = HttpUtil.postSSL("https://api.gizwits.com/app/sharing", map, json);
+                jsonObject =
+                        TemplateUtil.restHttp("https://api.gizwits.com/app/sharing", getMap(), json, HttpMethod.POST);
             }
         } else {
             return new Result().setError("分享类型不正确");
@@ -143,12 +144,12 @@ public class ShareController {
             staBuilder.append("%2C").append(s);
         }
         staBuilder.replace(0, 3, "");
-        Map<String, String> map = getMap();
-        JSONObject jsonObject = HttpUtil.getSSL("https://api.gizwits.com/app/sharing?sharing_type=" + sharingType +
-                (!staBuilder.equals("") ? ("&status=" + staBuilder) : "") +
-                (did != null ? "&skip=" + did : "") +
-                (limit != null ? "&limit=" + limit : "&limit=20") +
-                (skip != null ? "&skip=" + skip : "&skip=0"), map, null);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/sharing?sharing_type=" + sharingType +
+                        (!String.valueOf(staBuilder).equals("") ? ("&status=" + staBuilder) : "") +
+                        (did != null ? "&did=" + did : "") +
+                        (limit != null ? "&limit=" + limit : "&limit=20") +
+                        (skip != null ? "&skip=" + skip : "&skip=0"), getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -171,8 +172,8 @@ public class ShareController {
      */
     @DeleteMapping("removeShare/{id}")
     public Result removeShare(@PathVariable("id") Integer id) {
-        Map<String, String> map = getMap();
-        JSONObject jsonObject = HttpUtil.DeleteSSL("https://api.gizwits.com/app/sharing/" + id, map, null);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/sharing/" + id, getMap(), null, HttpMethod.DELETE);
         return new Result().setData(jsonObject);
     }
 
@@ -199,9 +200,9 @@ public class ShareController {
     public Result putShare(@PathVariable("id") Integer id,
                            @Param("status") Integer status) {
         JSONObject jsonObject = null;
-        Map<String, String> map = getMap();
         if (status == 1 || status == 2) {
-            jsonObject = HttpUtil.putSSL("https://api.gizwits.com/app/sharing/" + id + "?status=" + status, map, null);
+            jsonObject =
+                    TemplateUtil.restHttp("https://api.gizwits.com/app/sharing/" + id + "?status=" + status, getMap(), null, HttpMethod.PUT);
         } else {
             return new Result().setError("状态码错误");
         }
@@ -230,8 +231,8 @@ public class ShareController {
      */
     @GetMapping("getCode/{code}")
     public Result getCode(@PathVariable("code") String code) {
-        Map<String, String> map = getMap();
-        JSONObject jsonObject = HttpUtil.getSSL("https://api.gizwits.com/app/sharing/code/" + code, map, null);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/sharing/code/" + code, getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -254,8 +255,8 @@ public class ShareController {
      */
     @PostMapping("postCode/{code}")
     public Result postCode(@PathVariable("code") String code) {
-        Map<String, String> map = getMap();
-        JSONObject jsonObject = HttpUtil.postSSL("https://api.gizwits.com/app/sharing/code/" + code, map, null);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/sharing/code/" + code, getMap(), null, HttpMethod.POST);
         return new Result().setData(jsonObject);
     }
 
@@ -282,9 +283,7 @@ public class ShareController {
         if (userAlias == null || userAlias.equals("")) {
             return new Result().setError("备注信息不能为空");
         }
-        Map<String, String> map = getMap();
-        System.out.println("https://api.gizwits.com/app/sharing/" + id + "/alias?user_alias=" + userAlias);
-        JSONObject jsonObject = HttpUtil.putSSL("https://api.gizwits.com/app/sharing/" + id + "/alias?user_alias=" + userAlias, map, null);
+        JSONObject jsonObject = TemplateUtil.restHttp("https://api.gizwits.com/app/sharing/" + id + "/alias?user_alias=" + userAlias, getMap(), null, HttpMethod.PUT);
         return new Result().setData(jsonObject);
     }
 
@@ -311,13 +310,14 @@ public class ShareController {
         if (uid == null || uid.equals("")) {
             return new Result().setError("请设置需要成为owner用户的ID");
         }
-        Map<String, String> map = getMap();
-        JSONObject jsonObject = HttpUtil.postSSL("https://api.gizwits.com/app/sharing/" + did + "/transfer?uid=" + uid, map, null);
+        JSONObject jsonObject =
+                TemplateUtil.restHttp("https://api.gizwits.com/app/sharing/" + did + "/transfer?uid=" + uid, getMap(), null, HttpMethod.PUT);
         return new Result().setData(jsonObject);
     }
 
     /**
      * 获取消息头
+     *
      * @return 消息头封装map
      */
     public Map<String, String> getMap() {
