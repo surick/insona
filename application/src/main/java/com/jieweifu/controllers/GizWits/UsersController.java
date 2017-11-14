@@ -3,6 +3,7 @@ package com.jieweifu.controllers.GizWits;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.gizWits.Url;
 import com.jieweifu.models.regex.Regex;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,10 +30,12 @@ public class UsersController {
     private static String state = "1";
 
     private RedisUtil redisUtil;
+    private Url url;
 
     @Autowired
-    public UsersController(RedisUtil redisUtil) {
+    public UsersController(RedisUtil redisUtil, Url url) {
         this.redisUtil = redisUtil;
+        this.url = url;
     }
 
 
@@ -59,7 +62,7 @@ public class UsersController {
     @GetMapping("getUser")
     public Result getUser() {
         JSONObject jsonObject =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/users", getHeader(), null, HttpMethod.GET);
+                TemplateUtil.restHttp(url.getGetUser(), getHeader(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -90,7 +93,7 @@ public class UsersController {
         redisUtil.set("GWappid", appid);
         redisUtil.delete("GWUserToken");
         JSONObject jsonObject =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/users", getHeader(), object, HttpMethod.POST);
+                TemplateUtil.restHttp(url.getPostUser(), getHeader(), object, HttpMethod.POST);
         return new Result().setData(jsonObject);
     }
 
@@ -125,7 +128,7 @@ public class UsersController {
     @PutMapping("putUser}")
     public Result putUser(@RequestBody JSONObject object) {
         JSONObject result =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/users", getHeader(), object, HttpMethod.PUT);
+                TemplateUtil.restHttp(url.getPutUser(), getHeader(), object, HttpMethod.PUT);
         return new Result().setData(result);
     }
 
@@ -156,7 +159,7 @@ public class UsersController {
         Map<String, String> map1 = new HashMap<>();
         map1.put("X-Gizwits-Application-Id", id);
         JSONObject jsonObject =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/login", map1, json, HttpMethod.POST);
+                TemplateUtil.restHttp(url.getPostLogin(), map1, json, HttpMethod.POST);
         String userToken = jsonObject.get("token").toString();
         Integer timeValue = Integer.valueOf(jsonObject.get("expire_at").toString()) - 20;
         redisUtil.setEX("GWUserToken", userToken, timeValue, TimeUnit.SECONDS);
@@ -191,7 +194,7 @@ public class UsersController {
         map1.put("X-Gizwits-Application-Id", id);
         map1.put("X-Gizwits-Application-Auth", auth);
         JSONObject jsonObject =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/request_token", map1, null, HttpMethod.POST);
+                TemplateUtil.restHttp(url.getPostToken(), map1, null, HttpMethod.POST);
         String GWToken = jsonObject.get("token").toString();
         Integer timeValue = Integer.valueOf(String.valueOf(jsonObject.get("expired_at"))) - 20;
         redisUtil.setEX("GWToken", GWToken, timeValue, TimeUnit.MILLISECONDS);
@@ -222,7 +225,7 @@ public class UsersController {
                 || !String.valueOf(json.get("phone")).equals("")) {
             if (!String.valueOf(json.get("code")).matches(Regex.NOTNULL_REX)) {
                 JSONObject jsonObject =
-                        TemplateUtil.restHttp("http://api.gizwits.com/app/reset_password", getHeader(), json, HttpMethod.POST);
+                        TemplateUtil.restHttp(url.getPostPassword(), getHeader(), json, HttpMethod.POST);
                 return new Result().setData(jsonObject);
             } else {
                 return new Result().setError("验证码不能为空");
@@ -257,7 +260,7 @@ public class UsersController {
 
         if (String.valueOf(json.get("phone")).matches(Regex.PHONE_REX)) {
             JSONObject jsonObject =
-                    TemplateUtil.restHttp("http://api.gizwits.com/app/sms_code", getHeader(), json, HttpMethod.POST);
+                    TemplateUtil.restHttp(url.getSmsCode(), getHeader(), json, HttpMethod.POST);
             return new Result().setData(jsonObject);
         }
         return new Result().setMessage("手机号或验证码有误");
@@ -283,7 +286,7 @@ public class UsersController {
             return new Result().setError("参数错误");
         }
         JSONObject jsonObject =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/verify/codes", getHeader(), null, HttpMethod.GET);
+                TemplateUtil.restHttp(url.getGetCodes(), getHeader(), null, HttpMethod.GET);
         String captcha_id = jsonObject.get("captcha_id").toString();
         redisUtil.set("captcha_id", captcha_id);
         return new Result().setData(jsonObject);
@@ -311,7 +314,7 @@ public class UsersController {
         map.put("captcha_id", captcha_id);
         JSONObject json = JSONObject.fromObject(map);
         JSONObject jsonObject =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/verify/codes", getHeader(), json, HttpMethod.POST);
+                TemplateUtil.restHttp(url.getPostCodes(), getHeader(), json, HttpMethod.POST);
         return new Result().setData(jsonObject);
 
     }
@@ -333,7 +336,7 @@ public class UsersController {
     @GetMapping("putCodes")
     public Result putCodes(@RequestBody JSONObject json) {
         JSONObject jsonObject =
-                TemplateUtil.restHttp("https://api.gizwits.com/app/verify/codes", getHeader(), json, HttpMethod.GET);
+                TemplateUtil.restHttp(url.getPutCodes(), getHeader(), json, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
