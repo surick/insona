@@ -3,6 +3,7 @@ package com.jieweifu.controllers.GizWits;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.gizWits.Url;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,12 @@ import java.util.Map;
 @RequestMapping("giz/blind")
 public class BlindController {
     private RedisUtil redisUtil;
+    private Url url;
 
     @Autowired
-    public BlindController(RedisUtil redisUtil) {
+    public BlindController(RedisUtil redisUtil,Url url) {
         this.redisUtil = redisUtil;
+        this.url = url;
     }
 
     /**
@@ -74,7 +77,7 @@ public class BlindController {
             return new Result().setError("请设置正确的参数");
         }
         JSONObject result =
-                TemplateUtil.restHttp("http://api.gizwits.com/app/bind_mac", map1, jsonObject, HttpMethod.POST);
+                TemplateUtil.restHttp(url.getBlindMac(), map1, jsonObject, HttpMethod.POST);
         return new Result().setData(result);
     }
 
@@ -100,7 +103,7 @@ public class BlindController {
             return new Result().setError("请输入正确的数组");
         }
         JSONObject jsonObject =
-                TemplateUtil.restHttp("https://api.gizwits.com/app/bindings", getMap(), json, HttpMethod.DELETE);
+                TemplateUtil.restHttp(url.getDeleteBlind(), getMap(), json, HttpMethod.DELETE);
         return new Result().setData(jsonObject);
     }
 
@@ -150,11 +153,13 @@ public class BlindController {
                            @Param("skip") Integer skip,
                            @Param("show_disabled") Integer show_disabled,
                            @Param("show_proto_ver") Integer show_proto_ver) {
-        JSONObject jsonObject = TemplateUtil.restHttp("https://api.gizwits.com/app/bindings?" +
-                (!(limit == null) ? "limit=" + limit : "0") +
-                (!(skip == null) ? "&skip=" + skip : "0") +
-                (!(show_disabled == null) ? "&show_disabled=" + show_disabled : "0") +
-                (!(show_proto_ver == null) ? "&show_proto_ver=" + show_proto_ver : "0"), getMap(), null, HttpMethod.GET);
+        StringBuilder urlBuild = new StringBuilder(url.getGetBlind());
+        String urlPath = String.valueOf(urlBuild.append("?").append
+                (!(limit == null) ? "limit=" + limit : "0").append
+                (!(skip == null) ? "&skip=" + skip : "0").append
+                (!(show_disabled == null) ? "&show_disabled=" + show_disabled : "0").append
+        (!(show_proto_ver == null) ? "&show_proto_ver=" + show_proto_ver : "0"));
+        JSONObject jsonObject = TemplateUtil.restHttp(urlPath, getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -180,7 +185,7 @@ public class BlindController {
             return new Result().setError("请先扫描二维码");
         }
         JSONObject jsonObject =
-                TemplateUtil.restHttp("https://api.gizwits.com/app/bind_latest", getMap(), json, HttpMethod.POST);
+                TemplateUtil.restHttp(url.getBlindLatest(), getMap(), json, HttpMethod.POST);
         return new Result().setData(jsonObject);
     }
 
@@ -210,7 +215,7 @@ public class BlindController {
     @PutMapping("updateBlind/{did}")
     public Result updateBlind(@PathVariable("did") String did, @RequestBody JSONObject json) {
         JSONObject jsonObject =
-                TemplateUtil.restHttp("https://api.gizwits.com/app/bindings/" + did, getMap(), json, HttpMethod.PUT);
+                TemplateUtil.restHttp(url.getPutBlind().replace("{did}",did), getMap(), json, HttpMethod.PUT);
         return new Result().setData(jsonObject);
     }
 
@@ -238,7 +243,7 @@ public class BlindController {
     @GetMapping("getBlinding/{did}")
     public Result getBlinding(@PathVariable("did") String did) {
         JSONObject jsonObject =
-                TemplateUtil.restHttp("https://api.gizwits.com/app/" + did + "/bindings", getMap(), null, HttpMethod.GET);
+                TemplateUtil.restHttp(url.getGetDidBlind().replace("{did}",did), getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -263,10 +268,13 @@ public class BlindController {
      */
     @DeleteMapping("removeBlinds/{did}")
     public Result removeBlinds(@PathVariable("did") String did,
-                               @RequestParam(value = "uid", required = true) String uid) {
+                               @Param("uid") String uid) {
         Map<String, String> map1 = getMap();
+        StringBuilder urlBuild = new StringBuilder(url.getDeleteDidBlind());
+        String urlPath = String.valueOf(urlBuild.append("?uid=").append(uid));
+        System.out.println(urlPath.replace("{did}",did));
         JSONObject jsonObject =
-                TemplateUtil.restHttp("https://api.gizwits.com/app/" + did + "/bindings?uid=" + uid, getMap(), null, HttpMethod.DELETE);
+                TemplateUtil.restHttp(urlPath.replace("{did}",did), getMap(), null, HttpMethod.DELETE);
         return new Result().setData(jsonObject);
     }
 

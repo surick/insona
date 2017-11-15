@@ -5,26 +5,84 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Url {
-    @Value("${httpClient.get_app_users}")
+    /**
+     * 用户管理url
+     */
+    @Value("${httpClient.user.get_app_users}")
     private String getUser;
-    @Value("${httpClient.post_app_users}")
+    @Value("${httpClient.user.post_app_users}")
     private String postUser;
-    @Value("${httpClient.put_app_users}")
+    @Value("${httpClient.user.put_app_users}")
     private String putUser;
-    @Value("${httpClient.post_app_login}")
+    @Value("${httpClient.user.post_app_login}")
     private String postLogin;
-    @Value("${httpClient.post_app_request_token}")
+    @Value("${httpClient.user.post_app_request_token}")
     private String postToken;
-    @Value("${httpClient.post_app_reset_password}")
+    @Value("${httpClient.user.post_app_reset_password}")
     private String postPassword;
-    @Value("${httpClient.post_app_sms_code}")
+    @Value("${httpClient.user.post_app_sms_code}")
     private String smsCode;
-    @Value("${httpClient.get_app_verify_codes}")
+    @Value("${httpClient.user.get_app_verify_codes}")
     private String getCodes;
-    @Value("${httpClient.post_app_verify_codes}")
+    @Value("${httpClient.user.post_app_verify_codes}")
     private String putCodes;
-    @Value("${httpClient.put_app_verify_codes}")
+    @Value("${httpClient.user.put_app_verify_codes}")
     private String postCodes;
+    /**
+     * 设备绑定url
+     */
+    @Value("${httpClient.blind.post_app_bind_mac}")
+    private String blindMac;
+    @Value("${httpClient.blind.delete_app_bindings}")
+    private String deleteBlind;
+    @Value("${httpClient.blind.get_app_bindings}")
+    private String getBlind;
+    @Value("${httpClient.blind.post_app_bind_latest}")
+    private String blindLatest;
+    @Value("${httpClient.blind.put_app_bindings_did}")
+    private String putBlind;
+    @Value("${httpClient.blind.get_app_did_bindings}")
+    private String getDidBlind;
+    @Value("${httpClient.blind.delete_app_did_bindings}")
+    private String deleteDidBlind;
+
+    private String getShare;
+    private String postShare;
+    private String deleteShare;
+    private String putShare;
+    private String getCode;
+    private String postCode;
+    private String putIdalias;
+    private String postTransfer;
+
+
+    public String getBlindMac() {
+        return blindMac;
+    }
+
+    public String getDeleteBlind() {
+        return deleteBlind;
+    }
+
+    public String getGetBlind() {
+        return getBlind;
+    }
+
+    public String getBlindLatest() {
+        return blindLatest;
+    }
+
+    public String getPutBlind() {
+        return putBlind;
+    }
+
+    public String getGetDidBlind() {
+        return getDidBlind;
+    }
+
+    public String getDeleteDidBlind() {
+        return deleteDidBlind;
+    }
 
     public String getGetUser() {
         return getUser;

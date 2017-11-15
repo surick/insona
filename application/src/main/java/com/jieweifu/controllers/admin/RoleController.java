@@ -155,23 +155,25 @@ public class RoleController {
      * 添加权限
      */
     @PostMapping("saveAuthority/{id}")
-    public Result saveAuthority(@PathVariable("id") int id,
-                                @RequestBody Map<String, List<Integer>> mapList) {
+    public Result saveAuthority(@PathVariable("id") String id,
+                                @RequestBody Map<String, List<String>> mapList) {
+        if(!id.matches("^[0-9]*$")){
+            return new Result().setError("id非法");
+        }
         if (mapList.isEmpty())
             return new Result().setError("权限为空");
         mapList.forEach(
                 (s, integers) ->
                 {
-                    for (Integer j : integers) {
+                    for (String j : integers) {
                         RoleAuthority roleAuthority = new RoleAuthority();
-                        roleAuthority.setRoleId(id);
-                        roleAuthority.setResourceId(j);
+                        roleAuthority.setRoleId(Integer.parseInt(id));
+                        roleAuthority.setResourceId(Integer.parseInt(j));
                         roleAuthority.setResourceType(s);
                         roleAuthorityService.addRoleAuthority(roleAuthority);
                     }
                 }
         );
-
         return new Result().setMessage("添加/修改权限成功");
     }
 
@@ -179,8 +181,8 @@ public class RoleController {
      * 修改角色权限
      */
     @PutMapping("updateAuthority/{id}")
-    public Result updateAuthority(@PathVariable("id") int id, @RequestBody Map<String, List<Integer>> mapList) {
-        roleAuthorityService.deleteRoleAuthority(id);
+    public Result updateAuthority(@PathVariable("id") String id, @RequestBody Map<String, List<String>> mapList) {
+        roleAuthorityService.deleteRoleAuthority(Integer.parseInt(id));
         return saveAuthority(id, mapList);
     }
 

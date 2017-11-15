@@ -54,13 +54,31 @@ server:
     mime-types: application/json,text/html,text/xml,text/plain,text/css,application/javascript,image/gif,image/jpeg,image/png
 
 httpClient:
-  get_app_users: http://api.gizwits.com/app/users
-  post_app_users: http://api.gizwits.com/app/users
-  put_app_users: http://api.gizwits.com/app/users
-  post_app_login: http://api.gizwits.com/app/login
-  post_app_request_token: http://api.gizwits.com/app/request_token
-  post_app_reset_password: http://api.gizwits.com/app/reset_password
-  post_app_sms_code: http://api.gizwits.com/app/sms_code
-  get_app_verify_codes: http://api.gizwits.com/app/verify/codes
-  post_app_verify_codes: http://api.gizwits.com/app/verify/codes
-  put_app_verify_codes: https://api.gizwits.com/app/verify/codes
+  user:
+    get_app_users: http://api.gizwits.com/app/users
+    post_app_users: http://api.gizwits.com/app/users
+    put_app_users: http://api.gizwits.com/app/users
+    post_app_login: http://api.gizwits.com/app/login
+    post_app_request_token: http://api.gizwits.com/app/request_token
+    post_app_reset_password: http://api.gizwits.com/app/reset_password
+    post_app_sms_code: http://api.gizwits.com/app/sms_code
+    get_app_verify_codes: http://api.gizwits.com/app/verify/codes
+    post_app_verify_codes: http://api.gizwits.com/app/verify/codes
+    put_app_verify_codes: https://api.gizwits.com/app/verify/codes
+  blind:
+    post_app_bind_mac: http://api.gizwits.com/app/bind_mac
+    delete_app_bindings: https://api.gizwits.com/app/bindings
+    get_app_bindings: https://api.gizwits.com/app/bindings
+    post_app_bind_latest: https://api.gizwits.com/app/bind_latest
+    put_app_bindings_did: https://api.gizwits.com/app/bindings/{did}
+    get_app_did_bindings: https://api.gizwits.com/app/{did}/bindings
+    delete_app_did_bindings: https://api.gizwits.com/app/{did}/bindings
+  share:
+    get_app_sharing: https://api.gizwits.com/app/sharing
+    post_app_sharing: https://api.gizwits.com/app/sharing?sharing_type={sharing_type}
+    delete_app_sharing_id: https://api.gizwits.com/app/sharing/{id}
+    put_app_sharing_id: https://api.gizwits.com/app/sharing/{id}
+    get_app_sharing_code: https://api.gizwits.com/app/sharing/code/{code}
+    post_app_sharing_code: https://api.gizwits.com/app/sharing/code/{code}
+    put_app_sharing_idalias: https://api.gizwits.com/app/sharing/{id}/alias?user_alias={user_alias}
+    post_app_sharing_did_transfer: https://api.gizwits.com/app/sharing/1/transfer?uid=1

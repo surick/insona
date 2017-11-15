@@ -7,7 +7,28 @@ export default {
             url: '/sys/role/listAllRoles'
         });
     },
-
+    getAuthTree(vm) {
+        return ajax(vm, {
+            method: 'GET',
+            url: '/sys/menu/listAllMenus'
+        });
+    },
+    dealAuthTree(tree) {
+        let list = [];
+        tree.forEach(item => {
+            let obj = {};
+            obj.children = [];
+            if (item.children && item.children.length > 0) {
+                obj.children = this.dealAuthTree(item.children);
+            }
+            obj.resourceId = item.id;
+            obj.title = item.title;
+            obj.resourceType = item.code;
+            obj.expand = false;
+            list.push(obj);
+        });
+        return list;
+    },
     dealRoleTree(tree) {
         let list = [];
         tree.forEach(item => {
@@ -23,7 +44,16 @@ export default {
         });
         return list;
     },
-
+    saveAuth(vm, obj) {
+        console.log(obj);
+        return ajax(vm, {
+            method: 'POST',
+            url: '/sys/role/saveAuthority/'.concat(obj.roleId),
+            data: {
+                MENU: obj.resourceId
+            }
+        });
+    },
     dealRoleTreeToList(tree) {
         let list = [];
         tree.forEach(item => {

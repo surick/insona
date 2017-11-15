@@ -49,7 +49,7 @@ export default {
     addUser(vm, obj) {
         return ajax(vm, {
             method: 'POST',
-            url: '/sys/user/addUser',
+            url: '/sys/user/saveUser',
             data: {
                 userName: obj.userName,
                 name: obj.name,
@@ -87,5 +87,46 @@ export default {
             url: '/sys/user/deleteUser',
             data: ids
         });
+    },
+
+    saveRole(vm, obj) {
+        return ajax(vm, {
+            method: 'PUT',
+            headers: {'Access-Control-Allow-Origin': '*'},
+            url: '/sys/user/updateRoleUser',
+            data: {
+                userId: obj.userId,
+                roleId: obj.roleId
+            }
+        });
+    },
+    dealRoleTreeToList(tree) {
+        let list = [];
+        tree.forEach(item => {
+            let obj = {};
+            obj.id = item.id;
+            obj.roleName = item.roleName;
+            list.push(obj);
+            if (item.children && item.children.length > 0) {
+                list = list.concat(this.dealRoleTreeToList(item.children));
+            }
+        });
+        return list;
+    },
+    dealRoleTree(tree) {
+        let list = [];
+        tree.forEach(item => {
+            let obj = {};
+            obj.children = [];
+            if (item.children && item.children.length > 0) {
+                obj.children = this.dealRoleTree(item.children);
+            }
+            obj.checked = false;
+            obj.id = item.id;
+            obj.title = item.roleName;
+            obj.expand = false;
+            list.push(obj);
+        });
+        return list;
     }
 };

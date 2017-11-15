@@ -9,6 +9,7 @@ import com.jieweifu.models.regex.Regex;
 import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
 import com.jieweifu.services.admin.UserService;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -130,42 +131,56 @@ public class UserController {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
         boolean flag = false;
-        if (userService.getUserById(roleInfo.getUserId())!=null&&
-                roleService.getRoleById(roleInfo.getRoleId())!=null) {
-            roleUserService.deleteRoleUser(roleInfo.getUserId());
-            RoleUser roleUser = new RoleUser();
-            roleUser.setUserId(roleInfo.getUserId());
-            roleUser.setRoleId(roleInfo.getRoleId());
-            roleUser.setDescription(roleService.getRoleById(roleInfo.getRoleId()).getDescription());
-            roleUserService.addRoleUser(roleUser);
-            flag = true;
+        for(String roleIds : roleInfo.getRoleId()){
+            Integer roleId = Integer.parseInt(roleIds);
+            if (userService.getUserById(roleInfo.getUserId()) != null &&
+                    roleService.getRoleById(roleId) != null){
+                flag = true;
+            }else {
+                flag = false;
+            }
         }
-
-
-        return new Result().setMessage(flag ? "配置角色成功" : "配置角色失败");
+        if(flag){
+            roleUserService.deleteRoleUser(roleInfo.getUserId());
+            for (String roleIds : roleInfo.getRoleId()) {
+                Integer roleId = Integer.parseInt(roleIds);
+                if (userService.getUserById(roleInfo.getUserId()) != null &&
+                        roleService.getRoleById(roleId) != null) {
+                    RoleUser roleUser = new RoleUser();
+                    roleUser.setUserId(roleInfo.getUserId());
+                    roleUser.setRoleId(roleId);
+                    roleUser.setDescription(roleService.getRoleById(roleId).getDescription());
+                    roleUserService.addRoleUser(roleUser);
+                    flag = true;
+                }
+            }
+            return new Result().setMessage("配置角色成功");
+        }else {
+            return new Result().setError("配置权限失败");
+        }
     }
 
     public static class RoleInfo {
 
-        private int userId;
+        private Integer userId;
 
-        private int roleId;
+        private List<String> roleId;
 
         @Min(value = 0, message = "userId不合法")
-        public int getUserId() {
+        public Integer getUserId() {
             return userId;
         }
 
-        public void setUserId(int userId) {
+        public void setUserId(Integer userId) {
             this.userId = userId;
         }
 
-        @Min(value = 0, message = "角色不能为空")
-        public int getRoleId() {
+        @NotEmpty(message = "roleId不能为空")
+        public List<String> getRoleId() {
             return roleId;
         }
 
-        public void setRoleId(int roleId) {
+        public void setRoleId(List<String> roleId) {
             this.roleId = roleId;
         }
     }

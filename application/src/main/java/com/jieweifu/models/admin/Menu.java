@@ -70,6 +70,7 @@ public class Menu {
     private String attr7;
     private String attr8;
 
+
     public int getId() {
         return id;
     }

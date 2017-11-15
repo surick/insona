@@ -105,7 +105,7 @@
                     <div class="input-label">CODE</div>
                     </Col>
                     <Col span="21">
-                        <Input v-model="addRoleDetail.roleCode" placeholder="CODE"></Input>
+                    <Input v-model="addRoleDetail.roleCode" placeholder="CODE"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -139,7 +139,7 @@
             :mask-closable="false"
             @on-ok="saveAuth">
             <div class="modal-body">
-                <Tree ref="authTree" :data="authData" show-checkbox></Tree>
+                <Tree ref="authTree" :data="authData" show-checkbox @on-select-change="treeAuthSelect"></Tree>
             </div>
         </Modal>
     </div>
@@ -147,6 +147,7 @@
 
 <script>
     import {Role} from '@/http';
+
     export default {
         name: 'auth_role',
         data() {
@@ -164,7 +165,7 @@
                 roleDetail: {
                     parent: '',
                     name: '',
-                    status: true
+                    checked: true
                 },
                 addModal: false,
                 addRoleDetail: {
@@ -175,26 +176,13 @@
                     enabled: true
                 },
                 authModal: false,
-                authData: [
-                    {
-                        title: '超级管理员',
-                        expand: false
-                    },
-                    {
-                        title: '客服管理',
-                        expand: false,
-                        children: [
-                            {
-                                title: '售后客服',
-                                expand: false
-                            },
-                            {
-                                title: '售前客服',
-                                expand: false
-                            }
-                        ]
-                    }
-                ],
+                authData: [],
+                authDetail: {
+                    resourceId: '',
+                    resourceType: 'MENU',
+                    roleId: '',
+                    status: true
+                },
                 roleList: []
             };
         },
@@ -232,9 +220,19 @@
                     }
                 });
             },
+            getAuthTree() {
+                Role.getAuthTree(this).then(res => {
+                    if (res.success) {
+                        this.authData = Role.dealAuthTree(res.data);
+                    }
+                });
+            },
+            treeAuthSelect(node) {
+                this.authDetail = node;
+                console.log(node);
+            },
             treeNodeSelect(node) {
                 this.roleDetail = node;
-
                 console.log(node);
             },
             saveAdd() {
@@ -267,15 +265,31 @@
                 this.addModal = true;
             },
             authSet() {
+                this.getAuthTree();
                 this.authModal = true;
             },
             saveAuth() {
-
+                let role = this.$refs.roleTree.getCheckedNodes();
+                let roleId = role.map(item => {
+                    return item.id;
+                });
+                let auth = this.$refs.authTree.getCheckedNodes();
+                let authId = auth.map(item => {
+                    return item.resourceId;
+                });
+                console.log('id=' + auth.resourceId);
+                this.authDetail = {
+                    resourceId: authId,
+                    resourceType: 'MENU',
+                    roleId: roleId[0]
+                };
+                Role.saveAuth(this, this.authDetail);
             },
-
             deleteRoles() {
                 let roles = this.$refs.roleTree.getCheckedNodes();
-                let ids = roles.map(item => { return item.id; });
+                let ids = roles.map(item => {
+                    return item.id;
+                });
                 console.log(ids);
                 if (roles.length === 0) {
                     this.$Message.warning('请先选择需要删除的角色');
