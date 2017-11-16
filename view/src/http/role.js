@@ -47,8 +47,8 @@ export default {
     saveAuth(vm, obj) {
         console.log(obj);
         return ajax(vm, {
-            method: 'POST',
-            url: '/sys/role/saveAuthority/'.concat(obj.roleId),
+            method: 'PUT',
+            url: '/sys/role/updateAuthority/'.concat(obj.roleId),
             data: {
                 MENU: obj.resourceId
             }
