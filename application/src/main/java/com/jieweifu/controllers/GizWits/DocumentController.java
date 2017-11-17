@@ -10,7 +10,9 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @RestController("GizWitsDocument")
@@ -43,16 +45,17 @@ public class DocumentController {
     /**
      * 删除document
      *
-     * @param id id
+     * @param ids id数组
      * @return message
      */
     @DeleteMapping("removeDocument")
-    public Result removeDocument(@Param("id") Integer id) {
-        if (id == 0)
-            return new Result().setError("id不能为空");
-        if (documentService.getDocument(id) == null)
-            return new Result().setError("不存在");
-        documentService.removeDocument(id);
+    public Result removeDocument(@RequestBody List<String> ids) {
+        for (String id : ids) {
+            if (documentService.getDocument(Integer.parseInt(id)) == null) {
+                return new Result().setError("无效id");
+            }
+            documentService.removeDocument(Integer.parseInt(id));
+        }
         return new Result().setMessage("删除成功");
     }
 
@@ -99,5 +102,25 @@ public class DocumentController {
             return new Result().setError("不存在");
         documentService.updateDocument(document);
         return new Result().setMessage("修改成功");
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param pageIndex 起始页
+     * @param pageSize  条目数
+     * @return map
+     */
+    @GetMapping("pageDocument/{pageIndex}/{pageSize}")
+    public Result getInfoByPage(@PathVariable("pageIndex") int pageIndex,
+                                @PathVariable("pageSize") int pageSize) {
+        if (pageIndex < 0 || pageSize < 0)
+            return new Result().setError("页码或条目数不合法");
+        List<Document> infoList = documentService.documentPage(pageIndex, pageSize);
+        int total = documentService.getDocumentTotal();
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", infoList);
+        map.put("total", total);
+        return new Result().setData(map);
     }
 }

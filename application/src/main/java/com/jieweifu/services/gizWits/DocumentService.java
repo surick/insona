@@ -19,4 +19,8 @@ public interface DocumentService {
     List<Document> AllDocument();
 
     Document getDocument(Integer id);
+
+    List<Document> documentPage(int pageIndex, int pageSize);
+
+    int getDocumentTotal();
 }

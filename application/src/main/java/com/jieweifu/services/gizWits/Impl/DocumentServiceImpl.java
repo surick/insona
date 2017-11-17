@@ -96,4 +96,21 @@ public class DocumentServiceImpl implements DocumentService {
                 .where("is_deleted = ? AND id = ?", 0, id)
                 .queryForEntity(Document.class);
     }
+
+    @Override
+    public List<Document> documentPage(int pageIndex, int pageSize) {
+        return db.select()
+                .from(Document.class)
+                .where("is_deleted = ?", 0)
+                .limit(pageIndex, pageSize)
+                .queryForList(Document.class);
+    }
+
+    @Override
+    public int getDocumentTotal() {
+        return db.select()
+                .from(Document.class)
+                .where("is_deleted = ?", 0)
+                .total();
+    }
 }

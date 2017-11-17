@@ -96,5 +96,28 @@ public class InfoServiceImpl implements InfoService {
                 .execute();
     }
 
+    /**
+     * 分页查询
+     */
+    @Override
+    public List<Info> pageInfo(int pageIndex, int pageSize) {
+        return db.select()
+                .from(Info.class)
+                .where("is_deleted = ?", 0)
+                .limit(pageIndex, pageSize)
+                .queryForList(Info.class);
+    }
+
+    /**
+     * 总数
+     */
+    @Override
+    public int getInfoTotal() {
+        return db.select()
+                .from(Info.class)
+                .where("is_deleted = ?", 0)
+                .total();
+    }
+
 
 }

@@ -17,4 +17,8 @@ public interface HomeService {
     Home getHomeByTitle(String title);
 
     Home getHomeById(Integer id);
+
+    List<Home> homePage(int pageIndex, int pageSize);
+
+    int getHomeTotal();
 }

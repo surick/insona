@@ -84,4 +84,21 @@ public class HomeServiceImpl implements HomeService {
                 .where("is_deleted = ? AND id = ?", 0, id)
                 .queryForEntity(Home.class);
     }
+
+    @Override
+    public List<Home> homePage(int pageIndex, int pageSize) {
+        return db.select()
+                .from(Home.class)
+                .where("is_deleted = ?", 0)
+                .limit(pageIndex, pageSize)
+                .queryForList(Home.class);
+    }
+
+    @Override
+    public int getHomeTotal() {
+        return db.select()
+                .from(Home.class)
+                .where("is_deleted = ?", 0)
+                .total();
+    }
 }

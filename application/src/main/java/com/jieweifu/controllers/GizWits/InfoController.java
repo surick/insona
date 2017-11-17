@@ -10,7 +10,9 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @RestController("GizWitsInfo")
@@ -33,6 +35,26 @@ public class InfoController {
     public Result listAllInfo() {
         List<Info> list = infoService.getInfo();
         return new Result().setData(list);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param pageIndex 起始页
+     * @param pageSize  条目数
+     * @return map
+     */
+    @GetMapping("pageInfo/{pageIndex}/{pageSize}")
+    public Result getInfoByPage(@PathVariable("pageIndex") int pageIndex,
+                                @PathVariable("pageSize") int pageSize) {
+        if (pageIndex < 0 || pageSize < 0)
+            return new Result().setError("页码或条目数不合法");
+        List<Info> infoList = infoService.pageInfo(pageIndex, pageSize);
+        int total = infoService.getInfoTotal();
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", infoList);
+        map.put("total", total);
+        return new Result().setData(map);
     }
 
     /**
@@ -101,16 +123,17 @@ public class InfoController {
     /**
      * 删除info
      *
-     * @param id id
+     * @param ids id数组
      * @return message
      */
     @DeleteMapping("removeInfo")
-    public Result removeInfo(@Param("id") Integer id) {
-        if (id == 0)
-            return new Result().setError("id不能为空");
-        if (infoService.getInfoById(id) == null)
-            return new Result().setError("不存在");
-        infoService.removeInfo(id);
+    public Result removeInfo(@RequestBody List<String> ids) {
+        for (String id : ids) {
+            if (infoService.getInfoById(Integer.parseInt(id)) == null) {
+                return new Result().setError("无效id");
+            }
+            infoService.removeInfo(Integer.parseInt(id));
+        }
         return new Result().setMessage("删除成功");
     }
 }

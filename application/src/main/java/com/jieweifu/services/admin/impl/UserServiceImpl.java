@@ -223,7 +223,7 @@ public class UserServiceImpl implements UserService {
 
     private List<RoleAuthority> getRoleAuthorization(int userId) {
         return db.select()
-                .columns("DISTINCT C.resource_id, C.resource_type")
+                .columns("DISTINCT B.resource_id, B.resource_type")
                 .from(RoleUser.class, "A")
                 .leftOuterJoin(RoleAuthority.class, "B", "B.role_id = A.role_id")
                 .where("A.user_id = ?", userId)

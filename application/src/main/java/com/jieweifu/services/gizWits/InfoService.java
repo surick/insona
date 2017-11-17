@@ -19,4 +19,8 @@ public interface InfoService {
     Info getInfoById(Integer id);
 
     void removeInfo(Integer id);
+
+    List<Info> pageInfo(int pageIndex, int pageSize);
+
+    int getInfoTotal();
 }
