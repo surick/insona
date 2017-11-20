@@ -135,7 +135,7 @@ public class DocumentController {
             responseData.put("error", e.toString());
         }
         Document document = new Document();
-        document.setName(file.getName());
+        document.setName(file.getOriginalFilename());
         document.setFileType(1);
         document.setFileUrl(String.valueOf(responseData.get("link")));
         int total = documentService.getDocumentTotal();
