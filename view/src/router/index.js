@@ -136,10 +136,10 @@ export const appRouter = [
     },
 
     {
-        path: '/other',
+        path: '/insona',
         icon: 'key',
-        name: 'other',
-        title: '其他',
+        name: 'insona',
+        title: '英索纳',
         component: Main,
         children: [
             {
@@ -147,7 +147,7 @@ export const appRouter = [
                 title: '信息管理',
                 name: 'INFO',
                 component: resolve => {
-                    require(['../views/other/insona-info.vue'], resolve);
+                    require(['../views/insona/insona-info.vue'], resolve);
                 }
             },
 
@@ -156,15 +156,31 @@ export const appRouter = [
                 title: '家庭背景',
                 name: 'HOME',
                 component: resolve => {
-                    require(['../views/other/insona-home.vue'], resolve);
+                    require(['../views/insona/insona-home.vue'], resolve);
                 }
             },
             {
                 path: 'document',
                 title: '文件服务',
-                name: 'Document',
+                name: 'DOCUMENT',
                 component: resolve => {
-                    require(['../views/other/insona-document.vue'], resolve);
+                    require(['../views/insona/insona-document.vue'], resolve);
+                }
+            },
+            {
+                path: 'user-product',
+                title: '设备管理1',
+                name: 'USER-PRODUCT',
+                component: resolve => {
+                    require(['../views/insona/insona-user-product.vue'], resolve);
+                }
+            },
+            {
+                path: 'product',
+                title: '设备管理2',
+                name: 'PRODUCT',
+                component: resolve => {
+                    require(['../views/insona/insona-product.vue'], resolve);
                 }
             }
         ]

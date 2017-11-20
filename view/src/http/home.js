@@ -24,7 +24,7 @@ export default {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/giz/home/pageHome/' + obj.pageIndex + '/' + obj.pageSize
+                url: '/insona/home/pageHome/' + obj.pageIndex + '/' + obj.pageSize
             }).then(res => {
                 if (res.success) {
                     res.data.list.forEach(item => {
@@ -41,7 +41,7 @@ export default {
         console.log(obj);
         return ajax(vm, {
             method: 'POST',
-            url: '/giz/home/saveHome',
+            url: '/insona/home/saveHome',
             data: {
                 title: obj.title,
                 infoType: obj.infoType,
@@ -55,7 +55,7 @@ export default {
         console.log(obj);
         return ajax(vm, {
             method: 'PUT',
-            url: '/giz/home/updateHome',
+            url: '/insona/home/updateHome',
             data: {
                 id: id,
                 title: obj.title,
@@ -69,7 +69,7 @@ export default {
     deleteHome(vm, ids) {
         return ajax(vm, {
             method: 'DELETE',
-            url: '/giz/home/removeHome',
+            url: '/insona/home/removeHome',
             data: ids
         });
     }

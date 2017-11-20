@@ -1,10 +1,10 @@
-package com.jieweifu.controllers.other;
+package com.jieweifu.controllers.insona;
 
 import com.froala.editor.file.FileOptions;
 import com.froala.editor.file.FileValidation;
 import com.jieweifu.models.Result;
-import com.jieweifu.models.gizWits.Document;
-import com.jieweifu.services.gizWits.DocumentService;
+import com.jieweifu.models.insona.Document;
+import com.jieweifu.services.insona.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@RestController("GizWitsDocument")
-@RequestMapping("giz/document")
+@RestController("InsonaDocument")
+@RequestMapping("insona/document")
 public class DocumentController {
     private DocumentService documentService;
 

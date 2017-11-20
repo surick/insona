@@ -1,9 +1,9 @@
-package com.jieweifu.services.gizWits.Impl;
+package com.jieweifu.services.insona.Impl;
 
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
-import com.jieweifu.models.gizWits.Home;
-import com.jieweifu.services.gizWits.HomeService;
+import com.jieweifu.models.insona.Home;
+import com.jieweifu.services.insona.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

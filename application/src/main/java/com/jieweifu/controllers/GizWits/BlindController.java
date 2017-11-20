@@ -3,7 +3,7 @@ package com.jieweifu.controllers.GizWits;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
-import com.jieweifu.models.gizWits.Url;
+import com.jieweifu.models.insona.Url;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class BlindController {
     private Url url;
 
     @Autowired
-    public BlindController(RedisUtil redisUtil,Url url) {
+    public BlindController(RedisUtil redisUtil, Url url) {
         this.redisUtil = redisUtil;
         this.url = url;
     }
@@ -69,7 +69,6 @@ public class BlindController {
     public Result postBlind(@PathVariable("productSecret") String productSecret, @RequestBody JSONObject jsonObject) {
         String timesTamp = String.valueOf(System.currentTimeMillis() / 1000);
         String signature = DigestUtils.md5Hex(productSecret + timesTamp).toLowerCase();
-        System.out.println(timesTamp);
         Map<String, String> map1 = getMap();
         map1.put("X-Gizwits-Timestamp", timesTamp);
         map1.put("X-Gizwits-Signature", signature);
@@ -158,7 +157,7 @@ public class BlindController {
                 (!(limit == null) ? "limit=" + limit : "0").append
                 (!(skip == null) ? "&skip=" + skip : "0").append
                 (!(show_disabled == null) ? "&show_disabled=" + show_disabled : "0").append
-        (!(show_proto_ver == null) ? "&show_proto_ver=" + show_proto_ver : "0"));
+                (!(show_proto_ver == null) ? "&show_proto_ver=" + show_proto_ver : "0"));
         JSONObject jsonObject = TemplateUtil.restHttp(urlPath, getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
@@ -215,7 +214,7 @@ public class BlindController {
     @PutMapping("updateBlind/{did}")
     public Result updateBlind(@PathVariable("did") String did, @RequestBody JSONObject json) {
         JSONObject jsonObject =
-                TemplateUtil.restHttp(url.getPutBlind().replace("{did}",did), getMap(), json, HttpMethod.PUT);
+                TemplateUtil.restHttp(url.getPutBlind().replace("{did}", did), getMap(), json, HttpMethod.PUT);
         return new Result().setData(jsonObject);
     }
 
@@ -243,7 +242,7 @@ public class BlindController {
     @GetMapping("getBlinding/{did}")
     public Result getBlinding(@PathVariable("did") String did) {
         JSONObject jsonObject =
-                TemplateUtil.restHttp(url.getGetDidBlind().replace("{did}",did), getMap(), null, HttpMethod.GET);
+                TemplateUtil.restHttp(url.getGetDidBlind().replace("{did}", did), getMap(), null, HttpMethod.GET);
         return new Result().setData(jsonObject);
     }
 
@@ -272,9 +271,9 @@ public class BlindController {
         Map<String, String> map1 = getMap();
         StringBuilder urlBuild = new StringBuilder(url.getDeleteDidBlind());
         String urlPath = String.valueOf(urlBuild.append("?uid=").append(uid));
-        System.out.println(urlPath.replace("{did}",did));
+        System.out.println(urlPath.replace("{did}", did));
         JSONObject jsonObject =
-                TemplateUtil.restHttp(urlPath.replace("{did}",did), getMap(), null, HttpMethod.DELETE);
+                TemplateUtil.restHttp(urlPath.replace("{did}", did), getMap(), null, HttpMethod.DELETE);
         return new Result().setData(jsonObject);
     }
 

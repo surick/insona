@@ -7,7 +7,7 @@ export default {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/giz/document/pageDocument/' + obj.pageIndex + '/' + obj.pageSize
+                url: '/insona/document/pageDocument/' + obj.pageIndex + '/' + obj.pageSize
             }).then(res => {
                 if (res.success) {
                     res.data.list.forEach(item => {
@@ -24,7 +24,7 @@ export default {
         console.log(obj);
         return ajax(vm, {
             method: 'POST',
-            url: '/giz/document/saveDocument',
+            url: '/insona/document/saveDocument',
             data: {
                 name: obj.name,
                 fileUrl: obj.fileUrl,
@@ -38,7 +38,7 @@ export default {
         console.log(obj);
         return ajax(vm, {
             method: 'PUT',
-            url: '/giz/document/updateDocument',
+            url: '/insona/document/updateDocument',
             data: {
                 id: id,
                 name: obj.name,
@@ -52,7 +52,7 @@ export default {
     deleteDocument(vm, ids) {
         return ajax(vm, {
             method: 'DELETE',
-            url: '/giz/document/removeDocument',
+            url: '/insona/document/removeDocument',
             data: ids
         });
     }

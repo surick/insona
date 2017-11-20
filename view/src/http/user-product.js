@@ -2,14 +2,14 @@ import ajax from './api';
 import moment from 'moment';
 
 export default {
-
-    getInfo(vm, obj) {
+    getUserProduct(vm, obj) {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/insona/info/pageInfo/' + obj.pageIndex + '/' + obj.pageSize
+                url: '/insona/userProduct/getUserProduct/' + obj.pageIndex + '/' + obj.pageSize
             }).then(res => {
                 if (res.success) {
+                    console.log(res.data);
                     res.data.list.forEach(item => {
                         console.log(Number(item.updateTime));
                         item.createTime && (item.createTime = moment(Number(item.createTime)).format('YYYY-MM-DD HH:mm'));
@@ -20,39 +20,21 @@ export default {
             });
         });
     },
-    addInfo(vm, obj) {
+    addUserProduct(vm, obj) {
         console.log(obj);
         return ajax(vm, {
             method: 'POST',
-            url: '/insona/info/saveInfo',
+            url: '/insona/userProduct/saveUserProduct',
             data: {
-                title: obj.title,
-                infoType: obj.infoType,
-                description: obj.description,
-                sortNo: obj.sortNo,
-                isDelete: 0
+                did: obj.did,
+                baseUserId: obj.uid
             }
         });
     },
-    updateInfo(vm, id, obj) {
-        console.log(obj);
-        return ajax(vm, {
-            method: 'PUT',
-            url: '/insona/info/updateInfo',
-            data: {
-                id: id,
-                title: obj.title,
-                infoType: obj.infoType,
-                description: obj.description,
-                sortNo: obj.sortNo,
-                isDelete: 0
-            }
-        });
-    },
-    deleteInfo(vm, ids) {
+    deleteUserProduct(vm, ids) {
         return ajax(vm, {
             method: 'DELETE',
-            url: '/insona/info/removeInfo',
+            url: '/insona/userProduct/removeProduct',
             data: ids
         });
     }

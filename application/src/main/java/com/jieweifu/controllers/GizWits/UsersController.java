@@ -3,7 +3,7 @@ package com.jieweifu.controllers.GizWits;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
-import com.jieweifu.models.gizWits.Url;
+import com.jieweifu.models.insona.Url;
 import com.jieweifu.models.regex.Regex;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;

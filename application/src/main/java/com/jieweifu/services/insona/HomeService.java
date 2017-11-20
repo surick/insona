@@ -1,6 +1,6 @@
-package com.jieweifu.services.gizWits;
+package com.jieweifu.services.insona;
 
-import com.jieweifu.models.gizWits.Home;
+import com.jieweifu.models.insona.Home;
 
 import java.util.List;
 

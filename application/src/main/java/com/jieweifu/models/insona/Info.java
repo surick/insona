@@ -1,4 +1,4 @@
-package com.jieweifu.models.gizWits;
+package com.jieweifu.models.insona;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;

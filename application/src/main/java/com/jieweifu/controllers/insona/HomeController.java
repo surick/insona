@@ -1,11 +1,11 @@
-package com.jieweifu.controllers.other;
+package com.jieweifu.controllers.insona;
 
 import com.froala.editor.Image;
 import com.froala.editor.image.ImageOptions;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.models.Result;
-import com.jieweifu.models.gizWits.Home;
-import com.jieweifu.services.gizWits.HomeService;
+import com.jieweifu.models.insona.Home;
+import com.jieweifu.services.insona.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@RestController("GizWitsHome")
-@RequestMapping("giz/home")
+@RestController("InsonaHome")
+@RequestMapping("insona/home")
 public class HomeController {
     private HomeService homeService;
 

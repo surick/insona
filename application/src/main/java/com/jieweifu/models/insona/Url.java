@@ -1,4 +1,4 @@
-package com.jieweifu.models.gizWits;
+package com.jieweifu.models.insona;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

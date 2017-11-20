@@ -1,9 +1,9 @@
-package com.jieweifu.controllers.other;
+package com.jieweifu.controllers.insona;
 
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.models.Result;
-import com.jieweifu.models.gizWits.Info;
-import com.jieweifu.services.gizWits.InfoService;
+import com.jieweifu.models.insona.Info;
+import com.jieweifu.services.insona.InfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.validation.Errors;
@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@RestController("GizWitsInfo")
-@RequestMapping("giz/info")
+@RestController("InsonaInfo")
+@RequestMapping("insona/info")
 public class InfoController {
 
     private InfoService infoService;
