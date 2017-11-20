@@ -33,42 +33,23 @@
             v-model="addAndEditModal"
             :title="['文件新增', '文件编辑'][addOrEdit]"
             :mask-closable="false">
-            <div class="modal-body">
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">文件标题</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="document.name" placeholder="文件标题"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">文件链接</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="document.fileUrl" placeholder="文件链接"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">文件类型</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="document.fileType" placeholder="文件类型"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">排序</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="document.sortNo" placeholder="排序"></Input>
-                    </Col>
-                </Row>
+            <div class="modal-body" align="center">
+                <template>
+                    <div>
+                        <Upload
+                            :before-upload="handleUpload"
+                            :show-upload-list="false"
+                            action="http://localhost:8080/giz/document/upload">
+                            <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
+                            <Button type="text" :loading="loadingStatus">
+                                {{ loadingStatus ? 'Uploading' : 'Click to upload' }}
+                            </Button>
+                        </Upload>
+                    </div>
+                </template>
             </div>
             <div slot="footer">
-                <Button type="primary" size="large" @click="saveDocument()">确定</Button>
+                <Button type="primary" size="large" @click="doUpload()">确定</Button>
             </div>
         </Modal>
     </div>
@@ -83,6 +64,9 @@
         components: {expandRow},
         data: function () {
             return {
+                uploadModal: false,
+                file: null,
+                loadingStatus: false,
                 addAndEditModal: false,
                 addOrEdit: 0,
                 editId: '',
@@ -118,7 +102,7 @@
                     {
                         title: '文件链接',
                         key: 'fileUrl',
-                        width: 300,
+                        width: 513,
                         align: 'center'
                     },
                     {
@@ -126,39 +110,6 @@
                         key: 'fileType',
                         width: 220,
                         align: 'center'
-                    },
-                    {
-                        title: '操作',
-                        key: 'action',
-                        width: 230,
-                        align: 'center',
-                        render: (h, params) => {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'ghost'
-                                    },
-                                    style: {
-                                        marginRight: '10px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.editDocument(params.row);
-                                        }
-                                    }
-                                }, [
-                                    h('Icon', {
-                                        props: {
-                                            type: 'edit'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        }
-                                    }),
-                                    '编辑'
-                                ])
-                            ]);
-                        }
                     },
                     {
                         type: 'expand',
@@ -187,6 +138,27 @@
             }
         },
         methods: {
+            handleUpload() {
+                this.loadingStatus = true;
+                setTimeout(() => {
+                    this.loadingStatus = false;
+                    this.$Message.success('Success');
+                }, 1000);
+                return true;
+            },
+            doUpload() {
+                this.addAndEditModal = false;
+                this.getDocument();
+            },
+            uploadModel(document) {
+                this.addOrEdit = 1;
+                this.addAndEditModal = true;
+                this.editId = document.id;
+                this.uploadModal = true;
+                this.document = {
+                    name: document.name
+                };
+            },
             getDocument() {
                 Document.getDocument(this, {
                     pageIndex: this.current - 1,

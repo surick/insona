@@ -80,16 +80,19 @@
                     <div>
                         <Upload
                             :before-upload="handleUpload"
-                            action="http://localhost:8080/giz/home/imgUpload">
+                            :show-upload-list="false"
+                            :data="this.home"
+                            action="http://localhost:8080/giz/home/upload">
                             <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
-                        </Upload>
-                        <div v-if="file !== null">Upload file: {{ file.name }}
-                            <Button type="text" @click="upload()" :loading="loadingStatus">
+                            <Button type="text" :loading="loadingStatus">
                                 {{ loadingStatus ? 'Uploading' : 'Click to upload' }}
                             </Button>
-                        </div>
+                        </Upload>
                     </div>
                 </template>
+            </div>
+            <div slot="footer">
+                <Button type="primary" size="large" @click="doUpload()">确定</Button>
             </div>
         </Modal>
     </div>
@@ -114,6 +117,7 @@
                 total: 0,
                 current: 1,
                 home: {
+                    id: '',
                     title: '',
                     imgUrl: '',
                     sortNo: ''
@@ -132,14 +136,34 @@
                     {
                         title: '家庭背景标题',
                         key: 'title',
-                        width: 330,
+                        width: 230,
                         align: 'center'
                     },
                     {
                         title: '家庭背景链接',
                         key: 'imgUrl',
-                        width: 320,
+                        width: 330,
                         align: 'center'
+                    },
+                    {
+                        title: '家庭背景',
+                        key: 'avatar',
+                        columns: {
+                            'width': '50px'
+                        },
+                        render: (h, params) => {
+                            return h('div', [
+                                h('img', {
+                                    attrs: {
+                                        src: 'http://127.0.0.1:8080' + params.row.imgUrl
+                                    },
+                                    style: {
+                                        width: '40px',
+                                        height: '40px'
+                                    }
+                                })
+                            ]);
+                        }
                     },
                     {
                         title: '操作',
@@ -224,24 +248,22 @@
             }
         },
         methods: {
-
-            handleUpload(file) {
-                this.file = file;
-                console.log(file);
-                return true;
-            },
-            upload() {
-                debugger;
+            handleUpload() {
                 this.loadingStatus = true;
                 setTimeout(() => {
-                    this.file = null;
                     this.loadingStatus = false;
                     this.$Message.success('Success');
-                }, 1500);
+                }, 1000);
+                return true;
+            },
+            doUpload() {
+                this.uploadModal = false;
+                this.getHome();
             },
             uploadModel(home) {
                 this.uploadModal = true;
                 this.home = {
+                    id: home.id,
                     title: home.title
                 };
             },

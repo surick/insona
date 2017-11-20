@@ -39,6 +39,8 @@ export default {
             }
             obj.id = item.id;
             obj.title = item.roleName;
+            obj.status = item.enabled;
+            obj.parentId = item.parentId;
             obj.expand = false;
             list.push(obj);
         });

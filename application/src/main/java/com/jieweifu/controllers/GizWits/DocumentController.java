@@ -1,14 +1,17 @@
 package com.jieweifu.controllers.GizWits;
 
-import com.jieweifu.common.utils.ErrorUtil;
+import com.froala.editor.file.FileOptions;
+import com.froala.editor.file.FileValidation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.gizWits.Document;
 import com.jieweifu.services.gizWits.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +23,9 @@ import java.util.Map;
 public class DocumentController {
     private DocumentService documentService;
 
+    @Value("${custom.upload.home}")
+    private String uploadPath;
+
     @Autowired
     public DocumentController(DocumentService documentService) {
         this.documentService = documentService;
@@ -29,15 +35,10 @@ public class DocumentController {
      * 新增document
      *
      * @param document document
-     * @param errors   判断字段
      * @return message
      */
     @PostMapping("saveDocument")
-    public Result saveDocument(@Valid @RequestBody Document document, Errors errors) {
-        if (errors.hasErrors())
-            return new Result().setError(ErrorUtil.getErrors(errors));
-        if (documentService.AllDocumentByName(document.getName()) != null)
-            return new Result().setError("已存在");
+    public Result saveDocument(@Valid @RequestBody Document document) {
         documentService.saveDocument(document);
         return new Result().setMessage("新增成功");
     }
@@ -91,13 +92,10 @@ public class DocumentController {
      * 修改Document
      *
      * @param document Document
-     * @param errors   判断字段
      * @return message
      */
     @PutMapping("updateDocument")
-    public Result updateDocument(@Valid @RequestBody Document document, Errors errors) {
-        if (errors.hasErrors())
-            return new Result().setError(ErrorUtil.getErrors(errors));
+    public Result updateDocument(@Valid @RequestBody Document document) {
         if (documentService.getDocument(document.getId()) == null)
             return new Result().setError("不存在");
         documentService.updateDocument(document);
@@ -122,5 +120,28 @@ public class DocumentController {
         map.put("list", infoList);
         map.put("total", total);
         return new Result().setData(map);
+    }
+
+    @PostMapping("upload")
+    @ResponseBody
+    public Map<Object, Object> upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+        FileOptions options = new FileOptions();
+        Map<Object, Object> responseData = new HashMap<>();
+        options.setValidation(new FileValidation());
+        try {
+            com.froala.editor.File.upload(request, uploadPath, options).forEach((key, value) -> responseData.put(key, "/uploads/home/" + value));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseData.put("error", e.toString());
+        }
+        Document document = new Document();
+        document.setName(file.getName());
+        document.setFileType(1);
+        document.setFileUrl(String.valueOf(responseData.get("link")));
+        int total = documentService.getDocumentTotal();
+        document.setSortNo(total + 1);
+        document.setIsDelete(0);
+        saveDocument(document);
+        return responseData;
     }
 }

@@ -1,15 +1,16 @@
 package com.jieweifu.controllers.GizWits;
 
+import com.froala.editor.Image;
+import com.froala.editor.image.ImageOptions;
 import com.jieweifu.common.utils.ErrorUtil;
-import com.jieweifu.common.utils.FileUtil;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.gizWits.Home;
 import com.jieweifu.services.gizWits.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,6 +23,9 @@ import java.util.Map;
 @RequestMapping("giz/home")
 public class HomeController {
     private HomeService homeService;
+
+    @Value("${custom.upload.home}")
+    private String uploadPath;
 
     @Autowired
     public HomeController(HomeService homeService) {
@@ -48,14 +52,11 @@ public class HomeController {
     /**
      * 修改家庭背景
      *
-     * @param home   home
-     * @param errors 判断字段
+     * @param home home
      * @return message
      */
     @PutMapping("updateHome")
-    public Result updateHome(@Valid @RequestBody Home home, Errors errors) {
-        if (errors.hasErrors())
-            return new Result().setError(ErrorUtil.getErrors(errors));
+    public Result updateHome(@Valid @RequestBody Home home) {
         if (homeService.getHomeById(home.getId()) == null)
             return new Result().setError("不存在");
         homeService.updateHome(home);
@@ -124,20 +125,41 @@ public class HomeController {
         return new Result().setData(map);
     }
 
-    @PostMapping("imgUpload")
-    public Result imgUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-
-        String contentType = file.getContentType();
-        String fileName = file.getOriginalFilename();
-        System.out.println(contentType + "  " + fileName);
-        String filePath = request.getSession().getServletContext().getRealPath("D:\\Insona_java\\application\\src\\main\\java\\com\\jieweifu\\imgUpload\\");
-        try {
-
-            FileUtil.uploadFile(file.getBytes(), filePath, fileName);
-            System.out.println(111);
-        } catch (Exception e) {
-            return new Result().setError("上传失败");
+    @PostMapping("upload")
+    @ResponseBody
+    public Map<Object, Object> upload(HttpServletRequest request,
+                                      @RequestParam("id") String id,
+                                      @RequestParam("title") String title,
+                                      @RequestParam(value = "height", defaultValue = "300") Integer height,
+                                      @RequestParam(value = "width", defaultValue = "300") Integer width,
+                                      @RequestParam(value = "keepAspectRatio", defaultValue = "false") boolean keepAspectRatio,
+                                      @RequestParam(value = "onlyThumb", defaultValue = "false") boolean onlyThumb,
+                                      @RequestParam(value = "noThumb", defaultValue = "false") boolean noThumb) {
+        ImageOptions options = new ImageOptions();
+        options.setResize(width, height, keepAspectRatio);
+        if (onlyThumb)
+            options.setOnlyThumb(true);
+        if (noThumb) {
+            options = null;
         }
-        return new Result().setMessage("长传成功");
+        Map<Object, Object> responseData = uploadImage(request, uploadPath, options);
+        Home home = new Home();
+        home.setId(Integer.parseInt(id));
+        home.setTitle(title);
+        home.setImgUrl((String) responseData.get("link"));
+        updateHome(home);
+        return uploadImage(request, uploadPath, options);
     }
+
+    private Map<Object, Object> uploadImage(HttpServletRequest request, String path, ImageOptions options) {
+        Map<Object, Object> responseData = new HashMap<>();
+        try {
+            Image.upload(request, path, options).forEach((key, value) -> responseData.put(key, "/uploads/home/" + value));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseData.put("error", e.toString());
+        }
+        return responseData;
+    }
+
 }

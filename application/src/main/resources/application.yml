@@ -10,6 +10,7 @@ custom:
     prefix: InSona
   upload:
     dir: ${custom.path}/static/uploads/
+    home: ${custom.path}/static/uploads/home/
 
 spring:
   datasource:

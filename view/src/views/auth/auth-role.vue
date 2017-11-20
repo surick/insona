@@ -19,7 +19,6 @@
                     删除
                 </Button>
             </div>
-
             <Row :gutter="16">
                 <Col span="5">
                 <Tree ref="roleTree" :data="roleData" show-checkbox @on-select-change="treeNodeSelect"></Tree>
@@ -42,7 +41,7 @@
                         <div class="input-label">名称</div>
                         </Col>
                         <Col span="21">
-                        <Input v-model="roleDetail.name" placeholder="名称"></Input>
+                        <Input v-model="roleDetail.title" placeholder="名称"></Input>
                         </Col>
                     </Row>
                     <Row class="margin-bottom-10">
@@ -164,8 +163,8 @@
                 roleData: [],
                 roleDetail: {
                     parent: '',
-                    name: '',
-                    checked: true
+                    title: '',
+                    status: true
                 },
                 addModal: false,
                 addRoleDetail: {
@@ -232,15 +231,18 @@
                 console.log(node);
             },
             treeNodeSelect(node) {
-                this.roleDetail = node;
-                console.log(node);
+                this.roleDetail = {
+                    title: node[0].title,
+                    parentId: node[0].parentId,
+                    status: true
+                };
+                console.log(node[0]);
             },
             saveAdd() {
                 if (this.addRoleEdit === 0) {
                     if (this.$commonFun.checkObject(this.role, ['id'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
-
                     Role.addRole(this, this.addRoleDetail).then(res => {
                         if (res.success) {
                             console.log(this.addRoleDetail);
