@@ -150,5 +150,22 @@ public class UserProductController {
         return new Result().setData(map);
     }
 
+    /**
+     * 显示设备信息
+     * @param did 设备did
+     * @return product
+     */
+    @GetMapping("getProductInfo/{did}")
+    public Result getProductInfo(@PathVariable("did") String did){
+        Product product = productService.getByDid(did);
+        if(product == null)
+            return new Result().setError("did不合法");
+        return new Result().setData(product);
+    }
 
+    @GetMapping("getProducts")
+    public Result getProducts(){
+        List<Product> productList  = productService.getProducts();
+        return new Result().setData(productList);
+    }
 }

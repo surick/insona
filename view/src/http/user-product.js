@@ -9,7 +9,6 @@ export default {
                 url: '/insona/userProduct/getUserProduct/' + obj.pageIndex + '/' + obj.pageSize
             }).then(res => {
                 if (res.success) {
-                    console.log(res.data);
                     res.data.list.forEach(item => {
                         console.log(Number(item.updateTime));
                         item.createTime && (item.createTime = moment(Number(item.createTime)).format('YYYY-MM-DD HH:mm'));
@@ -36,6 +35,30 @@ export default {
             method: 'DELETE',
             url: '/insona/userProduct/removeProduct',
             data: ids
+        });
+    },
+    getProducts(vm) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/userProduct/getProducts'
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    productInfo(vm, did) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/userProduct/getProductInfo/' + did
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
         });
     }
 };
