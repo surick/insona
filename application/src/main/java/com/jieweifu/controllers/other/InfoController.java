@@ -1,4 +1,4 @@
-package com.jieweifu.controllers.GizWits;
+package com.jieweifu.controllers.other;
 
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.models.Result;

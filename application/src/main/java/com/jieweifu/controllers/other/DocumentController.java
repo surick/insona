@@ -1,4 +1,4 @@
-package com.jieweifu.controllers.GizWits;
+package com.jieweifu.controllers.other;
 
 import com.froala.editor.file.FileOptions;
 import com.froala.editor.file.FileValidation;
