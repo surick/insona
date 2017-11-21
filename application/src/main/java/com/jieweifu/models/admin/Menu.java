@@ -34,7 +34,7 @@ public class Menu {
     @NotBlank(message = "路径不能为空")
     private String path;
 
-    @Range(min = 0,max = 1,message = "状态无效")
+    @Range(min = 0, max = 1, message = "状态无效")
     private int enabled;
 
     @Column(columnName = "crt_time")
@@ -289,6 +289,12 @@ public class Menu {
 
     @Column(insert = false, update = false)
     private List<Menu> children = new ArrayList<>();
+    @Column(insert = false, update = false)
+    private List<Element> elements = new ArrayList<>();
+
+    public List<Element> getElements() {
+        return elements;
+    }
 
     public List<Menu> getChildren() {
         return children;

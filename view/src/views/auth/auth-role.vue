@@ -10,14 +10,12 @@
                 角色管理
             </div>
             <div slot="extra">
-                <Button type="primary" @click="addRole()">
-                    <Icon type="android-add"></Icon>
-                    新增
-                </Button>
-                <Button type="error" @click="deleteRoles()">
-                    <Icon type="trash-a"></Icon>
-                    删除
-                </Button>
+                <access-ctrl :name="'SYS_ROLE_SAVE'" ref="access">
+                    <Button type="primary" @click="addRole()">
+                        <Icon type="android-add"></Icon>
+                        新增
+                    </Button>
+                </access-ctrl>
             </div>
             <Row :gutter="16">
                 <Col span="5">
@@ -30,7 +28,7 @@
                         <div class="input-label">父级</div>
                         </Col>
                         <Col span="21">
-                        <Select v-model="roleDetail.parent" filterable style="width: 250px">
+                        <Select v-model="roleDetail.parentId" filterable style="width: 250px">
                             <Option v-for="item in roleList" :value="item.id" :key="item.id">{{ item.roleName }}
                             </Option>
                         </Select>
@@ -42,6 +40,14 @@
                         </Col>
                         <Col span="21">
                         <Input v-model="roleDetail.title" placeholder="名称"></Input>
+                        </Col>
+                    </Row>
+                    <Row class="margin-bottom-10">
+                        <Col span="3">
+                        <div class="input-label">Code</div>
+                        </Col>
+                        <Col span="21">
+                        <Input v-model="roleDetail.code" placeholder="code"></Input>
                         </Col>
                     </Row>
                     <Row class="margin-bottom-10">
@@ -58,17 +64,23 @@
                     <Row>
                         <Col span="3">&nbsp;</Col>
                         <Col span="21">
-                        <Button type="primary" @click="updateRole()">
-                            修改
-                        </Button>
-                        <Button type="info" @click="authSet()">
-                            <Icon type="android-settings"></Icon>
-                            配置权限
-                        </Button>
-                        <Button type="error" @click="deleteRole()">
-                            <Icon type="trash-a"></Icon>
-                            删除
-                        </Button>
+                        <access-ctrl :name="'SYS_ROLE_UPDATE'" ref="access">
+                            <Button type="primary" @click="updateRole()">
+                                修改
+                            </Button>
+                        </access-ctrl>
+                        <access-ctrl :name="'SYS_ROLE_AUTH'" ref="access">
+                            <Button type="info" @click="authSet()">
+                                <Icon type="android-settings"></Icon>
+                                配置权限
+                            </Button>
+                        </access-ctrl>
+                        <access-ctrl :name="'SYS_ROLE_REMOVR'" ref="access">
+                            <Button type="error" @click="deleteRoles()">
+                                <Icon type="trash-a"></Icon>
+                                删除
+                            </Button>
+                        </access-ctrl>
                         </Col>
                     </Row>
                 </Card>
@@ -146,9 +158,13 @@
 
 <script>
     import {Role} from '@/http';
+    import accessCtrl from '@/components/accessCtrl.vue';
 
     export default {
         name: 'auth_role',
+        components: {
+            accessCtrl
+        },
         data() {
             return {
                 access: this.$store.state.access,
@@ -162,8 +178,10 @@
                 current: 1,
                 roleData: [],
                 roleDetail: {
-                    parent: '',
+                    id: '',
+                    parentId: '',
                     title: '',
+                    code: '',
                     status: true
                 },
                 addModal: false,
@@ -177,10 +195,8 @@
                 authModal: false,
                 authData: [],
                 authDetail: {
-                    resourceId: '',
-                    resourceType: 'MENU',
-                    roleId: '',
-                    status: true
+                    codes: '',
+                    roleId: ''
                 },
                 roleList: []
             };
@@ -196,21 +212,13 @@
                 enabled: true
             };
         },
-        updateRole() {
-            this.addRoleEdit = 1;
-            this.addModal = true;
-            this.addRoleDetail = {
-                roleName: '',
-                roleCode: '',
-                parentId: '',
-                orderNum: '',
-                enabled: true
-            };
-        },
         mounted() {
             this.getRoleTree();
         },
         methods: {
+            ctrlAccess() {
+                this.$refs.access.updateAccess();
+            },
             getRoleTree() {
                 Role.getRoleTree(this).then(res => {
                     if (res.success) {
@@ -230,13 +238,20 @@
                 this.authDetail = node;
                 console.log(node);
             },
+            updateRole() {
+                console.log(this.roleDetail);
+                Role.updateRole(this, this.roleDetail);
+                this.getRoleTree();
+            },
             treeNodeSelect(node) {
                 this.roleDetail = {
                     title: node[0].title,
                     parentId: node[0].parentId,
+                    code: node[0].code,
+                    id: node[0].id,
                     status: true
                 };
-                console.log(node[0]);
+                console.log(node);
             },
             saveAdd() {
                 if (this.addRoleEdit === 0) {
@@ -276,30 +291,20 @@
                     return item.id;
                 });
                 let auth = this.$refs.authTree.getCheckedNodes();
-                let authId = auth.map(item => {
-                    return item.resourceId;
+                let codes = auth.map(item => {
+                    return item.code;
                 });
-                console.log('id=' + auth.resourceId);
+                console.log('code=' + codes);
                 this.authDetail = {
-                    resourceId: authId,
-                    resourceType: 'MENU',
+                    codes: codes,
                     roleId: roleId[0]
                 };
+                console.log(this.authDetail);
                 Role.saveAuth(this, this.authDetail);
             },
             deleteRoles() {
-                let roles = this.$refs.roleTree.getCheckedNodes();
-                let ids = roles.map(item => {
-                    return item.id;
-                });
-                console.log(ids);
-                if (roles.length === 0) {
-                    this.$Message.warning('请先选择需要删除的角色');
-                } else {
-                    this.delete(ids);
-                }
+                this.delete(this.roleDetail.id);
             },
-
             delete(ids) {
                 this.$Modal.confirm({
                     title: '提示',

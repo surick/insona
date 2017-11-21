@@ -100,6 +100,14 @@ public class RoleAuthorityServiceImpl implements RoleAuthorityService {
         return new MenuElements(menus, elements);
     }
 
+    @Override
+    public RoleAuthority getRoleAuth(String resourceType, Integer resourceId, Integer roleId) {
+        return db.select()
+                .from(RoleAuthority.class)
+                .where("resource_id = ? AND resource_type = ? AND role_id = ?", resourceId, resourceType, roleId)
+                .queryForEntity(RoleAuthority.class);
+    }
+
     private List<Menu> getAllMenus() {
         return db.select()
                 .columns("id, code, title, parent_id, href, icon, type, order_num, description, path, enabled")

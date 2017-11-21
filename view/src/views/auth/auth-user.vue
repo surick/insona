@@ -10,18 +10,24 @@
                 用户管理
             </div>
             <div slot="extra">
-                <Button type="primary" @click="addUser()">
-                    <Icon type="android-add"></Icon>
-                    新增
-                </Button>
-                <Button type="info">
-                    <Icon type="android-settings"></Icon>
-                    配置角色
-                </Button>
-                <Button type="error" @click="deleteUser()">
-                    <Icon type="trash-a"></Icon>
-                    删除
-                </Button>
+                <access-ctrl :name="'SYS_USER_SAVE'" ref="access">
+                    <Button type="primary" @click="addUser()">
+                        <Icon type="android-add"></Icon>
+                        新增
+                    </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_USER_ROLE'" ref="access">
+                    <Button type="info">
+                        <Icon type="android-settings"></Icon>
+                        配置角色
+                    </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_USER_REMOVE'" ref="access">
+                    <Button type="error" @click="deleteUser()">
+                        <Icon type="trash-a"></Icon>
+                        删除
+                    </Button>
+                </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">
@@ -145,10 +151,12 @@
 <script>
     import expandRow from './auth-user-expand.vue';
     import {User, Role} from '@/http';
+    import accessCtrl from '@/components/accessCtrl.vue';
 
     export default {
         name: 'auth_user',
-        components: {expandRow},
+        components: {expandRow, accessCtrl},
+
         data() {
             return {
                 access: this.$store.state.access,
@@ -330,6 +338,9 @@
             }
         },
         methods: {
+            ctrlAccess() {
+                this.$refs.access.updateAccess();
+            },
             getUser() {
                 User.getUser(this, {
                     pageIndex: this.current - 1,

@@ -3,23 +3,6 @@ import moment from 'moment';
 
 export default {
 
-    uploadHome(vm, obj) {
-        return ajax(vm, {
-            url: 'sys/home/imgUpload',
-            method: 'POST',
-            data: obj,
-            async: false,
-            cache: false,
-            contentType: 'multipart/form-data',
-            processData: false,
-            success: function (returndata) {
-                alert(returndata);
-            },
-            error: function (returndata) {
-                alert(returndata);
-            }
-        });
-    },
     getHome(vm, obj) {
         return new Promise((resolve, reject) => {
             ajax(vm, {

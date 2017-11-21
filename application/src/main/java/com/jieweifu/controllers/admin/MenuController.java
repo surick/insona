@@ -3,7 +3,9 @@ package com.jieweifu.controllers.admin;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.admin.Element;
 import com.jieweifu.models.admin.Menu;
+import com.jieweifu.services.admin.ElementService;
 import com.jieweifu.services.admin.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -19,10 +21,13 @@ import java.util.List;
 @AdminAuthAnnotation
 public class MenuController {
     private MenuService menuService;
+    private ElementService elementService;
 
     @Autowired
-    public MenuController(MenuService menuService) {
+    public MenuController(MenuService menuService,
+                          ElementService elementService) {
         this.menuService = menuService;
+        this.elementService = elementService;
     }
 
     /**
@@ -34,10 +39,11 @@ public class MenuController {
         List<Menu> menuList = new ArrayList<>();
         pMenuList.forEach(
                 menu -> {
-                    Menu role1 = getMenuTree(menu.getId());
-                    menuList.add(role1);
+                    Menu menu1 = getMenuTree(menu.getId());
+                    menuList.add(menu1);
                 }
         );
+        System.out.println(menuList);
         return new Result().setData(menuList);
     }
 
@@ -49,6 +55,18 @@ public class MenuController {
         List<Menu> cMenuList = menuService.getMenuByParentId(pMenu.getId());
         for (Menu Menu : cMenuList) {
             Menu m = getMenuTree(Menu.getId());
+            List<Element> elementList = elementService.listElement(m.getId());
+            elementList.forEach(
+                    element -> {
+                        Menu menu1 = new Menu();
+                        menu1.setId(element.getId());
+                        menu1.setCode(element.getCode());
+                        menu1.setType(element.getType());
+                        menu1.setTitle(element.getElementName());
+                        menu1.setParentId(element.getMenuId());
+                        m.getChildren().add(menu1);
+                    }
+            );
             pMenu.getChildren().add(m);
         }
         return pMenu;

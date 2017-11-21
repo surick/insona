@@ -19,4 +19,7 @@ public interface RoleAuthorityService {
     List<String> getResourceType(int resourceId);
 
     MenuElements getMenuElements(int userId);
+
+    RoleAuthority getRoleAuth(String resourceType, Integer resourceId, Integer roleId);
+
 }

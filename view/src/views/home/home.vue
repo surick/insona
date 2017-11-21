@@ -1,10 +1,10 @@
 <style lang="less">
-@import "./home.less";
-@import "../../styles/common.less";
+    @import "./home.less";
+    @import "../../styles/common.less";
 </style>
 <template>
     <div class="home-main">
-        <access-ctrl :name="'test2'" ref="access">
+        <access-ctrl :name="'SYS_LOGIN'" ref="access">
             <button>获取用户信息</button>
         </access-ctrl>
 
@@ -13,23 +13,23 @@
 </template>
 
 <script>
-import accessCtrl from '@/components/accessCtrl.vue';
-// import { User } from '@/http';
-export default {
-    name: 'home',
+    import accessCtrl from '@/components/accessCtrl.vue';
+    // import { User } from '@/http';
+    export default {
+        name: 'home',
 
-    components: {
-        accessCtrl
-    },
+        components: {
+            accessCtrl
+        },
 
-    mounted() {
-        // User.getPower(this);
-    },
+        mounted() {
+            // User.getPower(this);
+        },
 
-    methods: {
-        ctrlAccess() {
-            this.$refs.access.updateAccess();
+        methods: {
+            ctrlAccess() {
+                this.$refs.access.updateAccess();
+            }
         }
-    }
-};
+    };
 </script>

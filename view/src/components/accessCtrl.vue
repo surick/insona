@@ -1,5 +1,5 @@
 <template>
-    <div v-if="getAccess()">
+    <div class="access-box" v-if="getAccess()">
         <slot></slot>
     </div>
 </template>
@@ -10,7 +10,7 @@
 
         componentName: 'accessCtrl',
 
-        data () {
+        data() {
             return {
                 access: this.$store.state.access
             };
@@ -27,3 +27,8 @@
         }
     };
 </script>
+<style scoped>
+    .access-box {
+        display: inline-block;
+    }
+</style>

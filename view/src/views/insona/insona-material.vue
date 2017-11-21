@@ -6,16 +6,15 @@
     <div class="access">
         <Card>
             <div slot="title">
-                家庭背景
+                资料
             </div>
 
             <div slot="extra">
-
-                <Button type="primary" @click="addHome()">
+                <Button type="primary" @click="addMaterial()">
                     <Icon type="android-add"></Icon>
                     新增
                 </Button>
-                <Button type="error" @click="deleteHome()">
+                <Button type="error" @click="deleteMaterial()">
                     <Icon type="trash-a"></Icon>
                     删除
                 </Button>
@@ -36,31 +35,34 @@
             <div class="modal-body">
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">家庭背景标题</div>
+                    <div class="input-label">资料标题</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="home.title" placeholder="家庭背景标题"></Input>
+                    <Input v-model="material.title" placeholder="资料标题"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">家庭背景链接</div>
+                    <div class="input-label">资料类型</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="home.imgUrl" placeholder="家庭背景链接"></Input>
+                    <Input v-model="material.type" placeholder="资料类型"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">排序</div>
+                    <div class="input-label">生效</div>
                     </Col>
-                    <Col span="18">
-                    <Input v-model="home.sortNo" placeholder="排序"></Input>
+                    <Col span="18" style="line-height: 32px;">
+                    <i-switch v-model="material.enabled">
+                        <span slot="open">是</span>
+                        <span slot="close">否</span>
+                    </i-switch>
                     </Col>
                 </Row>
             </div>
             <div slot="footer">
-                <Button type="primary" size="large" @click="saveHome()">确定</Button>
+                <Button type="primary" size="large" @click="saveMaterial()">确定</Button>
             </div>
         </Modal>
         <Modal
@@ -70,10 +72,10 @@
             <div class="modal-body" align="center">
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">家庭背景标题</div>
+                    <div class="input-label">资料标题</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="home.title" placeholder="家庭背景标题"/>
+                    <Input v-model="material.title" placeholder="家庭背景标题"/>
                     </Col>
                 </Row>
                 <template>
@@ -81,8 +83,8 @@
                         <Upload
                             :before-upload="handleUpload"
                             :show-upload-list="false"
-                            :data="this.home"
-                            action="http://localhost:8080/insona/home/upload">
+                            :data="this.material"
+                            action="http://localhost:8080/insona/material/upload">
                             <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
                             <Button type="text" :loading="loadingStatus">
                                 {{ loadingStatus ? 'Uploading' : 'Click to upload' }}
@@ -100,10 +102,10 @@
 
 <script>
     import expandRow from './insona-expand.vue';
-    import Home from '../../http/home.js';
+    import Material from '../../http/material.js';
 
     export default {
-        name: 'other_home',
+        name: 'other_material',
         components: {expandRow},
         data: function () {
             return {
@@ -112,20 +114,21 @@
                 addOrEdit: 0,
                 editId: '',
                 image: null,
-                file: null,
                 loadingStatus: false,
                 total: 0,
                 current: 1,
-                home: {
+                material: {
                     id: '',
                     title: '',
-                    imgUrl: '',
-                    sortNo: ''
+                    imgUrl: '待上传',
+                    type: '',
+                    enabled: 1,
+                    content: '待编辑'
                 },
-                homeDetail: {
+                materialDetail: {
                     title: '',
                     imgUrl: '',
-                    sortNo: ''
+                    type: ''
                 },
                 columns: [
                     {
@@ -134,19 +137,29 @@
                         align: 'center'
                     },
                     {
-                        title: '家庭背景标题',
+                        title: '标题',
                         key: 'title',
                         width: 230,
                         align: 'center'
                     },
                     {
-                        title: '家庭背景链接',
-                        key: 'imgUrl',
-                        width: 330,
+                        title: '类型',
+                        key: 'type',
+                        width: 100,
                         align: 'center'
                     },
                     {
-                        title: '家庭背景',
+                        title: '状态',
+                        key: 'enabled',
+                        width: 100,
+                        align: 'center',
+                        render: (h, params) => {
+                            return params.row.enabled === 1 ? '正常' : '冻结';
+                        }
+                    },
+                    {
+                        title: '图片',
+                        align: 'center',
                         key: 'avatar',
                         columns: {
                             'width': '50px'
@@ -168,7 +181,7 @@
                     {
                         title: '操作',
                         key: 'action',
-                        width: 330,
+                        width: 230,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
@@ -181,7 +194,7 @@
                                     },
                                     on: {
                                         click: () => {
-                                            this.editHome(params.row);
+                                            this.editMaterial(params.row);
                                         }
                                     }
                                 }, [
@@ -240,7 +253,7 @@
         },
         mounted() {
             this.current = 1;
-            this.getHome();
+            this.getMaterial();
         },
         computed: {
             avatorPath() {
@@ -258,17 +271,17 @@
             },
             doUpload() {
                 this.uploadModal = false;
-                this.getHome();
+                this.getMaterial();
             },
-            uploadModel(home) {
+            uploadModel(material) {
                 this.uploadModal = true;
-                this.home = {
-                    id: home.id,
-                    title: home.title
+                this.material = {
+                    id: material.id,
+                    title: material.title
                 };
             },
-            getHome() {
-                Home.getHome(this, {
+            getMaterial() {
+                Material.getMaterial(this, {
                     pageIndex: this.current - 1,
                     pageSize: 10
                 }).then((res) => {
@@ -283,52 +296,56 @@
             },
             changePage(page) {
                 this.current = page;
-                this.getHome();
+                this.getMaterial();
             },
-            addHome() {
+            addMaterial() {
                 this.addOrEdit = 0;
                 this.addAndEditModal = true;
-                this.home = {
+                this.material = {
                     title: '',
-                    imgUrl: '',
-                    sortNo: ''
+                    imgUrl: '待上传',
+                    type: '',
+                    enabled: 1,
+                    content: '待编辑'
                 };
             },
-            editHome(home) {
+            editMaterial(material) {
                 this.addOrEdit = 1;
                 this.addAndEditModal = true;
-                this.editId = home.id;
-                this.home = {
-                    title: home.title,
-                    imgUrl: home.imgUrl,
-                    sortNo: home.sortNo
+                this.editId = material.id;
+                this.material = {
+                    title: material.title,
+                    imgUrl: material.imgUrl,
+                    type: material.type,
+                    enabled: material.enabled
                 };
+                console.log(this.material);
             },
-            saveHome() {
+            saveMaterial() {
                 if (this.addOrEdit === 0) {
-                    if (this.$commonFun.checkObject(this.home, ['title'])) {
+                    if (this.$commonFun.checkObject(this.material, ['title'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
-                    Home.addHome(this, this.home).then(res => {
+                    Material.addMaterial(this, this.material).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;
-                            this.getHome();
+                            this.getMaterial();
                         }
                     });
                 } else {
-                    if (this.$commonFun.checkObject(this.home, ['imgUrl'])) {
+                    if (this.$commonFun.checkObject(this.material, ['title'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
 
-                    Home.updateHome(this, this.editId, this.home).then(res => {
+                    Material.updateMaterial(this, this.editId, this.material).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;
-                            this.getHome();
+                            this.getMaterial();
                         }
                     });
                 }
             },
-            deleteHome(ids) {
+            deleteMaterial(ids) {
                 if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
                 if (!ids && this.selected.length > 0) {
                     ids = this.selected.map(item => {
@@ -341,8 +358,8 @@
                     okText: '确定',
                     cancelText: '取消',
                     onOk: () => {
-                        Home.deleteHome(this, ids).then((res) => {
-                            if (res.success) this.getHome();
+                        Material.deleteMaterial(this, ids).then((res) => {
+                            if (res.success) this.getMaterial();
                         });
                     }
                 });

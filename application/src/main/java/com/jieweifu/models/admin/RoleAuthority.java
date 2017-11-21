@@ -193,4 +193,12 @@ public class RoleAuthority {
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
     }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
 }

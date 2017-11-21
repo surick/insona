@@ -23,10 +23,11 @@ export default {
             }
             obj.resourceId = item.id;
             obj.title = item.title;
-            obj.resourceType = item.code;
+            obj.code = item.code;
             obj.expand = false;
             list.push(obj);
         });
+        console.log(list);
         return list;
     },
     dealRoleTree(tree) {
@@ -37,6 +38,7 @@ export default {
             if (item.children && item.children.length > 0) {
                 obj.children = this.dealRoleTree(item.children);
             }
+            obj.code = item.roleCode;
             obj.id = item.id;
             obj.title = item.roleName;
             obj.status = item.enabled;
@@ -52,7 +54,7 @@ export default {
             method: 'PUT',
             url: '/sys/role/updateAuthority/'.concat(obj.roleId),
             data: {
-                MENU: obj.resourceId
+                codes: obj.codes
             }
         });
     },
@@ -74,11 +76,11 @@ export default {
             method: 'PUT',
             url: '/sys/role/updateRole',
             data: {
-                roleName: obj.roleName,
-                code: obj.code,
-                parent: obj.parent,
-                orderNum: obj.orderNum,
-                status: obj.status ? 1 : 0
+                id: obj.id,
+                roleName: obj.title,
+                parentId: obj.parentId,
+                status: obj.status ? 1 : 0,
+                roleCode: obj.code
             }
         });
     },

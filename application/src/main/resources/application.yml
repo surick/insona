@@ -11,6 +11,7 @@ custom:
   upload:
     dir: ${custom.path}/static/uploads/
     home: ${custom.path}/static/uploads/home/
+    material: ${custom.path}/static/uploads/material/
 
 spring:
   datasource:

@@ -2,16 +2,14 @@ import ajax from './api';
 import moment from 'moment';
 
 export default {
-
-    getProduct(vm, obj) {
+    getMaterial(vm, obj) {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/insona/userProduct/getProduct/' + obj.pageIndex + '/' + obj.pageSize
+                url: '/insona/material/listMaterial/' + obj.pageIndex + '/' + obj.pageSize
             }).then(res => {
                 if (res.success) {
                     res.data.list.forEach(item => {
-                        console.log(Number(item.updateTime));
                         item.createTime && (item.createTime = moment(Number(item.createTime)).format('YYYY-MM-DD HH:mm'));
                         item.updateTime && (item.updateTime = moment(Number(item.updateTime)).format('YYYY-MM-DD HH:mm'));
                     });
@@ -20,21 +18,37 @@ export default {
             });
         });
     },
-    addProduct(vm, obj) {
-        console.log(obj);
+    addMaterial(vm, obj) {
         return ajax(vm, {
             method: 'POST',
-            url: '/insona/userProduct/saveProduct',
+            url: '/insona/material/saveMaterial',
             data: {
-                did: obj.did,
-                baseUserId: obj.uid
+                title: obj.title,
+                type: obj.type,
+                imgUrl: '待上传',
+                enabled: 1,
+                content: obj.content
             }
         });
     },
-    deleteProduct(vm, ids) {
+    updateMaterial(vm, id, obj) {
+        return ajax(vm, {
+            method: 'PUT',
+            url: '/insona/material/updateMaterial',
+            data: {
+                id: id,
+                title: obj.title,
+                type: obj.type,
+                imgUrl: obj.imgUrl,
+                content: obj.content,
+                enabled: obj.enabled ? 1 : 0
+            }
+        });
+    },
+    deleteMaterial(vm, ids) {
         return ajax(vm, {
             method: 'DELETE',
-            url: '/insona/userProduct/removeProduct',
+            url: '/insona/material/removeMaterial',
             data: ids
         });
     }

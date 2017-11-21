@@ -10,14 +10,26 @@ import java.io.Serializable;
 public class Element implements Serializable {
     @Column(primaryKey = true)
     private int id = -1;
-
     private String code;
     private String type;
     @Column(columnName = "element_name")
     private String elementName;
-
     @Column(columnName = "menu_id")
     private Integer menuId;
+    @Column(columnName = "parent_id")
+    private Integer parentId;
+
+    public void setMenuId(Integer menuId) {
+        this.menuId = menuId;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
 
     private String path;
     private String method;

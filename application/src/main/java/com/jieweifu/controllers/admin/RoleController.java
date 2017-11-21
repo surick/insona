@@ -3,12 +3,10 @@ package com.jieweifu.controllers.admin;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.admin.Element;
 import com.jieweifu.models.admin.RoleAuthority;
 import com.jieweifu.models.admin.Role;
-import com.jieweifu.services.admin.RoleAuthorityService;
-import com.jieweifu.services.admin.RoleService;
-import com.jieweifu.services.admin.RoleUserService;
-import com.jieweifu.services.admin.UserService;
+import com.jieweifu.services.admin.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +27,22 @@ public class RoleController {
     private RoleUserService roleUserService;
     private RoleAuthorityService roleAuthorityService;
     private UserService userService;
+    private ElementService elementService;
+    private MenuService menuService;
 
     @Autowired
     public RoleController(RoleService roleService,
                           RoleUserService roleUserService,
                           RoleAuthorityService roleAuthorityService,
-                          UserService userService) {
+                          UserService userService,
+                          ElementService elementService,
+                          MenuService menuService) {
         this.roleService = roleService;
         this.roleUserService = roleUserService;
         this.roleAuthorityService = roleAuthorityService;
         this.userService = userService;
+        this.elementService = elementService;
+        this.menuService = menuService;
     }
 
     /**
@@ -108,21 +112,18 @@ public class RoleController {
      * 角色下有用户在使用,不允许删除
      */
     @DeleteMapping("removeRole")
-    public Result removeRole(@RequestBody List<Integer> ids) {
-        for (int id : ids) {
-            if (id <= 1)
-                return new Result().setError("id不合法");
-            if (roleService.getRoleById(id) == null)
-                return new Result().setError("分类不存在");
-            if (!roleService.getRoleByParentId(id).isEmpty())
-                return new Result().setError("分类下不为空,不允许删除");
-            if (roleUserService.getRoleUserByRoleId(id) != null)
-                return new Result().setError("角色下用户不为空,不允许删除");
-        }
-        for(int id :ids){
-            if (roleAuthorityService.getRoleAuthorityById(roleService.getRoleById(id).getId()) != null) {
-                roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
-            }
+    public Result removeRole(@RequestBody String ids) {
+        int id = Integer.parseInt(ids);
+        if (id <= 1)
+            return new Result().setError("id不合法");
+        if (roleService.getRoleById(id) == null)
+            return new Result().setError("分类不存在");
+        if (!roleService.getRoleByParentId(id).isEmpty())
+            return new Result().setError("分类下不为空,不允许删除");
+        if (roleUserService.getRoleUserByRoleId(id) != null)
+            return new Result().setError("角色下用户不为空,不允许删除");
+        if (roleAuthorityService.getRoleAuthorityById(roleService.getRoleById(id).getId()) != null) {
+            roleAuthorityService.deleteRoleAuthority(roleService.getRoleById(id).getId());
             roleService.deleteRole(id);
         }
         return new Result().setMessage("删除角色成功");
@@ -157,20 +158,46 @@ public class RoleController {
     @PostMapping("saveAuthority/{id}")
     public Result saveAuthority(@PathVariable("id") String id,
                                 @RequestBody Map<String, List<String>> mapList) {
-        if(!id.matches("^[0-9]*$")){
+        if (!id.matches("^[0-9]*$")) {
             return new Result().setError("id非法");
         }
         if (mapList.isEmpty())
             return new Result().setError("权限为空");
         mapList.forEach(
-                (s, integers) ->
+                (code, codes) ->
                 {
-                    for (String j : integers) {
-                        RoleAuthority roleAuthority = new RoleAuthority();
-                        roleAuthority.setRoleId(Integer.parseInt(id));
-                        roleAuthority.setResourceId(Integer.parseInt(j));
-                        roleAuthority.setResourceType(s);
-                        roleAuthorityService.addRoleAuthority(roleAuthority);
+                    for (String cd : codes) {
+                        if (cd.startsWith("SYS")) {
+                            RoleAuthority roleAuthority = new RoleAuthority();
+                            Element element = elementService.getElement(cd);
+                            if (roleAuthorityService.getRoleAuth("MENU", element.getMenuId(), Integer.parseInt(id)) == null) {
+                                RoleAuthority roleAuthority1 = new RoleAuthority();
+                                roleAuthority1.setResourceType("MENU");
+                                roleAuthority1.setResourceId(element.getMenuId());
+                                roleAuthority1.setRoleId(Integer.parseInt(id));
+                                roleAuthorityService.addRoleAuthority(roleAuthority1);
+                            }
+                            roleAuthority.setRoleId(Integer.parseInt(id));
+                            roleAuthority.setResourceType("ELEMENT");
+                            roleAuthority.setResourceId(element.getId());
+                            roleAuthorityService.addRoleAuthority(roleAuthority);
+                        } else if (cd.startsWith("AUTH")) {
+                            if (roleAuthorityService.getRoleAuth(
+                                    "MENU", menuService.getMenuByCode(cd).getId(), Integer.parseInt(id)) == null) {
+                                RoleAuthority roleAuthority1 = new RoleAuthority();
+                                roleAuthority1.setResourceType("MENU");
+                                roleAuthority1.setResourceId(menuService.getMenuByCode(cd).getId());
+                                roleAuthority1.setRoleId(Integer.parseInt(id));
+                                roleAuthorityService.addRoleAuthority(roleAuthority1);
+                            }
+                            if (roleAuthorityService.getRoleAuth("MENU", 1, Integer.parseInt(id)) == null) {
+                                RoleAuthority roleAuthority2 = new RoleAuthority();
+                                roleAuthority2.setRoleId(Integer.parseInt(id));
+                                roleAuthority2.setResourceType("MENU");
+                                roleAuthority2.setResourceId(1);
+                                roleAuthorityService.addRoleAuthority(roleAuthority2);
+                            }
+                        }
                     }
                 }
         );
