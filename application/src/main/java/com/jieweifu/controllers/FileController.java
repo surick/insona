@@ -28,7 +28,7 @@ public class FileController {
         Map<Object, Object> responseData = new HashMap<>();
         options.setValidation(new FileValidation());
         try {
-            File.upload(request, uploadPath, options).forEach((key, value) -> responseData.put(key, "/uploads/" + value));
+            File.upload(request, uploadPath, options).forEach((key, value) -> responseData.put(key, "/uploads/images/" + value));
         } catch (Exception e) {
             e.printStackTrace();
             responseData.put("error", e.toString());

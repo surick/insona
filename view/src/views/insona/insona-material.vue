@@ -31,7 +31,8 @@
         <Modal
             v-model="addAndEditModal"
             :title="['家庭背景新增', '家庭背景编辑'][addOrEdit]"
-            :mask-closable="false">
+            :mask-closable="false"
+            width="1000px">
             <div class="modal-body">
                 <Row class="margin-bottom-10">
                     <Col span="6">
@@ -58,6 +59,14 @@
                         <span slot="open">是</span>
                         <span slot="close">否</span>
                     </i-switch>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">生效</div>
+                    </Col>
+                    <Col span="18" style="line-height: 32px;">
+                    <froala :tag="'textarea'" :config="config" v-model="material.content">Init text</froala>
                     </Col>
                 </Row>
             </div>
@@ -101,12 +110,13 @@
 </template>
 
 <script>
-    import expandRow from './insona-expand.vue';
+    import textRow from './insona-text.vue';
     import Material from '../../http/material.js';
+    import VueFroala from 'vue-froala-wysiwyg';
 
     export default {
         name: 'other_material',
-        components: {expandRow},
+        components: {textRow, VueFroala},
         data: function () {
             return {
                 uploadModal: false,
@@ -240,7 +250,7 @@
                         title: '更多',
                         align: 'center',
                         render: (h, params) => {
-                            return h(expandRow, {
+                            return h(textRow, {
                                 props: {
                                     row: params.row
                                 }
@@ -248,7 +258,28 @@
                         }
                     }
                 ],
-                data: []
+                data: [],
+                config: {
+                    toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline',
+                        'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily',
+                        'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|',
+                        'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent',
+                        'indent', '-', 'insertImage',
+                        'embedly', 'insertFile', 'insertTable', '|',
+                        'specialCharacters', 'insertHR', 'selectAll', '|',
+                        'print', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
+                    imageUploadURL: 'http://localhost:8080/image/upload',
+                    fileUploadURL: 'http://localhost:8080/file/upload',
+                    imageManagerDeleteURL: 'http://localhost:8080/image/delete',
+                    imageDefaultAlign: 'left',
+                    imageDefaultDisplay: 'inline',
+                    events: {
+                        'froalaEditor.initialized': function () {
+                            console.log(this.imageManagerLoadURL);
+                        }
+                    }
+                },
+                model: ''
             };
         },
         mounted() {
@@ -277,7 +308,8 @@
                 this.uploadModal = true;
                 this.material = {
                     id: material.id,
-                    title: material.title
+                    title: material.title,
+                    content: material.content
                 };
             },
             getMaterial() {
@@ -315,9 +347,9 @@
                 this.editId = material.id;
                 this.material = {
                     title: material.title,
-                    imgUrl: material.imgUrl,
                     type: material.type,
-                    enabled: material.enabled
+                    enabled: material.enabled,
+                    content: material.content
                 };
                 console.log(this.material);
             },

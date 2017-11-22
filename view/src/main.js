@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import iView from 'iview';
-import { router, otherRouter, appRouter } from './router';
+import {router, otherRouter, appRouter} from './router';
 import store from './store';
 import Util from './libs/util';
 import App from './app.vue';
@@ -13,6 +13,14 @@ import zhTLocale from 'iview/src/locale/lang/zh-TW';
 import Loading from './components/loading';
 import commonFun from './libs/commonFun';
 
+require('froala-editor/js/froala_editor.pkgd.min');
+require('froala-editor/css/froala_editor.pkgd.min.css');
+require('font-awesome/css/font-awesome.css');
+require('froala-editor/css/froala_style.min.css');
+
+import VueFroala from 'vue-froala-wysiwyg';
+
+Vue.use(VueFroala);
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(Loading);
@@ -96,7 +104,7 @@ new Vue({
     data: {
         currentPageName: ''
     },
-    mounted () {
+    mounted() {
         this.currentPageName = this.$route.name;
         this.$store.commit('initCachepage');
         // 权限菜单过滤相关
