@@ -13,6 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 获取温度,湿度,pm2.5
+ * 外接阿里云提供API(注:当前版本为免费版,期限一年,每分钟限次访问30次)
+ * 如需付费版可访问阿里云API平台购买
+ * https://market.aliyun.com/products/?sre=s2&keyword=全国天气查询
+ *
+ * 温度湿度查询API(经纬度)http://tqsk.api.4dsmart.cn/web/weatherApi/weatherLive/[lon]/[lat]/ALL
+ * pm2.5查询API(城市)http(s)://ali-pm25.showapi.com/pm25-detail
+ *
+ * 购买后获得APPCODE作为验证Token发起请求即可
+ */
 @SuppressWarnings("unused")
 @RestController("InsonaWeather")
 @RequestMapping("insona/weather")
