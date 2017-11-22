@@ -2,24 +2,12 @@ package com.jieweifu.common.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.Map;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 public class HttpUtil {
 
@@ -38,12 +26,12 @@ public class HttpUtil {
                                      Map<String, String> headers,
                                      Map<String, String> querys)
             throws Exception {
-        HttpClient httpClient = wrapClient(host);
+        CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet request = new HttpGet(buildUrl(host, path, querys));
         for (Map.Entry<String, String> e : headers.entrySet()) {
             request.addHeader(e.getKey(), e.getValue());
         }
-        return httpClient.execute(request);
+        return httpclient.execute(request);
     }
 
     private static String buildUrl(String host, String path, Map<String, String> querys) throws UnsupportedEncodingException {
@@ -73,42 +61,6 @@ public class HttpUtil {
                 sbUrl.append("?").append(sbQuery);
             }
         }
-
         return sbUrl.toString();
-    }
-
-    private static HttpClient wrapClient(String host) {
-        HttpClient httpClient = new DefaultHttpClient();
-        if (host.startsWith("https://")) {
-            sslClient(httpClient);
-        }
-        return httpClient;
-    }
-
-    private static void sslClient(HttpClient httpClient) {
-        try {
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            X509TrustManager tm = new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(X509Certificate[] xcs, String str) {
-
-                }
-
-                public void checkServerTrusted(X509Certificate[] xcs, String str) {
-
-                }
-            };
-            ctx.init(null, new TrustManager[]{tm}, null);
-            SSLSocketFactory ssf = new SSLSocketFactory(ctx);
-            ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            ClientConnectionManager ccm = httpClient.getConnectionManager();
-            SchemeRegistry registry = ccm.getSchemeRegistry();
-            registry.register(new Scheme("https", 443, ssf));
-        } catch (KeyManagementException | NoSuchAlgorithmException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 }
