@@ -1,5 +1,6 @@
 package com.jieweifu.controllers.admin;
 
+import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
@@ -69,6 +70,10 @@ public class UserController {
         if (userService.getUserByUserName(user.getUserName()) != null)
             return new Result().setError("用户名已存在");
         userService.addUser(user);
+        RoleUser roleUser = new RoleUser();
+        roleUser.setRoleId(roleService.getRoleByName("经销商").getId());
+        roleUser.setUserId(userService.getUserByUserName(user.getUserName()).getId());
+        roleUserService.addRoleUser(roleUser);
         return new Result().setMessage("新增成功");
     }
 
@@ -114,7 +119,9 @@ public class UserController {
                                 @PathVariable("pageSize") int pageSize) {
         if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
-        List<User> userList = userService.getUsersByPage(pageIndex, pageSize);
+        int userId = BaseContextHandler.getUserId();
+        String label = userService.getUserById(userId).getLabel();
+        List<User> userList = userService.getUsersByPage(pageIndex, pageSize, label == null ? "" : label);
         int total = userService.getUserTotal();
         Map<String, Object> map = new HashMap<>();
         map.put("list", userList);
@@ -131,16 +138,38 @@ public class UserController {
             return new Result().setError(ErrorUtil.getErrors(errors));
         }
         boolean flag = false;
-        for(String roleIds : roleInfo.getRoleId()){
+        for (String roleIds : roleInfo.getRoleId()) {
             Integer roleId = Integer.parseInt(roleIds);
             if (userService.getUserById(roleInfo.getUserId()) != null &&
-                    roleService.getRoleById(roleId) != null){
+                    roleService.getRoleById(roleId) != null) {
                 flag = true;
-            }else {
+            } else {
                 flag = false;
             }
         }
-        if(flag){
+        for (String roleIds : roleInfo.getRoleId()) {
+            Integer roleId = Integer.parseInt(roleIds);
+            User user = userService.getUserById(roleInfo.getUserId());
+            if (roleService.getRoleById(roleId).getRoleName().equals("经销商")) {
+                user.setLabel("00100010001");
+            }
+            if (roleService.getRoleById(roleId).getRoleName().equals("生产商")) {
+                user.setLabel("0010001");
+                userService.updateUser(user);
+                break;
+            }
+            userService.updateUser(user);
+        }
+        for (String roleIds : roleInfo.getRoleId()) {
+            Integer roleId = Integer.parseInt(roleIds);
+            User user = userService.getUserById(roleInfo.getUserId());
+            if (roleService.getRoleById(roleId).getRoleName().equals("管理员")) {
+                user.setLabel("001");
+                userService.updateUser(user);
+                break;
+            }
+        }
+        if (flag) {
             roleUserService.deleteRoleUser(roleInfo.getUserId());
             for (String roleIds : roleInfo.getRoleId()) {
                 Integer roleId = Integer.parseInt(roleIds);
@@ -155,7 +184,7 @@ public class UserController {
                 }
             }
             return new Result().setMessage("配置角色成功");
-        }else {
+        } else {
             return new Result().setError("配置权限失败");
         }
     }

@@ -32,7 +32,7 @@ public interface UserService {
 
     List<Element> getAllAuthElements(int userId, boolean isAdmin);
 
-    List<User> getUsersByPage(int pageIndex, int pageSize);
+    List<User> getUsersByPage(int pageIndex, int pageSize, String label);
 
     List<User> getUserByName(String Name);
 

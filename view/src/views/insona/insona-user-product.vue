@@ -88,7 +88,7 @@
                     <div class="input-label">在线状态</div>
                     </Col>
                     <Col span="6">
-                    <Input v-model="product.enable === 1 ? '在线' : '离线'" disabled></Input>
+                    <Input v-model="product.insonaOnlin === 1 ? '在线' : '离线'" disabled></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">

@@ -16,12 +16,6 @@
                         新增
                     </Button>
                 </access-ctrl>
-                <access-ctrl :name="'SYS_USER_ROLE'" ref="access">
-                    <Button type="info">
-                        <Icon type="android-settings"></Icon>
-                        配置角色
-                    </Button>
-                </access-ctrl>
                 <access-ctrl :name="'SYS_USER_REMOVE'" ref="access">
                     <Button type="error" @click="deleteUser()">
                         <Icon type="trash-a"></Icon>
@@ -118,6 +112,14 @@
                     <Input v-model="user.address" placeholder="详细地址"></Input>
                     </Col>
                 </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">Label</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="user.label" placeholder="Label"></Input>
+                    </Col>
+                </Row>
                 <Row>
                     <Col span="6">
                     <div class="input-label">状态</div>
@@ -142,7 +144,7 @@
             :mask-closable="false"
             @on-ok="saveRole">
             <div class="modal-body">
-                <Tree ref="roleTree" :data="roleData" show-checkbox></Tree>
+                <Tree ref="roleTree" :data="roleData" show-checkbox @on-check-change="checkRole"></Tree>
             </div>
         </Modal>
     </div>
@@ -151,16 +153,16 @@
 <script>
     import expandRow from './auth-user-expand.vue';
     import {User, Role} from '@/http';
-    import accessCtrl from '@/components/accessCtrl.vue';
 
     export default {
         name: 'auth_user',
-        components: {expandRow, accessCtrl},
+        components: {expandRow},
 
         data() {
             return {
                 access: this.$store.state.access,
                 addAndEditModal: false,
+                userId: '',
                 addOrEdit: 0,
                 editId: '',
                 selected: [],
@@ -180,6 +182,7 @@
                     mobilePhone: '',
                     email: '',
                     sex: '女',
+                    label: '',
                     status: true
                 },
                 roleInfo: {
@@ -235,7 +238,12 @@
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
-                                h('Button', {
+                                h('access-ctrl', {
+                                    props: {
+                                        name: 'SYS_USER_REMOVE',
+                                        ref: 'access'
+                                    }
+                                }, [h('Button', {
                                     props: {
                                         type: 'ghost'
                                     },
@@ -257,8 +265,14 @@
                                         }
                                     }),
                                     '编辑'
+                                ])
                                 ]),
-                                h('Button', {
+                                h('access-ctrl', {
+                                    props: {
+                                        name: 'SYS_USER_ROLE',
+                                        ref: 'access'
+                                    }
+                                }, [h('Button', {
                                     props: {
                                         type: 'info'
                                     },
@@ -280,26 +294,34 @@
                                         }
                                     }),
                                     '配置角色'
+                                ])
                                 ]),
-                                h('Button', {
+                                h('access-ctrl', {
                                     props: {
-                                        type: 'error'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.deleteUser([params.row.id]);
-                                        }
+                                        name: 'SYS_USER_REMOVE',
+                                        ref: 'access'
                                     }
                                 }, [
-                                    h('Icon', {
+                                    h('Button', {
                                         props: {
-                                            type: 'trash-a'
+                                            type: 'error'
                                         },
-                                        style: {
-                                            marginRight: '5px'
+                                        on: {
+                                            click: () => {
+                                                this.deleteUser([params.row.id]);
+                                            }
                                         }
-                                    }),
-                                    '删除'
+                                    }, [
+                                        h('Icon', {
+                                            props: {
+                                                type: 'trash-a'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            }
+                                        }),
+                                        '删除'
+                                    ])
                                 ])
                             ]);
                         }
@@ -355,19 +377,27 @@
             selectChange(selection) {
                 this.selected = selection;
             },
-
-            setRole(index, user) {
-                this.roleModal = true;
-                this.roleIndexs = index;
+            checkRole() {
                 let role = this.$refs.roleTree.getCheckedNodes();
                 let roleId = role.map(item => {
                     return item.id;
                 });
                 this.roleInfo = {
-                    userId: user.id,
+                    userId: this.userId,
                     roleId: roleId
                 };
-                console.log(user.id);
+                console.log(this.roleInfo);
+            },
+            setRole(index, user) {
+                Role.getRoleTree(this).then(res => {
+                    if (res.success) {
+                        this.roleData = Role.dealRoleTree(res.data);
+                        this.roleList = Role.dealRoleTreeToList(res.data);
+                    }
+                });
+                this.roleModal = true;
+                this.roleIndexs = index;
+                this.userId = user.id;
             },
             editUser(user) {
                 this.addOrEdit = 1;
@@ -383,6 +413,7 @@
                     mobilePhone: user.mobilePhone,
                     email: user.email,
                     sex: user.sex === 1 ? '男' : '女',
+                    label: user.label,
                     status: user.status === 1
                 };
             },
@@ -400,6 +431,7 @@
                     mobilePhone: '',
                     email: '',
                     sex: '男',
+                    label: '',
                     status: true
                 };
             },
@@ -454,7 +486,6 @@
                 this.getUser();
             },
             saveRole() {
-                console.log(this.$refs.roleTree.getCheckedNodes());
                 console.log(this.roleInfo);
                 User.saveRole(this, this.roleInfo);
             }

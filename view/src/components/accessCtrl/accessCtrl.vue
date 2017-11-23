@@ -6,9 +6,9 @@
 
 <script>
     export default {
-        name: 'accessCtrl',
+        name: 'AccessCtrl',
 
-        componentName: 'accessCtrl',
+        componentName: 'AccessCtrl',
 
         data() {
             return {

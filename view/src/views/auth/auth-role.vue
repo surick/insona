@@ -19,7 +19,7 @@
             </div>
             <Row :gutter="16">
                 <Col span="5">
-                <Tree ref="roleTree" :data="roleData" show-checkbox @on-select-change="treeNodeSelect"></Tree>
+                <Tree ref="roleTree" :data="roleData" @on-select-change="treeNodeSelect"></Tree>
                 </Col>
                 <Col span="19">
                 <Card>
@@ -158,13 +158,9 @@
 
 <script>
     import {Role} from '@/http';
-    import accessCtrl from '@/components/accessCtrl.vue';
 
     export default {
         name: 'auth_role',
-        components: {
-            accessCtrl
-        },
         data() {
             return {
                 access: this.$store.state.access,
@@ -202,8 +198,6 @@
             };
         },
         addRole() {
-            this.addRoleEdit = 0;
-            this.addModal = true;
             this.addRoleDetail = {
                 roleName: '',
                 roleCode: '',
@@ -211,6 +205,8 @@
                 orderNum: '',
                 enabled: true
             };
+            this.addRoleEdit = 0;
+            this.addModal = true;
         },
         mounted() {
             this.getRoleTree();
@@ -262,6 +258,7 @@
                         if (res.success) {
                             console.log(this.addRoleDetail);
                             this.addModal = false;
+                            this.addRoleDetail = {};
                             this.getRoleTree();
                         }
                     });
@@ -286,7 +283,8 @@
                 this.authModal = true;
             },
             saveAuth() {
-                let role = this.$refs.roleTree.getCheckedNodes();
+                debugger;
+                let role = this.$refs.roleTree.getSelectedNodes();
                 let roleId = role.map(item => {
                     return item.id;
                 });
@@ -301,6 +299,7 @@
                 };
                 console.log(this.authDetail);
                 Role.saveAuth(this, this.authDetail);
+                this.getRoleTree();
             },
             deleteRoles() {
                 this.delete(this.roleDetail.id);

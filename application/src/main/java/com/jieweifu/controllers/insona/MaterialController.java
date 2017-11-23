@@ -99,6 +99,14 @@ public class MaterialController {
         return new Result().setData(map);
     }
 
+    /**
+     * 图片上传
+     *
+     * @param request 请求
+     * @param id      id
+     * @param title   标题
+     * @return link
+     */
     @PostMapping("upload")
     @ResponseBody
     public Map<Object, Object> upload(HttpServletRequest request,

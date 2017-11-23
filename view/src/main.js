@@ -11,6 +11,7 @@ import zhLocale from 'iview/src/locale/lang/zh-CN';
 import enLocale from 'iview/src/locale/lang/en-US';
 import zhTLocale from 'iview/src/locale/lang/zh-TW';
 import Loading from './components/loading';
+import AccessCtrl from './components/accessCtrl';
 import commonFun from './libs/commonFun';
 
 require('froala-editor/js/froala_editor.pkgd.min');
@@ -24,6 +25,7 @@ Vue.use(VueFroala);
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(Loading);
+Vue.use(AccessCtrl);
 Vue.use(commonFun);
 
 // 自动设置语言

@@ -177,6 +177,13 @@ public class RoleController {
                                 roleAuthority1.setRoleId(Integer.parseInt(id));
                                 roleAuthorityService.addRoleAuthority(roleAuthority1);
                             }
+                            if (roleAuthorityService.getRoleAuth("MENU", 1, Integer.parseInt(id)) == null) {
+                                RoleAuthority roleAuthority2 = new RoleAuthority();
+                                roleAuthority2.setRoleId(Integer.parseInt(id));
+                                roleAuthority2.setResourceType("MENU");
+                                roleAuthority2.setResourceId(1);
+                                roleAuthorityService.addRoleAuthority(roleAuthority2);
+                            }
                             roleAuthority.setRoleId(Integer.parseInt(id));
                             roleAuthority.setResourceType("ELEMENT");
                             roleAuthority.setResourceId(element.getId());
@@ -189,13 +196,6 @@ public class RoleController {
                                 roleAuthority1.setResourceId(menuService.getMenuByCode(cd).getId());
                                 roleAuthority1.setRoleId(Integer.parseInt(id));
                                 roleAuthorityService.addRoleAuthority(roleAuthority1);
-                            }
-                            if (roleAuthorityService.getRoleAuth("MENU", 1, Integer.parseInt(id)) == null) {
-                                RoleAuthority roleAuthority2 = new RoleAuthority();
-                                roleAuthority2.setRoleId(Integer.parseInt(id));
-                                roleAuthority2.setResourceType("MENU");
-                                roleAuthority2.setResourceId(1);
-                                roleAuthorityService.addRoleAuthority(roleAuthority2);
                             }
                         }
                     }

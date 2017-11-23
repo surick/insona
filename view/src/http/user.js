@@ -58,6 +58,7 @@ export default {
                 address: obj.address,
                 mobilePhone: obj.mobilePhone,
                 email: obj.email,
+                label: obj.label,
                 sex: obj.sex === '男' ? 1 : 0,
                 status: obj.status ? 1 : 0
             }
@@ -75,6 +76,7 @@ export default {
                 address: obj.address,
                 mobilePhone: obj.mobilePhone,
                 email: obj.email,
+                label: obj.label,
                 sex: obj.sex === '男' ? 1 : 0,
                 status: obj.status ? 1 : 0
             }

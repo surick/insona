@@ -4,7 +4,7 @@
 </style>
 <template>
     <div class="home-main">
-        <access-ctrl :name="'SYS_LOGIN'" ref="access">
+        <access-ctrl :name="'SYS_USER_GET'" ref="access">
             <button>获取用户信息</button>
         </access-ctrl>
 
@@ -13,14 +13,9 @@
 </template>
 
 <script>
-    import accessCtrl from '@/components/accessCtrl.vue';
     // import { User } from '@/http';
     export default {
         name: 'home',
-
-        components: {
-            accessCtrl
-        },
 
         mounted() {
             // User.getPower(this);

@@ -31,13 +31,13 @@ public class User {
     @NotBlank(message = "name不允许为空")
     private String name;
 
-    @Pattern(regexp = Regex.DATE_REX,message = "日期格式错误")
+    @Pattern(regexp = Regex.DATE_REX, message = "日期格式错误")
     private String birthday;
 
     @NotBlank(message = "address不允许为空")
     private String address;
 
-    @Pattern(regexp =Regex.PHONE_REX ,message = "手机号码格式错误")
+    @Pattern(regexp = Regex.PHONE_REX, message = "手机号码格式错误")
     @Column(columnName = "mobile_phone")
 
     private String mobilePhone;
@@ -45,10 +45,10 @@ public class User {
     @Email(message = "电子邮箱格式错误")
     private String email;
 
-    @Range(min = 0,max = 1,message = "性别非法")
+    @Range(min = 0, max = 1, message = "性别非法")
     private Integer sex;
 
-    @Range(min = 0,max = 1,message = "状态无效")
+    @Range(min = 0, max = 1, message = "状态无效")
     private Integer status;
 
     @Column(columnName = "head_img_url")
@@ -90,6 +90,9 @@ public class User {
     private String attr8;
     private String attr9;
     private String attr10;
+
+    @Column(columnName = "label")
+    private String label;
 
     public int getId() {
         return id;
@@ -337,5 +340,13 @@ public class User {
 
     public void setAttr10(String attr10) {
         this.attr10 = attr10;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }
