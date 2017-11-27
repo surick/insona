@@ -1,0 +1,33 @@
+<template>
+    <div>
+        <Row class="expand-row">
+            <Col span="4">
+            <span class="expand-key">生日：</span>
+            <span class="expand-value">{{ row.birthday }}</span>
+            </Col>
+            <Col span="4">
+            <span class="expand-key">备注：</span>
+            <span class="expand-value">{{ row.lang}}</span>
+            </Col>
+            <Col span="4">
+            <span class="expand-key">remar：</span>
+            <span class="expand-value">{{ row.remar }}</span>
+            </Col>
+            <Col span="4">
+            <span class="expand-key">是否匿名：</span>
+            <span class="expand-value" v-text=" row.isAnonymous===0?'否':'是'"></span>
+            </Col>
+            <Col span="6" padding="2    0px">
+            <span class="expand-key">地址：</span>
+            <span class="expand-value">{{ row.address }}</span>
+            </Col>
+        </Row>
+    </div>
+</template>
+<script>
+    export default {
+        props: {
+            row: Object
+        }
+    };
+</script>
