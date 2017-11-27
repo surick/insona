@@ -20,7 +20,9 @@ require('font-awesome/css/font-awesome.css');
 require('froala-editor/css/froala_style.min.css');
 
 import VueFroala from 'vue-froala-wysiwyg';
+import VCharts from 'v-charts';
 
+Vue.use(VCharts);
 Vue.use(VueFroala);
 Vue.use(VueI18n);
 Vue.use(iView);

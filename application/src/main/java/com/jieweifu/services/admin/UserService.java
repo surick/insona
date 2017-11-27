@@ -43,4 +43,6 @@ public interface UserService {
     int getUserTotal();
 
     void isDelete(Integer ids);
+
+    List<User> getUserIds(String label);
 }

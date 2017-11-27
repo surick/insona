@@ -235,7 +235,7 @@
                         width: 180,
                         align: 'center',
                         render: (h, params) => {
-                            return params.row.enable === 1 ? '正常' : '冻结';
+                            return params.row.disabled === 1 ? '正常' : '冻结';
                         }
                     },
                     {

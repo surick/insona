@@ -176,6 +176,14 @@ export const appRouter = [
                 }
             },
             {
+                path: 'users',
+                title: '用户管理',
+                name: 'USERS',
+                component: resolve => {
+                    require(['../views/insona/insona-users.vue'], resolve);
+                }
+            },
+            {
                 path: 'material',
                 title: '资料',
                 name: 'MATERIAL',

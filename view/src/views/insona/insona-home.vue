@@ -100,7 +100,7 @@
 
 <script>
     import expandRow from './insona-expand.vue';
-    import Home from '../../http/home.js';
+    import Home from '../../http/insona-home.js';
 
     export default {
         name: 'other_home',

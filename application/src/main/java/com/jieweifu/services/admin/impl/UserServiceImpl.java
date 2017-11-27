@@ -204,6 +204,14 @@ public class UserServiceImpl implements UserService {
         db.update().table(User.class).set("isDelete", 1).where("id = ?", id).execute();
     }
 
+    @Override
+    public List<User> getUserIds(String label) {
+        return db.select()
+                .from(User.class)
+                .where("label LIKE ?",label+"%")
+                .queryForList(User.class);
+    }
+
     private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {
         List<MenuElement> menuElements = new ArrayList<>();
         findNext(-1, menus, menuElements, elements);
