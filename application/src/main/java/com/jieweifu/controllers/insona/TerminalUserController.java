@@ -1,5 +1,6 @@
 package com.jieweifu.controllers.insona;
 
+import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.insona.InsonaUser;
 import com.jieweifu.models.insona.Product;

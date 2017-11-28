@@ -294,6 +294,7 @@
                     if (res.success) {
                         this.data = res.data.list;
                         this.total = res.data.total;
+                        console.log(this.data);
                     }
                 });
             },
@@ -301,7 +302,6 @@
                 UserDT.getProducts(this).then((res) => {
                     if (res.success) {
                         this.productDetail = res.data;
-                        console.log(this.productDetail);
                     }
                 });
             },

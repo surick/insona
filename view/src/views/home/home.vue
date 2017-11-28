@@ -43,14 +43,16 @@
                 <Col span="12" width="400px">
                 <Card :bordered="false" style="background-color: rgba(0,20,41,0.78);margin: 10px">
                     <div style="width: 600px;">
-                        <ve-map :extend="option"></ve-map>
+                        <ve-map :extend="extend"></ve-map>
                     </div>
                 </Card>
                 </Col>
                 <Col span="12" width="400px">
                 <Card :bordered="false" style="background-color: #15c1df;margin: 10px">
-                    <div>
-                        <ve-bar :data="chartData" :settings="chartSettings"></ve-bar>
+                    <div style="width: 600px;height: 400px">
+                        <div class="margin-bottom-10" style="color: #fff">分布排行</div>
+                        <br/>
+                        <MyProgress></MyProgress>
                     </div>
                 </Card>
                 </Col>
@@ -64,117 +66,13 @@
     import VeMap from 'v-charts/lib/map';
     import VeBar from 'v-charts/lib/bar';
     import Home from '../../http/home.js';
+    import MyProgress from '../components/progress.vue';
     // import { User } from '@/http';
     export default {
-        components: {VeMap, VeBar},
+        components: {VeMap, VeBar, MyProgress},
         name: 'home',
-        created() {
-            this.chartData = {
-                columns: ['日期', '成本', '利润'],
-                rows: [
-                    {'日期': '1月1号', '成本': 123},
-                    {'日期': '1月2号', '成本': 1223},
-                    {'日期': '1月3号', '成本': 2123},
-                    {'日期': '1月4号', '成本': 4123},
-                    {'日期': '1月5号', '成本': 3123},
-                    {'日期': '1月6号', '成本': 7123}
-                ]
-            };
-            this.chartSettings = {
-                dimension: ['成本']
-            };
-            this.chartSettings = {
-                position: 'china',
-                label: false,
-                itemStyle: {
-                    normal: {
-                        borderColor: '#eee'
-                    }
-                }
-            };
-        },
         data() {
             return {
-                option: {
-                    title: {
-                        text: '设备分布',
-                        left: '5px',
-                        textStyle: {
-                            color: '#fff',
-                            fontWeight: '90'
-                        }
-                    },
-                    tooltip: {},
-                    visualMap: {
-                        type: 'continuous',
-                        min: 0,
-                        max: 4123,
-                        top: 'bottom',
-                        zlevel: '3',
-                        text: ['高', '低'],
-                        realtime: false,
-                        calculable: true,
-                        color: ['#15c1df', 'lightskyblue', 'lightblue'],
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    geo: {
-                        map: 'china',
-                        label: {
-                            normal: {
-                                show: false,
-                                textStyle: {
-                                    color: 'rgba(0,0,0,0.4)'
-                                }
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                borderColor: '#ffffff'
-                            },
-                            emphasis: {
-                                areaColor: null,
-                                shadowOffsetX: 0,
-                                shadowOffsetY: 0,
-                                shadowBlur: 20,
-                                borderWidth: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    },
-                    series: [
-                        {
-                            type: 'scatter',
-                            coordinateSystem: 'geo',
-                            symbolSize: 20,
-                            symbol: 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z',
-                            symbolRotate: 35,
-                            label: {
-                                normal: {
-                                    formatter: '{b}',
-                                    position: 'right',
-                                    show: false
-                                },
-                                emphasis: {
-                                    show: true
-                                }
-                            },
-                            itemStyle: {
-                                normal: {
-                                    color: '#F06C00'
-                                }
-                            }
-                        },
-                        {
-                            name: 'categoryA',
-                            type: 'map',
-                            geoIndex: 0,
-                            zoom: 0.5,
-                            data: this.data
-                        }
-                    ]
-                },
                 table: {
                     id: '',
                     city: '',
@@ -183,7 +81,45 @@
                     userNumber: 0
                 },
                 tables: '',
-                data: [],
+                data: [
+                    {name: '北京', value: null},
+                    {name: '天津', value: null},
+                    {name: '上海', value: null},
+                    {name: '重庆', value: null},
+                    {name: '河北', value: null},
+                    {name: '河南', value: null},
+                    {name: '云南', value: null},
+                    {name: '辽宁', value: null},
+                    {name: '黑龙江', value: null},
+                    {name: '湖南', value: null},
+                    {name: '安徽', value: null},
+                    {name: '山东', value: null},
+                    {name: '新疆', value: null},
+                    {name: '江苏', value: null},
+                    {name: '浙江', value: null},
+                    {name: '江西', value: null},
+                    {name: '湖北', value: null},
+                    {name: '广西', value: null},
+                    {name: '甘肃', value: null},
+                    {name: '山西', value: null},
+                    {name: '内蒙古', value: null},
+                    {name: '陕西', value: null},
+                    {name: '吉林', value: null},
+                    {name: '福建', value: null},
+                    {name: '贵州', value: null},
+                    {name: '广东', value: null},
+                    {name: '青海', value: null},
+                    {name: '西藏', value: null},
+                    {name: '四川', value: null},
+                    {name: '宁夏', value: null},
+                    {name: '海南', value: null},
+                    {name: '台湾', value: null},
+                    {name: '香港', value: null},
+                    {name: '澳门', value: null}
+                ],
+                extend: {},
+                map: [],
+                max: '',
                 total: {
                     totalProduct: 0,
                     totalOnline: 0,
@@ -194,11 +130,127 @@
         },
         mounted() {
             this.getTable();
+            this.getMap();
             // User.getPower(this);
+        },
+        watch: {},
+        computed: {
+            f1: function () {
+                Home.getMax(this).then((res) => {
+                    this.max = res.data;
+                });
+                Home.getMap(this).then((res) => {
+                    if (res.success) {
+                        this.map = res.data;
+                        this.data.forEach(item => {
+                            this.map.forEach(res => {
+                                if (item.name === res.name) {
+                                    item.value = res.value;
+                                }
+                            });
+                        });
+                    }
+                });
+                console.log('max' + this.max);
+                return this.data;
+            }
         },
         methods: {
             ctrlAccess() {
                 this.$refs.access.updateAccess();
+            },
+            getMap() {
+                Home.getMap(this).then((res) => {
+                    if (res.success) {
+                        this.map = res.data;
+                        this.data.forEach(item => {
+                            this.map.forEach(res => {
+                                if (item.name === res.name) {
+                                    item.value = res.value;
+                                }
+                            });
+                        });
+                    }
+                    this.extend = {
+                        title: {
+                            text: '设备分布',
+                            left: '5px',
+                            textStyle: {
+                                color: '#fff',
+                                fontWeight: '9 item.value'
+                            }
+                        },
+                        tooltip: {},
+                        visualMap: {
+                            type: 'continuous',
+                            min: 0,
+                            max: 4123,
+                            top: 'bottom',
+                            zlevel: '3',
+                            text: ['高', '低'],
+                            realtime: false,
+                            calculable: true,
+                            color: ['#15c1df', 'lightskyblue', 'lightblue'],
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+                        geo: {
+                            map: 'china',
+                            label: {
+                                normal: {
+                                    show: false,
+                                    textStyle: {
+                                        color: 'rgba(0,0,0,0.4)'
+                                    }
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    borderColor: '#ffffff'
+                                },
+                                emphasis: {
+                                    areaColor: null,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0,
+                                    shadowBlur: 20,
+                                    borderWidth: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                type: 'scatter',
+                                coordinateSystem: 'geo',
+                                symbolSize: 20,
+                                symbolRotate: 35,
+                                label: {
+                                    normal: {
+                                        formatter: '{b}',
+                                        position: 'right',
+                                        show: false
+                                    },
+                                    emphasis: {
+                                        show: true
+                                    }
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: '#F06C00'
+                                    }
+                                }
+                            },
+                            {
+                                name: 'categoryA',
+                                type: 'map',
+                                geoIndex: 0,
+                                zoom: 0.5,
+                                data: this.data
+                            }
+                        ]
+                    };
+                });
             },
             getTable() {
                 this.total = {
@@ -209,8 +261,6 @@
                 };
                 Home.getTable(this).then((res) => {
                     if (res.success) {
-                        this.data = res.data;
-                        console.log(this.data);
                         res.data.forEach(item => {
                             this.total = {
                                 totalProduct: this.total.totalProduct + item.normalProduct,

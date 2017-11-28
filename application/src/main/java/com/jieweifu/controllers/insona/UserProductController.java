@@ -3,17 +3,22 @@ package com.jieweifu.controllers.insona;
 import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.common.utils.RedisUtil;
+import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.Product;
 import com.jieweifu.models.insona.ProductInfo;
 import com.jieweifu.models.insona.UserProduct;
+import com.jieweifu.services.admin.UserService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.UserProductService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,19 +26,23 @@ import java.util.Map;
 @SuppressWarnings("unused")
 @RestController("InsonaUserProduct")
 @RequestMapping("insona/userProduct")
+@AdminAuthAnnotation
 public class UserProductController {
 
     private UserProductService userProductService;
     private RedisUtil redisUtil;
     private ProductService productService;
+    private UserService userService;
 
     @Autowired
     public UserProductController(UserProductService userProductService,
                                  RedisUtil redisUtil,
-                                 ProductService productService) {
+                                 ProductService productService,
+                                 UserService userService) {
         this.userProductService = userProductService;
         this.redisUtil = redisUtil;
         this.productService = productService;
+        this.userService = userService;
     }
 
     /**
@@ -104,8 +113,17 @@ public class UserProductController {
                                  @PathVariable("pageSize") int pageSize) {
         if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
-
-        List<ProductInfo> infoList = userProductService.pageUserProduct(pageIndex, pageSize);
+        int userId = BaseContextHandler.getUserId();
+        User user = userService.getUserById(userId);
+        List<User> userList = userService.getUserIds(user.getLabel());
+        List<ProductInfo> infoList = new ArrayList<>();
+        userList.forEach(
+                user1 -> {
+                    ProductInfo productInfo = userProductService.pageUserProduct(pageIndex, pageSize, String.valueOf(user1.getId()));
+                    if (productInfo != null)
+                        infoList.add(productInfo);
+                }
+        );
         int total = userProductService.getTotal();
         Map<String, Object> map = new HashMap<>();
         map.put("list", infoList);
@@ -152,20 +170,21 @@ public class UserProductController {
 
     /**
      * 显示设备信息
+     *
      * @param did 设备did
      * @return product
      */
     @GetMapping("getProductInfo/{did}")
-    public Result getProductInfo(@PathVariable("did") String did){
+    public Result getProductInfo(@PathVariable("did") String did) {
         Product product = productService.getByDid(did);
-        if(product == null)
+        if (product == null)
             return new Result().setError("did不合法");
         return new Result().setData(product);
     }
 
     @GetMapping("getProducts")
-    public Result getProducts(){
-        List<Product> productList  = productService.getProducts();
+    public Result getProducts() {
+        List<Product> productList = productService.getProducts();
         return new Result().setData(productList);
     }
 }

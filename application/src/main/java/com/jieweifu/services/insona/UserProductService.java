@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserProductService {
 
-    List<ProductInfo> pageUserProduct(int pageIndex, int pageSize);
+    ProductInfo pageUserProduct(int pageIndex, int pageSize, String id);
 
     void saveUserProduct(UserProduct userProduct);
 

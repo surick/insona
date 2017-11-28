@@ -20,13 +20,14 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    public List<ProductInfo> pageUserProduct(int pageIndex, int pageSize) {
+    public ProductInfo pageUserProduct(int pageIndex, int pageSize, String id) {
         return db.select()
                 .columns("B.id,B.did,A.insona_online,A.is_disabled,A.dev_alias,B.base_user_id")
                 .from(UserProduct.class, "B")
                 .leftOuterJoin(Product.class, "A", "A.did = B.did")
+                .where("B.base_user_id = ? AND B.base_user_id != 1", id)
                 .limit(pageIndex, pageSize)
-                .queryForList(ProductInfo.class);
+                .queryForEntity(ProductInfo.class);
     }
 
     @Override
