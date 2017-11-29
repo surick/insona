@@ -17,7 +17,7 @@
             <Card :bordered="false" style="background-color: #15c1df; margin: 10px">
                 <div style="line-height: 40px">
                     <p align="center">设备在线率(%)</p>
-                    <h2 align="center">{{(this.total.totalOnline / this.total.totalProduct * 100).toFixed(2)}}</h2>
+                    <h2 align="center">{{(this.total.totalOnline / this.total.totalProduct * 100).toFixed()}}</h2>
                 </div>
             </Card>
             </Col>
@@ -52,7 +52,7 @@
                     <div style="width: 600px;height: 400px">
                         <div class="margin-bottom-10" style="color: #fff">分布排行</div>
                         <br/>
-                        <MyProgress></MyProgress>
+                        <MyProgress :maps="this.maps" :total="this.total"></MyProgress>
                     </div>
                 </Card>
                 </Col>
@@ -119,7 +119,8 @@
                 ],
                 extend: {},
                 map: [],
-                max: '',
+                maps: [],
+                max: 0,
                 total: {
                     totalProduct: 0,
                     totalOnline: 0,
@@ -133,28 +134,6 @@
             this.getMap();
             // User.getPower(this);
         },
-        watch: {},
-        computed: {
-            f1: function () {
-                Home.getMax(this).then((res) => {
-                    this.max = res.data;
-                });
-                Home.getMap(this).then((res) => {
-                    if (res.success) {
-                        this.map = res.data;
-                        this.data.forEach(item => {
-                            this.map.forEach(res => {
-                                if (item.name === res.name) {
-                                    item.value = res.value;
-                                }
-                            });
-                        });
-                    }
-                });
-                console.log('max' + this.max);
-                return this.data;
-            }
-        },
         methods: {
             ctrlAccess() {
                 this.$refs.access.updateAccess();
@@ -162,7 +141,8 @@
             getMap() {
                 Home.getMap(this).then((res) => {
                     if (res.success) {
-                        this.map = res.data;
+                        this.map = res.data.list;
+                        this.max = res.data.max;
                         this.data.forEach(item => {
                             this.map.forEach(res => {
                                 if (item.name === res.name) {
@@ -177,14 +157,14 @@
                             left: '5px',
                             textStyle: {
                                 color: '#fff',
-                                fontWeight: '9 item.value'
+                                fontSize: 12
                             }
                         },
                         tooltip: {},
                         visualMap: {
                             type: 'continuous',
                             min: 0,
-                            max: 4123,
+                            max: this.max,
                             top: 'bottom',
                             zlevel: '3',
                             text: ['高', '低'],
@@ -251,16 +231,12 @@
                         ]
                     };
                 });
+                console.log(this.data);
             },
             getTable() {
-                this.total = {
-                    totalProduct: 0,
-                    totalOnline: 0,
-                    totalError: 0,
-                    totalUser: 0
-                };
                 Home.getTable(this).then((res) => {
                     if (res.success) {
+                        this.maps = res.data;
                         res.data.forEach(item => {
                             this.total = {
                                 totalProduct: this.total.totalProduct + item.normalProduct,

@@ -16,49 +16,39 @@ import java.util.*;
 public class TableController {
 
     private TableService tableService;
+
     @Autowired
-    public TableController(TableService tableService){
+    public TableController(TableService tableService) {
         this.tableService = tableService;
     }
 
     @GetMapping("listTables")
-    public Result listTables(){
+    public Result listTables() {
         return new Result().setData(tableService.listTables());
     }
 
-    @GetMapping("maxTotal")
-    public Result maxTotal(){
-        List<Table> tables = tableService.listTables();
-        List<Integer> list = new ArrayList<>();
-        tables.forEach(
-                table -> {
-                    list.add(table.getNormalProduct());
-                }
-        );
-        Integer max = Collections.max(list);
-        System.out.println(max);
-        return new Result().setData(max);
-    }
-
     @GetMapping("listMap")
-    public Result listMap(){
-        List<Data> list = new ArrayList<>();
+    public Result listMap() {
         List<Table> tables = tableService.listTables();
-        tables.forEach(
-                table ->{
-                    Data data = new Data();
-                    data.setName(table.getCity());
-                    data.setValue(table.getNormalProduct());
-                    list.add(data);
-                }
-
-        );
-        return new Result().setData(list);
+        int max = 0;
+        List<Data> list = new ArrayList<>();
+        for (Table table : tables) {
+            Data data = new Data();
+            data.setName(table.getCity());
+            data.setValue(table.getNormalProduct());
+            list.add(data);
+            max += table.getNormalProduct();
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", list);
+        map.put("max", max);
+        return new Result().setData(map);
     }
 
-    class Data{
+    class Data {
         private String name;
         private Integer value;
+
         public String getName() {
             return name;
         }

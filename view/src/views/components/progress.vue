@@ -1,25 +1,30 @@
 <template>
     <div>
-        <Row>
-            <Col span="3" style="padding-left: 10px">
-            <span style="color: #fff;">北京</span>
-            </Col>
-            <Col span="15">
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
-                      style="width: 80%;">
-                    <span style="padding-left: 10px;color: #aab2b3">2000</span>
+        <div v-for="map in maps">
+            <Row>
+                <Col span="3" style="padding-left: 10px">
+                <span style="color: #fff;">{{map.city}}</span>
+                </Col>
+                <Col span="15">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0"
+                         aria-valuemax="100"
+                         :style="{width:((map.normalProduct/total.totalProduct* 100).toFixed(0))+'%'}">
+                        <span style="padding-left: 10px;color: #aab2b3">{{map.normalProduct}}</span>
+                    </div>
                 </div>
-            </div>
-            </Col>
-            <Col span="4" style="padding-left: 30px">
-            <span style="color: #fff">80%</span>
-            </Col>
-        </Row>
+                </Col>
+                <Col span="4" style="padding-left: 30px">
+                <span style="color: #fff">{{(map.normalProduct/total.totalProduct* 100).toFixed(0)}}%</span>
+                </Col>
+            </Row>
+        </div>
     </div>
 </template>
 <script>
-
+    export default {
+        props: ['maps', 'total']
+    };
 </script>
 <style>
     .progress {
@@ -32,6 +37,7 @@
         -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
         box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
     }
+
     .progress-bar {
         float: left;
         width: 0;

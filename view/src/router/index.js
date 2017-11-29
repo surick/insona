@@ -177,10 +177,18 @@ export const appRouter = [
             },
             {
                 path: 'users',
-                title: '用户管理',
+                title: '终端用户管理',
                 name: 'USERS',
                 component: resolve => {
                     require(['../views/insona/insona-users.vue'], resolve);
+                }
+            },
+            {
+                path: 'message',
+                title: '通知管理',
+                name: 'MESSAGE',
+                component: resolve => {
+                    require(['../views/insona/insona-message.vue'], resolve);
                 }
             },
             {
