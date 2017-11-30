@@ -1,6 +1,7 @@
 package com.jieweifu.controllers.insona;
 
 import com.jieweifu.common.business.BaseContextHandler;
+import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.InsonaProductUser;
@@ -17,10 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 @RestController("InsonaTerminal")
@@ -40,7 +38,7 @@ public class TerminalUserController {
         this.terminalUserService = terminalUserService;
         this.productService = productService;
         this.userService = userService;
-        this.userService = userService;
+        this.userProductService = userProductService;
     }
 
     /**
@@ -51,11 +49,71 @@ public class TerminalUserController {
                                    @PathVariable("pageSize") int pageSize) {
         if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
-        List<InsonaUser> userList = terminalUserService.listUser(pageIndex, pageSize);
-        int total = terminalUserService.getTotal();
+        //得到登录用户
+        User user = BaseContextHandler.getUser();
+        //得到子厂商
+        List<User> userList = userService.getUserIds(user.getLabel());
+        //得到子厂商绑定的设备
+        List<UserProduct> productList = new ArrayList<>();
+        for (User user1 : userList) {
+            System.out.println(user1.getId());
+            try {
+                userProductService.listUserProduct(String.valueOf(user1.getId()));
+                productList.addAll(userProductService.listUserProduct(String.valueOf(user1.getId())));
+            } catch (NullPointerException ignored) {
+                productList.add(null);
+            }
+        }
+        //得到登录设备的用户关系
+        List<InsonaProductUser> users = new ArrayList<>();
+        for (UserProduct product : productList) {
+            users.addAll(terminalUserService.listUser(product.getDid()));
+        }
+        //取uid
+        List<String> uids = new ArrayList<>();
+        users.forEach(
+                insonaProductUser ->
+                        uids.add(insonaProductUser.getUid())
+        );
+        //去重
+        HashSet<String> h = new HashSet<>(uids);
+        uids.clear();
+        uids.addAll(h);
+        //去空
+        for (int i = 0; i < uids.size(); i++) {
+            if (users.get(i) == null) {
+                uids.remove(i);
+            }
+        }
+        //查用户 ->id
+        List<InsonaUser> listUser = new ArrayList<>();
+        uids.forEach(
+                uid -> {
+                    listUser.add(terminalUserService.getUserById(uid));
+                }
+        );
+        //手动分页
+        List<InsonaUser> list = new ArrayList<>();
+        int total = listUser.size();
+        for (int i = 0; i <= total; i++) {
+            // 开始索引
+            int fromIndex = pageIndex * pageSize;
+            // 结束索引
+            int toIndex = fromIndex + pageSize;
+            // 如果结束索引大于集合的最大索引，那么规定结束索引=集合大小
+            if (toIndex > total) {
+                toIndex = total;
+            }
+            if (fromIndex <= total) {
+                list = listUser.subList(fromIndex, toIndex);
+                if (toIndex >= fromIndex) {
+                    break;
+                }
+            }
+        }
         Map<String, Object> map = new HashMap<>();
-        map.put("list", userList);
-        map.put("total", total);
+        map.put("list", list);
+        map.put("total", listUser.size());
         return new Result().setData(map);
     }
 
@@ -81,35 +139,14 @@ public class TerminalUserController {
         if (uid == null)
             return new Result().setError("查询信息不能为空");
         System.out.println(uid);
-        List<UserProduct> productList = terminalUserService.listProduct(uid);
+        List<InsonaProductUser> productList = terminalUserService.listProducts(uid);
         List<Product> list = new ArrayList<>();
-        for (UserProduct product : productList) {
+        for (InsonaProductUser product : productList) {
             Product product1 = productService.getByDid(product.getDid());
             list.add(product1);
         }
         if (productList.isEmpty())
             return new Result().setError("设备不存在");
         return new Result().setData(list);
-    }
-
-    public void a(int pageIndex, int pageSize) {
-        User user = BaseContextHandler.getUser();
-        List<User> userList = userService.getUserIds(user.getLabel());
-        List<UserProduct> productList = new ArrayList<>();
-        userList.forEach(
-                user1 -> {
-                    productList.addAll(userProductService.listUserProduct(String.valueOf(user1.getId())));
-                }
-        );
-        List<InsonaProductUser> users = new ArrayList<>();
-        productList.forEach(
-                product -> {
-                    users.addAll(terminalUserService.listUser(product.getDid()));
-                }
-        );
-        //去重
-        //去空
-        //查用户 ->id
-        //根据id查设备
     }
 }

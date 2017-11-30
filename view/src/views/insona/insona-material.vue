@@ -6,7 +6,7 @@
     <div class="access">
         <Card>
             <div slot="title">
-                资料
+                资料管理
             </div>
 
             <div slot="extra">
@@ -30,7 +30,7 @@
         <!-- 编辑与新增 -->
         <Modal
             v-model="addAndEditModal"
-            :title="['家庭背景新增', '家庭背景编辑'][addOrEdit]"
+            :title="['图片新增', '图片编辑'][addOrEdit]"
             :mask-closable="false"
             width="1000px">
             <div class="modal-body">
@@ -63,7 +63,7 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">生效</div>
+                    <div class="input-label">备注</div>
                     </Col>
                     <Col span="18" style="line-height: 32px;">
                     <froala :tag="'textarea'" :config="config" v-model="material.content">Init text</froala>
@@ -94,9 +94,9 @@
                             :show-upload-list="false"
                             :data="this.material"
                             action="http://192.168.3.163:8080/image/materialUpload">
-                            <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
+                            <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
                             <Button type="text" :loading="loadingStatus">
-                                {{ loadingStatus ? 'Uploading' : 'Click to upload' }}
+                                {{ loadingStatus ? '正在上传' : '待上传 ' }}
                             </Button>
                         </Upload>
                     </div>

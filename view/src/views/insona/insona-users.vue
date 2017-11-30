@@ -6,7 +6,7 @@
     <div class="access">
         <Card>
             <div slot="title">
-                设备管理
+                终端用户管理
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">
@@ -15,37 +15,6 @@
                 </div>
             </div>
         </Card>
-
-        <!-- 绑定与解绑 -->
-        <Modal
-            v-model="addAndEditModal"
-            :title="'设备绑定'"
-            :mask-closable="false">
-            <div class="modal-body">
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">用户id</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="userProduct.uid" placeholder="用户id"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">可用设备</div>
-                    </Col>
-                    <Select v-model="userProduct.did" filterable style="width: 250px">
-                        <Option v-for="item in productDetail" :value="item.did" :key="item.did">
-                            {{ item.did }}
-                        </Option>
-                    </Select>
-                    </Col>
-                </Row>
-            </div>
-            <div slot="footer">
-                <Button type="primary" size="large" @click="saveUserProduct()">确定</Button>
-            </div>
-        </Modal>
         <Modal
             v-model="productModal"
             :title="'设备信息'"
@@ -286,7 +255,7 @@
                 }
             },
             close() {
-                this.productModal = close;
+                this.productModal = false;
             },
             deleteUserProduct(ids) {
                 if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');

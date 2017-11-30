@@ -58,4 +58,12 @@ public class TerminalUserServiceImpl implements TerminalUserService {
                 .where("did = ?", did)
                 .queryForList(InsonaProductUser.class);
     }
+
+    @Override
+    public List<InsonaProductUser> listProducts(String uid) {
+        return db.select()
+                .from(InsonaProductUser.class)
+                .where("uid = ?", uid)
+                .queryForList(InsonaProductUser.class);
+    }
 }

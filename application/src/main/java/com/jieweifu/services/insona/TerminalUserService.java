@@ -18,4 +18,6 @@ public interface TerminalUserService {
     List<UserProduct> listProduct(String uid);
 
     List<InsonaProductUser> listUser(String did);
+
+    List<InsonaProductUser> listProducts(String uid);
 }

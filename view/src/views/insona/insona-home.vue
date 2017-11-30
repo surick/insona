@@ -83,9 +83,9 @@
                             :show-upload-list="false"
                             :data="this.home"
                             action="http://192.168.3.163:8080/image/homeUpload">
-                            <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
+                            <Button type="ghost" icon="ios-cloud-upload-outline">选择图片</Button>
                             <Button type="text" :loading="loadingStatus">
-                                {{ loadingStatus ? 'Uploading' : 'Click to upload' }}
+                                {{ loadingStatus ? '正在上传' : '待上传' }}
                             </Button>
                         </Upload>
                     </div>

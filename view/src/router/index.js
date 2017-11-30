@@ -193,7 +193,7 @@ export const appRouter = [
             },
             {
                 path: 'material',
-                title: '资料',
+                title: '资料管理',
                 name: 'MATERIAL',
                 component: resolve => {
                     require(['../views/insona/insona-material.vue'], resolve);
