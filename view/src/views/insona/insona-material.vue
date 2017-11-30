@@ -84,7 +84,7 @@
                     <div class="input-label">资料标题</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="material.title" placeholder="家庭背景标题"/>
+                    <Input v-model="material.title" placeholder="资料标题"/>
                     </Col>
                 </Row>
                 <template>
@@ -93,7 +93,7 @@
                             :before-upload="handleUpload"
                             :show-upload-list="false"
                             :data="this.material"
-                            action="http://localhost:8080/insona/material/upload">
+                            action="http://192.168.3.163:8080/image/materialUpload">
                             <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
                             <Button type="text" :loading="loadingStatus">
                                 {{ loadingStatus ? 'Uploading' : 'Click to upload' }}
@@ -178,7 +178,7 @@
                             return h('div', [
                                 h('img', {
                                     attrs: {
-                                        src: 'http://127.0.0.1:8080' + params.row.imgUrl
+                                        src: 'http://192.168.3.163:8080' + params.row.imgUrl
                                     },
                                     style: {
                                         width: '40px',
@@ -268,9 +268,9 @@
                         'embedly', 'insertFile', 'insertTable', '|',
                         'specialCharacters', 'insertHR', 'selectAll', '|',
                         'print', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
-                    imageUploadURL: 'http://localhost:8080/image/upload',
-                    fileUploadURL: 'http://localhost:8080/file/upload',
-                    imageManagerDeleteURL: 'http://localhost:8080/image/delete',
+                    imageUploadURL: 'http://192.168.3.163:8080/image/upload',
+                    fileUploadURL: 'http://192.168.3.163:8080/file/upload',
+                    imageManagerDeleteURL: 'http://192.168.3.163:8080/image/delete',
                     imageDefaultAlign: 'left',
                     imageDefaultDisplay: 'inline',
                     events: {

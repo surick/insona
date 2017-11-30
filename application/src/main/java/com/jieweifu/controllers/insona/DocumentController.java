@@ -1,7 +1,5 @@
 package com.jieweifu.controllers.insona;
 
-import com.froala.editor.file.FileOptions;
-import com.froala.editor.file.FileValidation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.insona.Document;
 import com.jieweifu.services.insona.DocumentService;
@@ -9,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -122,26 +118,4 @@ public class DocumentController {
         return new Result().setData(map);
     }
 
-    @PostMapping("upload")
-    @ResponseBody
-    public Map<Object, Object> upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
-        FileOptions options = new FileOptions();
-        Map<Object, Object> responseData = new HashMap<>();
-        options.setValidation(new FileValidation());
-        try {
-            com.froala.editor.File.upload(request, uploadPath, options).forEach((key, value) -> responseData.put(key, "/uploads/home/" + value));
-        } catch (Exception e) {
-            e.printStackTrace();
-            responseData.put("error", e.toString());
-        }
-        Document document = new Document();
-        document.setName(file.getOriginalFilename());
-        document.setFileType(1);
-        document.setFileUrl(String.valueOf(responseData.get("link")));
-        int total = documentService.getDocumentTotal();
-        document.setSortNo(total + 1);
-        document.setIsDelete(0);
-        saveDocument(document);
-        return responseData;
-    }
 }

@@ -82,7 +82,7 @@
                             :before-upload="handleUpload"
                             :show-upload-list="false"
                             :data="this.home"
-                            action="http://localhost:8080/insona/home/upload">
+                            action="http://192.168.3.163:8080/image/homeUpload">
                             <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
                             <Button type="text" :loading="loadingStatus">
                                 {{ loadingStatus ? 'Uploading' : 'Click to upload' }}
@@ -155,7 +155,7 @@
                             return h('div', [
                                 h('img', {
                                     attrs: {
-                                        src: 'http://127.0.0.1:8080' + params.row.imgUrl
+                                        src: 'http://192.168.3.163:8080' + params.row.imgUrl
                                     },
                                     style: {
                                         width: '40px',

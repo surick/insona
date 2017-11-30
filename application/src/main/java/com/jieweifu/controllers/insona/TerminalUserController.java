@@ -1,12 +1,17 @@
 package com.jieweifu.controllers.insona;
 
-import com.jieweifu.interceptors.AdminAuthAnnotation;
+import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.admin.User;
+import com.jieweifu.models.insona.InsonaProductUser;
 import com.jieweifu.models.insona.InsonaUser;
 import com.jieweifu.models.insona.Product;
 import com.jieweifu.models.insona.UserProduct;
+import com.jieweifu.services.admin.UserService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.TerminalUserService;
+import com.jieweifu.services.insona.UserProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +29,18 @@ public class TerminalUserController {
 
     private TerminalUserService terminalUserService;
     private ProductService productService;
+    private UserService userService;
+    private UserProductService userProductService;
 
-    public TerminalUserController(TerminalUserService terminalUserService,ProductService productService){
+    @Autowired
+    public TerminalUserController(TerminalUserService terminalUserService,
+                                  ProductService productService,
+                                  UserService userService,
+                                  UserProductService userProductService) {
         this.terminalUserService = terminalUserService;
         this.productService = productService;
+        this.userService = userService;
+        this.userService = userService;
     }
 
     /**
@@ -35,10 +48,10 @@ public class TerminalUserController {
      */
     @GetMapping("listTerminalUser/{pageIndex}/{pageSize}")
     public Result listTerminalUser(@PathVariable("pageIndex") int pageIndex,
-                                @PathVariable("pageSize") int pageSize) {
+                                   @PathVariable("pageSize") int pageSize) {
         if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
-        List<InsonaUser> userList = terminalUserService.listUser(pageIndex,pageSize);
+        List<InsonaUser> userList = terminalUserService.listUser(pageIndex, pageSize);
         int total = terminalUserService.getTotal();
         Map<String, Object> map = new HashMap<>();
         map.put("list", userList);
@@ -70,12 +83,33 @@ public class TerminalUserController {
         System.out.println(uid);
         List<UserProduct> productList = terminalUserService.listProduct(uid);
         List<Product> list = new ArrayList<>();
-        for(UserProduct product : productList){
+        for (UserProduct product : productList) {
             Product product1 = productService.getByDid(product.getDid());
             list.add(product1);
         }
         if (productList.isEmpty())
             return new Result().setError("设备不存在");
         return new Result().setData(list);
+    }
+
+    public void a(int pageIndex, int pageSize) {
+        User user = BaseContextHandler.getUser();
+        List<User> userList = userService.getUserIds(user.getLabel());
+        List<UserProduct> productList = new ArrayList<>();
+        userList.forEach(
+                user1 -> {
+                    productList.addAll(userProductService.listUserProduct(String.valueOf(user1.getId())));
+                }
+        );
+        List<InsonaProductUser> users = new ArrayList<>();
+        productList.forEach(
+                product -> {
+                    users.addAll(terminalUserService.listUser(product.getDid()));
+                }
+        );
+        //去重
+        //去空
+        //查用户 ->id
+        //根据id查设备
     }
 }
