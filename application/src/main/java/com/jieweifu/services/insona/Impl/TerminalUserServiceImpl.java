@@ -1,8 +1,8 @@
 package com.jieweifu.services.insona.Impl;
 
 import com.jieweifu.common.dbservice.DB;
+import com.jieweifu.models.insona.InsonaProductUser;
 import com.jieweifu.models.insona.InsonaUser;
-import com.jieweifu.models.insona.Product;
 import com.jieweifu.models.insona.UserProduct;
 import com.jieweifu.services.insona.TerminalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +49,13 @@ public class TerminalUserServiceImpl implements TerminalUserService {
                 .from(UserProduct.class)
                 .where("base_user_id = ?", uid)
                 .queryForList(UserProduct.class);
+    }
+
+    @Override
+    public List<InsonaProductUser> listUser(String did) {
+        return db.select()
+                .from(InsonaProductUser.class)
+                .where("did = ?", did)
+                .queryForList(InsonaProductUser.class);
     }
 }

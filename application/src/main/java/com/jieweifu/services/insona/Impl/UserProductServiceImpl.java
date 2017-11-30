@@ -79,4 +79,12 @@ public class UserProductServiceImpl implements UserProductService {
                 .limit(pageIndex, pageSize)
                 .queryForList(ProductInfo.class);
     }
+
+    @Override
+    public List<UserProduct> listUserProduct(String uid) {
+        return db.select()
+                .from(UserProduct.class)
+                .where("base_user_id = ?", uid)
+                .queryForList(UserProduct.class);
+    }
 }

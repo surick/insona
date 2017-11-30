@@ -1,6 +1,7 @@
 package com.jieweifu.services.insona;
 
 
+import com.jieweifu.models.insona.InsonaProductUser;
 import com.jieweifu.models.insona.InsonaUser;
 import com.jieweifu.models.insona.UserProduct;
 
@@ -15,4 +16,6 @@ public interface TerminalUserService {
     int getTotal();
 
     List<UserProduct> listProduct(String uid);
+
+    List<InsonaProductUser> listUser(String did);
 }

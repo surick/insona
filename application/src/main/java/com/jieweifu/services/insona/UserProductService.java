@@ -20,4 +20,6 @@ public interface UserProductService {
     UserProduct getByid(Integer id);
 
     List<ProductInfo> getByUid(String uid, int pageIndex, int pageSize);
+
+    List<UserProduct> listUserProduct(String uid);
 }
