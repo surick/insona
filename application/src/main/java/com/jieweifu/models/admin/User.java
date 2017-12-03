@@ -94,6 +94,16 @@ public class User {
     @Column(columnName = "label")
     private String label;
 
+    private boolean isFirst = false;
+
+    public boolean getIsFirst() {
+        return isFirst;
+    }
+
+    public void setIsFirst(boolean isFirst) {
+        this.isFirst = isFirst;
+    }
+
     public int getId() {
         return id;
     }

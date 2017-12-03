@@ -25,5 +25,33 @@ export default {
                 }
             });
         });
+    },
+    getUser(vm) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/table/getUser'
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    putPassword(vm, obj) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'PUT',
+                url: '/insona/table/putPassword',
+                data: {
+                    password: obj.password,
+                    newPassword: obj.newPassword
+                }
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
     }
 };

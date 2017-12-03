@@ -58,6 +58,37 @@
                 </Col>
             </div>
         </Row>
+        <Modal v-model="editPasswordModal" :title="'初次登录修改密码'" :mask-closable=false :width="500">
+            <div class="modal-body">
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">旧密码</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="user.password" placeholder="旧密码"/>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">新密码</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="user.newPassword" placeholder="新密码"/>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">确认新密码</div>
+                    </Col>
+                    <Col span="18">
+                    <Input placeholder="确认新密码"/>
+                    </Col>
+                </Row>
+            </div>
+            <div slot="footer">
+                <Button type="primary" size="large" @click="saveEditPass">确定</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -73,6 +104,12 @@
         name: 'home',
         data() {
             return {
+                editPasswordModal: false,
+                user: {
+                    password: '',
+                    newPassword: '',
+                    isFirst: true
+                },
                 table: {
                     id: '',
                     city: '',
@@ -130,6 +167,7 @@
             };
         },
         mounted() {
+            this.getUser();
             this.getTable();
             this.getMap();
             // User.getPower(this);
@@ -245,6 +283,27 @@
                                 totalUser: this.total.totalUser + item.userNumber
                             };
                         });
+                    }
+                });
+            },
+            getUser() {
+                Home.getUser(this).then((res) => {
+                    console.log(res.data);
+                    if (res.success) {
+                        this.user = {
+                            isFirst: !res.data.isFirst
+                        };
+                    }
+                    this.editPasswordModal = this.user.isFirst;
+                });
+            },
+            saveEditPass() {
+                console.log(this.user);
+                Home.putPassword(this, this.user).then(res => {
+                    if (res.success) {
+                        this.editPasswordModal = false;
+                        this.getTable();
+                        this.getMap();
                     }
                 });
             }
