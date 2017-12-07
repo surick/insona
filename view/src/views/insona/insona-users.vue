@@ -77,28 +77,25 @@
                         align: 'center'
                     },
                     {
-                        title: '设备别名',
-                        key: 'devAlias',
+                        title: '设备名',
+                        key: 'name',
                         width: 180,
                         align: 'center'
                     },
                     {
                         title: '是否在线',
-                        key: 'insonaOnlin',
+                        key: 'insonaOnline',
                         width: 180,
                         align: 'center',
                         render: (h, params) => {
-                            return params.row.insonaOnlin === 1 ? '在线' : '离线';
+                            return params.row.insonaOnline === 1 ? '在线' : '离线';
                         }
                     },
                     {
-                        title: '设备状态',
-                        key: 'isDisabled',
+                        title: '设备类型',
+                        key: 'type',
                         width: 180,
-                        align: 'center',
-                        render: (h, params) => {
-                            return params.row.isDisabled === 1 ? '正常' : '冻结';
-                        }
+                        align: 'center'
                     }
                 ],
                 row: [],

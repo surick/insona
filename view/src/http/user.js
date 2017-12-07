@@ -78,7 +78,12 @@ export default {
                 email: obj.email,
                 label: obj.label,
                 sex: obj.sex === '男' ? 1 : 0,
-                status: obj.status ? 1 : 0
+                status: obj.status ? 1 : 0,
+                type: obj.type,
+                gizwits: obj.gizwits,
+                qq: obj.qq,
+                wechat: obj.wechat,
+                phone: obj.wechat
             }
         });
     },

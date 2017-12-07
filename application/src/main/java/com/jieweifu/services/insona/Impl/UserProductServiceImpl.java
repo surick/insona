@@ -22,7 +22,7 @@ public class UserProductServiceImpl implements UserProductService {
     @Override
     public ProductInfo pageUserProduct(int pageIndex, int pageSize, String id) {
         return db.select()
-                .columns("B.id,B.did,A.insona_online,A.is_disabled,A.dev_alias,B.base_user_id")
+                .columns("B.id,B.did,A.name,A.gizwit_info,A.serial_code,A.type,A.last_online,A.insona_online,A.version,B.base_user_id")
                 .from(UserProduct.class, "B")
                 .leftOuterJoin(Product.class, "A", "A.did = B.did")
                 .where("B.base_user_id = ? AND B.base_user_id != 1", id)

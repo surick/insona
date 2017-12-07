@@ -96,6 +96,57 @@ public class User {
 
     private boolean isFirst = false;
 
+    @Column(columnName = "type")
+    private String type;
+    @Column(columnName = "gizwits")
+    private String gizwits;
+    @Column(columnName = "qq")
+    private String qq;
+    @Column(columnName = "wechat")
+    private String wechat;
+    @Column(columnName = "phone")
+    private String phone;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getGizwits() {
+        return gizwits;
+    }
+
+    public void setGizwits(String gizwits) {
+        this.gizwits = gizwits;
+    }
+
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq;
+    }
+
+    public String getWechat() {
+        return wechat;
+    }
+
+    public void setWechat(String wechat) {
+        this.wechat = wechat;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public boolean getIsFirst() {
         return isFirst;
     }

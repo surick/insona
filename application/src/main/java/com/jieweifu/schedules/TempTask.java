@@ -24,6 +24,10 @@ public class TempTask {
     @Scheduled(cron = "0 0/3 * * * ?")
     public void temp() {
         List<Temp> temps = (List<Temp>) redisUtil.get("temp");
+        if (temps == null) {
+            System.out.println("temps = null");
+            return;
+        }
         temps.forEach(
                 temp -> {
                     if (redisUtil.get("temp") == null) {

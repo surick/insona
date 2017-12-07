@@ -10,14 +10,24 @@ public class ProductInfo {
     private Integer id;
     @Column(columnName = "did")
     private String did;
+    @Column(columnName = "name")
+    private String name;
+    @Column(columnName = "gizwit_info")
+    private String gizwitInfo;
     @Column(columnName = "insona_online")
-    private Integer online;
-    @Column(columnName = "is_disabled")
-    private Integer disabled;
-    @Column(columnName = "dev_alias")
-    private String alias;
-    @Column(columnName = "base_user_id")
-    private String uid;
+    private int insonaOnline;
+    @Column(columnName = "serial_code")
+    private String serialCode;
+    @Column(columnName = "last_online")
+    private String lastOnline;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getDid() {
         return did;
@@ -27,28 +37,52 @@ public class ProductInfo {
         this.did = did;
     }
 
-    public Integer getOnline() {
-        return online;
+    public String getName() {
+        return name;
     }
 
-    public void setOnline(Integer online) {
-        this.online = online;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Integer getDisabled() {
-        return disabled;
+    public String getGizwitInfo() {
+        return gizwitInfo;
     }
 
-    public void setDisabled(Integer disabled) {
-        this.disabled = disabled;
+    public void setGizwitInfo(String gizwitInfo) {
+        this.gizwitInfo = gizwitInfo;
     }
 
-    public String getAlias() {
-        return alias;
+    public int getInsonaOnline() {
+        return insonaOnline;
     }
 
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public void setInsonaOnline(int insonaOnline) {
+        this.insonaOnline = insonaOnline;
+    }
+
+    public String getSerialCode() {
+        return serialCode;
+    }
+
+    public void setSerialCode(String serialCode) {
+        this.serialCode = serialCode;
+    }
+
+    public String getLastOnline() {
+        return lastOnline;
+    }
+
+    public void setLastOnline(String lastOnline) {
+        this.lastOnline = lastOnline;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getUid() {
@@ -59,23 +93,9 @@ public class ProductInfo {
         this.uid = uid;
     }
 
-    public Integer getId() {
-        return id;
-    }
+    @Column(columnName = "version")
+    private String version;
+    @Column(columnName = "base_user_id")
+    private String uid;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "ProductInfo{" +
-                "id=" + id +
-                ", did='" + did + '\'' +
-                ", online=" + online +
-                ", disabled=" + disabled +
-                ", alias='" + alias + '\'' +
-                ", uid='" + uid + '\'' +
-                '}';
-    }
 }

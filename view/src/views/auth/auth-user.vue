@@ -106,6 +106,50 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
+                    <div class="input-label">用户分类</div>
+                    </Col>
+                    <Col span="18">
+                    <Select v-model="user.type" filterable style="width: 250px">
+                        <Option v-for="item in type" :value="item" :key="item">
+                            {{ item }}
+                        </Option>
+                    </Select>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">机智云账号</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="user.gizwits" placeholder="机智云账号"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">QQ账号</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="user.qq" placeholder="QQ账号"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">微信</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="user.wechat" placeholder="微信"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">联系电话</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="user.phone" placeholder="联系电话"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
                     <div class="input-label">详细地址</div>
                     </Col>
                     <Col span="18">
@@ -160,6 +204,10 @@
 
         data() {
             return {
+                type: [
+                    '代理用户',
+                    '终端用户'
+                ],
                 access: this.$store.state.access,
                 addAndEditModal: false,
                 userId: '',
@@ -183,7 +231,12 @@
                     email: '',
                     sex: '女',
                     label: '',
-                    status: true
+                    status: true,
+                    type: '',
+                    gizwits: '',
+                    qq: '',
+                    wechat: '',
+                    phone: ''
                 },
                 roleInfo: {
                     userId: '',
@@ -196,19 +249,16 @@
                         align: 'center'
                     },
                     {
-                        title: '姓名',
-                        key: 'name',
+                        title: '用户名',
+                        key: 'userName',
                         width: 120,
                         align: 'center'
                     },
                     {
-                        title: '性别',
-                        key: 'sex',
-                        width: 80,
-                        align: 'center',
-                        render: (h, params) => {
-                            return params.row.sex === 1 ? '男' : '女';
-                        }
+                        title: '联系人',
+                        key: 'name',
+                        width: 120,
+                        align: 'center'
                     },
                     {
                         title: '手机号',
@@ -217,13 +267,10 @@
                         align: 'center'
                     },
                     {
-                        title: '状态',
-                        key: 'status',
-                        width: 80,
-                        align: 'center',
-                        render: (h, params) => {
-                            return params.row.status === 1 ? '正常' : '冻结';
-                        }
+                        title: '用户分类',
+                        key: 'type',
+                        width: 120,
+                        align: 'center'
                     },
                     {
                         title: '详细地址',
@@ -414,7 +461,12 @@
                     email: user.email,
                     sex: user.sex === 1 ? '男' : '女',
                     label: user.label,
-                    status: user.status === 1
+                    status: user.status === 1,
+                    type: user.type,
+                    gizwits: user.gizwits,
+                    qq: user.qq,
+                    wechat: user.wechat,
+                    phone: user.phone
                 };
             },
 
@@ -432,7 +484,12 @@
                     email: '',
                     sex: '男',
                     label: '',
-                    status: true
+                    status: true,
+                    type: '',
+                    gizwits: '',
+                    qq: '',
+                    wechat: '',
+                    phone: ''
                 };
             },
 

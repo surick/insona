@@ -60,93 +60,10 @@
         </Modal>
         <Modal
             v-model="productModal"
-            :title="'设备信息'"
+            :title="'设备日志'"
             :mask-closable="false">
             <div class="modal-body">
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">设备did</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.did" placeholder="设备did" disabled></Input>
-                    </Col>
-                    <Col span="6">
-                    <div class="input-label">设备key</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.productKey" disabled></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">MAC地址</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.mac" disabled></Input>
-                    </Col>
-                    <Col span="6">
-                    <div class="input-label">在线状态</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.insonaOnlin === 1 ? '在线' : '离线'" disabled></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">passcode</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.passCode" disabled></Input>
-                    </Col>
-                    <Col span="6">
-                    <div class="input-label">host</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.host" disabled></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">remark</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.remark" disabled></Input>
-                    </Col>
-                    <Col span="6">
-                    <div class="input-label">是否生效</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.isDisabled === 1 ? '正常' : '冻结'" disabled></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">设备类型</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.type" disabled></Input>
-                    </Col>
-                    <Col span="6">
-                    <div class="input-label">设备别名</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.devAlias" disabled></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">设备label</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.devLabel" disabled></Input>
-                    </Col>
-                    <Col span="6">
-                    <div class="input-label">设备角色</div>
-                    </Col>
-                    <Col span="6">
-                    <Input v-model="product.role" disabled></Input>
-                    </Col>
-                </Row>
+                <div v-for="log in logs">{{ log.log }}</div>
             </div>
             <div slot="footer">
                 <Button type="primary" size="large" @click="close()">确定</Button>
@@ -173,18 +90,14 @@
                 productDetail: [],
                 product: {
                     did: '',
-                    product_key: '',
-                    mac: '',
-                    insona_online: '',
-                    passcode: '',
-                    host: '',
-                    remark: '',
-                    is_disabled: '',
-                    type: '',
-                    dev_alias: '',
-                    dev_label: '',
-                    role: ''
+                    name: '',
+                    gizwitInfo: '',
+                    insonaOnline: '',
+                    serialCode: '',
+                    lastOnline: '',
+                    version: ''
                 },
+                logs: [],
                 productList: [],
                 userProductList: [],
                 userProduct: {
@@ -215,28 +128,22 @@
                         align: 'center'
                     },
                     {
-                        title: '设备别名',
-                        key: 'alias',
+                        title: '设备名称',
+                        key: 'name',
                         width: 180,
                         align: 'center'
                     },
                     {
-                        title: '是否在线',
-                        key: 'online',
+                        title: '机智云信息',
+                        key: 'gizwitInfo',
                         width: 160,
-                        align: 'center',
-                        render: (h, params) => {
-                            return params.row.online === 1 ? '在线' : '离线';
-                        }
+                        align: 'center'
                     },
                     {
-                        title: '设备状态',
-                        key: 'disabled',
+                        title: '序列号',
+                        key: 'serialCode',
                         width: 180,
-                        align: 'center',
-                        render: (h, params) => {
-                            return params.row.disabled === 1 ? '正常' : '冻结';
-                        }
+                        align: 'center'
                     },
                     {
                         title: '操作',
@@ -294,7 +201,6 @@
                     if (res.success) {
                         this.data = res.data.list;
                         this.total = res.data.total;
-                        console.log(this.data);
                     }
                 });
             },
@@ -339,7 +245,8 @@
                 UserDT.productInfo(this, did).then(
                     (res) => {
                         if (res.success) {
-                            this.product = res.data;
+                            this.logs = res.data;
+                            console.log(res.data);
                         }
                     }
                 );

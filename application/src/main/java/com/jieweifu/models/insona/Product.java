@@ -8,28 +8,42 @@ import com.jieweifu.common.dbservice.Entity;
 public class Product {
     @Column(columnName = "did")
     private String did;
-    @Column(columnName = "product_key")
-    private String productKey;
-    @Column(columnName = "mac")
-    private String mac;
+    @Column(columnName = "name")
+    private String name;
+    @Column(columnName = "gizwit_info")
+    private String gizwitInfo;
     @Column(columnName = "insona_online")
-    private Integer insonaOnlin;
-    @Column(columnName = "passcode")
-    private String passCode;
-    @Column(columnName = "host")
-    private String host;
+    private int insonaOnline;
+    @Column(columnName = "serial_code")
+    private String serialCode;
+    @Column(columnName = "last_online")
+    private String lastOnline;
+    @Column(columnName = "version")
+    private String version;
+    @Column(columnName = "sub_user")
+    private String subUser;
+    @Column(columnName = "sub_home")
+    private String subHome;
+    @Column(columnName = "address")
+    private String address;
+    @Column(columnName = "other")
+    private String other;
+    @Column(columnName = "near_status")
+    private String nearStatus;
+    @Column(columnName = "near_order")
+    private String nearOrder;
+    @Column(columnName = "near_event")
+    private String nearEvent;
+    @Column(columnName = "sub_inter")
+    private String subInter;
+    @Column(columnName = "sub_maker")
+    private String subMaker;
     @Column(columnName = "remark")
     private String remark;
-    @Column(columnName = "is_disabled")
-    private Integer isDisabled;
+    @Column(columnName = "sort_no")
+    private String sortNo;
     @Column(columnName = "type")
     private String type;
-    @Column(columnName = "dev_alias")
-    private String devAlias;
-    @Column(columnName = "dev_label")
-    private String devLabel;
-    @Column(columnName = "role")
-    private String role;
 
     public String getDid() {
         return did;
@@ -39,44 +53,124 @@ public class Product {
         this.did = did;
     }
 
-    public String getProductKey() {
-        return productKey;
+    public String getName() {
+        return name;
     }
 
-    public void setProductKey(String productKey) {
-        this.productKey = productKey;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMac() {
-        return mac;
+    public String getGizwitInfo() {
+        return gizwitInfo;
     }
 
-    public void setMac(String mac) {
-        this.mac = mac;
+    public void setGizwitInfo(String gizwitInfo) {
+        this.gizwitInfo = gizwitInfo;
     }
 
-    public Integer getInsonaOnlin() {
-        return insonaOnlin;
+    public int getInsonaOnline() {
+        return insonaOnline;
     }
 
-    public void setInsonaOnlin(Integer insonaOnlin) {
-        this.insonaOnlin = insonaOnlin;
+    public void setInsonaOnline(int insonaOnline) {
+        this.insonaOnline = insonaOnline;
     }
 
-    public String getPassCode() {
-        return passCode;
+    public String getSerialCode() {
+        return serialCode;
     }
 
-    public void setPassCode(String passCode) {
-        this.passCode = passCode;
+    public void setSerialCode(String serialCode) {
+        this.serialCode = serialCode;
     }
 
-    public String getHost() {
-        return host;
+    public String getLastOnline() {
+        return lastOnline;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setLastOnline(String lastOnline) {
+        this.lastOnline = lastOnline;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getSubUser() {
+        return subUser;
+    }
+
+    public void setSubUser(String subUser) {
+        this.subUser = subUser;
+    }
+
+    public String getSubHome() {
+        return subHome;
+    }
+
+    public void setSubHome(String subHome) {
+        this.subHome = subHome;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getOther() {
+        return other;
+    }
+
+    public void setOther(String other) {
+        this.other = other;
+    }
+
+    public String getNearStatus() {
+        return nearStatus;
+    }
+
+    public void setNearStatus(String nearStatus) {
+        this.nearStatus = nearStatus;
+    }
+
+    public String getNearOrder() {
+        return nearOrder;
+    }
+
+    public void setNearOrder(String nearOrder) {
+        this.nearOrder = nearOrder;
+    }
+
+    public String getNearEvent() {
+        return nearEvent;
+    }
+
+    public void setNearEvent(String nearEvent) {
+        this.nearEvent = nearEvent;
+    }
+
+    public String getSubInter() {
+        return subInter;
+    }
+
+    public void setSubInter(String subInter) {
+        this.subInter = subInter;
+    }
+
+    public String getSubMaker() {
+        return subMaker;
+    }
+
+    public void setSubMaker(String subMaker) {
+        this.subMaker = subMaker;
     }
 
     public String getRemark() {
@@ -87,12 +181,12 @@ public class Product {
         this.remark = remark;
     }
 
-    public Integer getIsDisabled() {
-        return isDisabled;
+    public String getSortNo() {
+        return sortNo;
     }
 
-    public void setIsDisabled(Integer isDisabled) {
-        this.isDisabled = isDisabled;
+    public void setSortNo(String sortNo) {
+        this.sortNo = sortNo;
     }
 
     public String getType() {
@@ -102,29 +196,4 @@ public class Product {
     public void setType(String type) {
         this.type = type;
     }
-
-    public String getDevAlias() {
-        return devAlias;
-    }
-
-    public void setDevAlias(String devAlias) {
-        this.devAlias = devAlias;
-    }
-
-    public String getDevLabel() {
-        return devLabel;
-    }
-
-    public void setDevLabel(String devLabel) {
-        this.devLabel = devLabel;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
 }

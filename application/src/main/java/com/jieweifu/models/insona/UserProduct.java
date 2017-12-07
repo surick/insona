@@ -16,6 +16,27 @@ public class UserProduct {
     private String updateDt;
     @Column(columnName = "base_user_id")
     private String baseUserId;
+    @Column(columnName = "type_id")
+    private String typeId;
+
+    public String getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Column(columnName = "name")
+    private String name;
 
     public int getId() {
         return id;

@@ -6,13 +6,13 @@ import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
+import com.jieweifu.models.insona.Log;
 import com.jieweifu.models.insona.Product;
 import com.jieweifu.models.insona.ProductInfo;
 import com.jieweifu.models.insona.UserProduct;
 import com.jieweifu.services.admin.UserService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.UserProductService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -65,9 +65,12 @@ public class UserProductController {
         if (product == null)
             return new Result().setError("设备不存在");
         Result result = new Result();
+        Product finalProduct = product;
         redisUtil.lock("saveUserProduct", 3,
                 () -> {
                     userProduct.setUpdateDt(String.valueOf(System.currentTimeMillis()));
+                    userProduct.setTypeId(finalProduct.getType());
+                    userProduct.setName(finalProduct.getName());
                     userProductService.saveUserProduct(userProduct);
                     result.setMessage("绑定成功");
                 },
@@ -176,10 +179,10 @@ public class UserProductController {
      */
     @GetMapping("getProductInfo/{did}")
     public Result getProductInfo(@PathVariable("did") String did) {
-        Product product = productService.getByDid(did);
-        if (product == null)
+        List<Log> logs = productService.getLog(did);
+        if (logs == null)
             return new Result().setError("did不合法");
-        return new Result().setData(product);
+        return new Result().setData(logs);
     }
 
     @GetMapping("getProducts")
