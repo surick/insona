@@ -21,7 +21,10 @@ public class TempTask {
         this.tempService = tempService;
     }
 
-    @Scheduled(cron = "0 0/3 * * * ?")
+    /**
+     * 定时写入数据，目前注释注解
+     */
+    //@Scheduled(cron = "0 0/3 * * * ?")
     public void temp() {
         List<Temp> temps = (List<Temp>) redisUtil.get("temp");
         if (temps == null) {

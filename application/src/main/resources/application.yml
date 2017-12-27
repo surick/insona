@@ -17,7 +17,7 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/insona?useUnicode\=true&characterEncoding\=utf-8&autoReconnect\=true
     username: 4AB769B3A315FEDE
-    password: D11A0751AE9ADEDC1ED3E31D009048EA
+    password: 81F5E21E35407D884A6CD4A731AEBFB6AF209E1B
     driver-class-name: com.mysql.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:

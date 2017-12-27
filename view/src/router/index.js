@@ -168,6 +168,14 @@ export const appRouter = [
                 }
             },
             {
+                path: 'type',
+                title: '设备类别',
+                name: 'TYPE',
+                component: resolve => {
+                    require(['../views/insona/insona-type.vue'], resolve);
+                }
+            },
+            {
                 path: 'user-product',
                 title: '设备管理',
                 name: 'USER-PRODUCT',

@@ -1,0 +1,402 @@
+<style lang="less">
+    @import '../../styles/common.less';
+</style>
+
+<template>
+    <div class="access">
+        <Card>
+            <div slot="title">
+                设备类别
+            </div>
+
+            <div slot="extra">
+
+                <Button type="primary" @click="addType()">
+                    <Icon type="android-add"></Icon>
+                    新建
+                </Button>
+                <Button type="error" @click="deleteType()">
+                    <Icon type="trash-a"></Icon>
+                    删除
+                </Button>
+            </div>
+            <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
+            <div style="margin: 10px;overflow: hidden">
+                <div style="float: right;">
+                    <Page :total="total" :current="current" @on-change="changePage"></Page>
+                </div>
+            </div>
+        </Card>
+
+        <!-- 绑定与解绑 -->
+        <Modal
+            v-model="addAndEditModal"
+            :title="['新增类别', '编辑类别'][addOrEdit]"
+            :mask-closable="false">
+            <div class="modal-body">
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">类型id</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.type_id" placeholder="类型id"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">类型名称</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.type_name" placeholder="类型名称"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">生产商</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.maker" placeholder="生产商"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">型号</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.model_no" placeholder="型号"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">生产日期</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time"  style="width:344px"></DatePicker>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">生产批号</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.make_no" placeholder="生产批号"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">入库时间</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" placeholder="入库时间" v-model="type.into_time" style="width:344px"></DatePicker>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">操作人</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.person" placeholder="操作人"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">技术方案</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.technology" placeholder="技术方案"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">通讯类型</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.communication" placeholder="通讯类型"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">是否可用</div>
+                    </Col>
+                    <Col span="18">
+                    <i-switch size="large" v-model="type.enable">
+                        <span slot="open">启用</span>
+                        <span slot="close">禁用</span>
+                    </i-switch>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">备注</div>
+                    </Col>
+                    <Col span="18">
+                    <Input type="textarea" v-model="type.remark" placeholder="备注"></Input>
+                    </Col>
+                </Row>
+            </div>
+            <div slot="footer">
+                <Button type="primary" size="large" @click="saveType()">确定</Button>
+            </div>
+        </Modal>
+    </div>
+</template>
+
+<script>
+    import Type from '../../http/type.js';
+    import typeRow from './insona-detail.vue';
+
+    export default {
+        name: 'insona_type',
+        components: {typeRow},
+        data: function () {
+            return {
+                addAndEditModal: false,
+                addOrEdit: 0,
+                editId: '',
+                total: 0,
+                current: 1,
+                type: {
+                    id: '',
+                    type_id: '',
+                    type_name: '',
+                    maker: '',
+                    model_no: '',
+                    make_time: '',
+                    make_no: '',
+                    into_time: '',
+                    person: '',
+                    technology: '',
+                    communication: '',
+                    enable: '',
+                    remark: ''
+                },
+                columns: [
+                    {
+                        type: 'selection',
+                        key: 'id',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '类型名称',
+                        key: 'type_name',
+                        width: 180,
+                        align: 'center'
+                    },
+                    {
+                        title: '生产商',
+                        key: 'maker',
+                        width: 180,
+                        align: 'center'
+                    },
+                    {
+                        title: '型号',
+                        key: 'model_no',
+                        width: 180,
+                        align: 'center'
+                    },
+                    {
+                        title: '生产日期',
+                        key: 'make_time',
+                        width: 160,
+                        align: 'center'
+                    },
+                    {
+                        title: '生产批号',
+                        key: 'make_no',
+                        width: 180,
+                        align: 'center'
+                    },
+                    {
+                        width: 80,
+                        title: '更多',
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                params.row.enable ? '是' : '否'
+                            ]);
+                        }
+                    },
+                    {
+                        title: '操作',
+                        key: 'action',
+                        width: 200,
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'ghost'
+                                    },
+                                    style: {
+                                        marginRight: '10px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.editType(params.row);
+                                        }
+                                    }
+                                }, [
+                                    h('Icon', {
+                                        props: {
+                                            type: 'edit'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        }
+                                    }),
+                                    '修改'
+                                ]),
+                                h('Button', {
+                                    props: {
+                                        type: 'ghost'
+                                    },
+                                    style: {
+                                        marginRight: '10px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.deleteType(params.row.id);
+                                        }
+                                    }
+                                }, [
+                                    h('Icon', {
+                                        props: {
+                                            type: 'edit'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        }
+                                    }),
+                                    '删除'
+                                ])],
+                            );
+                        }
+                    },
+                    {
+                        type: 'expand',
+                        width: 80,
+                        title: '更多',
+                        align: 'center',
+                        render: (h, params) => {
+                            return h(typeRow, {
+                                props: {
+                                    row: params.row
+                                }
+                            });
+                        }
+                    }
+                ],
+                data: []
+            };
+        },
+        mounted() {
+            this.current = 1;
+            this.getTypes();
+        },
+        computed: {
+            avatorPath() {
+                return localStorage.avatorImgPath;
+            }
+        },
+        methods: {
+            getTypes() {
+                Type.getTypes(this, {
+                    pageIndex: this.current - 1,
+                    pageSize: 10
+                }).then((res) => {
+                    if (res.success) {
+                        this.data = res.data.list;
+                        this.total = res.data.total;
+                    }
+                });
+            },
+            selectChange(selection) {
+                this.selected = selection;
+            },
+            changePage(page) {
+                this.current = page;
+                this.getTypes();
+            },
+            addType() {
+                this.addOrEdit = 0;
+                this.addAndEditModal = true;
+                this.type = {
+                    type_id: '',
+                    type_name: '',
+                    maker: '',
+                    model_no: '',
+                    make_time: '',
+                    make_no: '',
+                    into_time: '',
+                    person: '',
+                    technology: '',
+                    communication: '',
+                    enable: 1,
+                    remark: ''
+                };
+            },
+            saveType() {
+                if (this.addOrEdit === 0) {
+                    if (this.$commonFun.checkObject(this.type, ['type_id'])) {
+                        return this.$Message.warning('请将信息填写完整！');
+                    }
+                    Type.addType(this, this.type).then(res => {
+                        if (res.success) {
+                            this.addAndEditModal = false;
+                            this.getTypes();
+                        }
+                    });
+                } else {
+                    Type.updateType(this, this.editId, this.type).then(res => {
+                        if (res.success) {
+                            this.addAndEditModal = false;
+                            this.getTypes();
+                        }
+                    });
+                }
+            },
+            editType(obj) {
+                this.type = {
+                    type_id: obj.type_id,
+                    type_name: obj.type_name,
+                    maker: obj.maker,
+                    model_no: obj.model_no,
+                    make_time: obj.make_time,
+                    make_no: obj.make_no,
+                    into_time: obj.into_time,
+                    person: obj.person,
+                    technology: obj.technology,
+                    communication: obj.communication,
+                    enable: obj.enable,
+                    remark: obj.remark
+                };
+                this.addOrEdit = 1;
+                this.addAndEditModal = true;
+                this.editId = obj.id;
+            },
+            deleteType(id) {
+                var ids;
+                if (!id && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
+                if (!id && this.selected.length > 0) {
+                    ids = this.selected.map(item => {
+                        return item.id;
+                    });
+                } else {
+                    ids = [id];
+                }
+                this.$Modal.confirm({
+                    title: '提示',
+                    content: '确定删除用户？',
+                    okText: '确定',
+                    cancelText: '取消',
+                    onOk: () => {
+                        Type.deleteType(this, ids).then((res) => {
+                            if (res.success) this.getTypes();
+                        });
+                    }
+                });
+            }
+        }
+    };
+</script>
