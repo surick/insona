@@ -1,5 +1,7 @@
 custom:
   path: D:/spring-files
+  key: 123456798
+  salt: insona
   jwt:
     pri-key:
       path: jwt/pri.key

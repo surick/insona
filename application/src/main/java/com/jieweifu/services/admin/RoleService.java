@@ -1,6 +1,7 @@
 package com.jieweifu.services.admin;
 
 import com.jieweifu.models.admin.Role;
+import com.jieweifu.models.admin.User;
 
 import java.util.List;
 
@@ -18,5 +19,7 @@ public interface RoleService {
     int addRole(Role Role);
 
     Role getRoleByName(String roleName);
+
+    List<User> getProducerUser();
 
 }

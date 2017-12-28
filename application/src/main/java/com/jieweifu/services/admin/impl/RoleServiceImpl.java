@@ -3,6 +3,7 @@ package com.jieweifu.services.admin.impl;
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.admin.Role;
+import com.jieweifu.models.admin.User;
 import com.jieweifu.services.admin.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,13 @@ public class RoleServiceImpl implements RoleService {
                 .from(Role.class)
                 .where("role_name = ?", roleName)
                 .queryForEntity(Role.class);
+    }
+
+    @Override
+    public List<User> getProducerUser() {
+        List<User> list = db.getJdbcTemplate().queryForList("select * from base_user AS A,base_role AS B,base_role_user " +
+                "AS C WHERE A.id=C.user_id AND B.id = C.role_id AND B.role_name = '生产商'", null, null, User.class);
+        return list;
     }
 
 }

@@ -40,4 +40,83 @@ public class ProductServiceImpl implements ProductService {
                 .from(Product.class)
                 .queryForList(Product.class);
     }
+
+    @Override
+    public List<Product> getProducts(int pageIndex, int pageSize) {
+        return db.select()
+                .from(Product.class)
+                .limit(pageIndex, pageSize)
+                .queryForList(Product.class);
+    }
+
+    @Override
+    public void saveProduct(Product product) {
+        db.insert().save(product).execute();
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+        db.update().save(product).execute();
+    }
+
+    @Override
+    public Product getProductById(int id) {
+        return db.select()
+                .from(Product.class)
+                .where("id = ?", id)
+                .queryForEntity(Product.class);
+    }
+
+    @Override
+    public void removeProduct(int id) {
+        db.delete().from(Product.class).where("id = ?", id).execute();
+    }
+
+    @Override
+    public int total() {
+        return db.select().from(Product.class).total();
+    }
+
+    @Override
+    public List<Product> listProducts(String status1, String status2) {
+        return db.select()
+                .from(Product.class)
+                .where("status IN ( ? , ? )", status1, status2)
+                .queryForList(Product.class);
+    }
+
+    @Override
+    public List<Product> listProducts(String status) {
+        return db.select()
+                .from(Product.class)
+                .where("status = ?", status)
+                .queryForList(Product.class);
+    }
+
+    @Override
+    public int total(String status) {
+
+        return db.select()
+                .from(Product.class)
+                .where("status = ?", status)
+                .total();
+    }
+
+    @Override
+    public int total(String status1, String status2) {
+
+        return db.select()
+                .from(Product.class)
+                .where("status IN ( ? , ? )", status1, status2)
+                .total();
+    }
+
+    @Override
+    public void setStatus(int id, String status) {
+        db.update()
+                .table(Product.class)
+                .set("status", status)
+                .where("id = ?", id)
+                .execute();
+    }
 }

@@ -6,7 +6,7 @@
     <div class="access">
         <Card>
             <div slot="title">
-                设备管理
+                设备绑定
             </div>
 
             <div slot="extra">

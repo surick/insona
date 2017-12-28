@@ -40,7 +40,7 @@ public class TypeController {
         try {
             typeService.saveType(type);
         } catch (Exception e) {
-            e.printStackTrace();
+            return new Result().setError(500, "系统繁忙，请刷新后重试");
         }
         return new Result().setMessage("保存成功");
     }
@@ -50,7 +50,7 @@ public class TypeController {
      */
     @DeleteMapping("remove")
     public Result removeType(@RequestBody List<String> ids) {
-        System.out.println("ids"+ids.size());
+        System.out.println("ids" + ids.size());
         if (ids.isEmpty()) {
             return new Result().setError("id为空");
         }

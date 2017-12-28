@@ -12,4 +12,26 @@ public interface ProductService {
     List<Log> getLog(String did);
 
     List<Product> getProducts();
+
+    List<Product> getProducts(int pageIndex, int pageSize);
+
+    void saveProduct(Product product);
+
+    void updateProduct(Product product);
+
+    Product getProductById(int id);
+
+    void removeProduct(int id);
+
+    int total();
+
+    List<Product> listProducts(String status1, String status2);
+
+    List<Product> listProducts(String status);
+
+    int total(String status);
+
+    int total(String status1, String status2);
+
+    void setStatus(int id, String status);
 }

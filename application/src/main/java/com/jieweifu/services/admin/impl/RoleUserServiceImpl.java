@@ -2,6 +2,7 @@ package com.jieweifu.services.admin.impl;
 
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
+import com.jieweifu.models.admin.Role;
 import com.jieweifu.models.admin.RoleUser;
 import com.jieweifu.services.admin.RoleUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,14 @@ public class RoleUserServiceImpl implements RoleUserService {
     @Override
     public void deleteRoleUser(int userId) {
         db.delete().from(RoleUser.class).where("user_id = ?", userId).execute();
+    }
+
+    @Override
+    public Role getRoleByUserId(int userId) {
+        return db.select()
+                .from(Role.class, "A")
+                .join(RoleUser.class, "B", "A.id = B.role_id")
+                .where("B.user_id = ?", userId)
+                .queryForEntity(Role.class);
     }
 }
