@@ -116,6 +116,7 @@ public class ProductServiceImpl implements ProductService {
         db.update()
                 .table(Product.class)
                 .set("status", status)
+                .set("reason", "")
                 .where("id = ?", id)
                 .execute();
     }

@@ -20,6 +20,6 @@ public interface RoleService {
 
     Role getRoleByName(String roleName);
 
-    List<User> getProducerUser();
+    List<User> getProducerUser(String roleName);
 
 }

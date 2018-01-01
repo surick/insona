@@ -58,11 +58,39 @@ export default {
             }
         });
     },
-    changeProduct(vm, status, ids) {
+    changeProduct(vm, status, obj) {
+        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
             url: '/insona/product/change/' + status,
-            data: ids
+            data: {
+                ids: obj.ids,
+                sub_sale: obj.sub_sale
+            }
+        });
+    },
+    getDealers(vm) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/product/getDealers'
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    getTypes(vm) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/product/type'
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
         });
     }
 };

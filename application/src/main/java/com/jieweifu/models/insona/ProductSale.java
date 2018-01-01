@@ -2,45 +2,54 @@ package com.jieweifu.models.insona;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
-import org.hibernate.validator.constraints.NotBlank;
 
 @SuppressWarnings("unused")
-@Entity(tableName = "insona_product")
-public class Product {
+@Entity(tableName = "insona_product_sale")
+public class ProductSale {
     @Column(primaryKey = true)
     private int id;
-    @NotBlank(message = "请将设备did填写完整")
     @Column(columnName = "did")
     private String did;
-    @NotBlank(message = "请将设备名填写完整")
     @Column(columnName = "name")
     private String name;
-    @NotBlank(message = "请将机智云信息填写完整")
     @Column(columnName = "gizwit_info")
     private String gizwit_info;
-    @NotBlank(message = "请将序列号填写完整")
+    @Column(columnName = "insona_online")
+    private String insona_online;
     @Column(columnName = "serial_code")
     private String serial_code;
-    @NotBlank(message = "请将版本号填写完整")
+    @Column(columnName = "last_online")
+    private String last_online;
     @Column(columnName = "version")
     private String version;
-    @NotBlank(message = "请将集成商信息填写完整")
+    @Column(columnName = "sub_user")
+    private String sub_user;
+    @Column(columnName = "sub_home")
+    private String sub_home;
+    @Column(columnName = "address")
+    private String address;
+    @Column(columnName = "other")
+    private String other;
+    @Column(columnName = "near_status")
+    private String near_status;
+    @Column(columnName = "near_order")
+    private String near_order;
+    @Column(columnName = "near_event")
+    private String near_event;
     @Column(columnName = "sub_inter")
     private String sub_inter;
-    @NotBlank(message = "请将生产商信息填写完整")
     @Column(columnName = "sub_maker")
     private String sub_maker;
+    @Column(columnName = "remark")
+    private String remark;
     @Column(columnName = "sort_no")
     private String sort_no;
-    @NotBlank(message = "请将设备类别填写完整")
     @Column(columnName = "type")
     private String type;
     @Column(columnName = "status")
     private String status;
     @Column(columnName = "extract")
     private String extract;
-    @Column(columnName = "reason")
-    private String reason;
 
     public int getId() {
         return id;
@@ -74,6 +83,14 @@ public class Product {
         this.gizwit_info = gizwit_info;
     }
 
+    public String getInsona_online() {
+        return insona_online;
+    }
+
+    public void setInsona_online(String insona_online) {
+        this.insona_online = insona_online;
+    }
+
     public String getSerial_code() {
         return serial_code;
     }
@@ -82,12 +99,76 @@ public class Product {
         this.serial_code = serial_code;
     }
 
+    public String getLast_online() {
+        return last_online;
+    }
+
+    public void setLast_online(String last_online) {
+        this.last_online = last_online;
+    }
+
     public String getVersion() {
         return version;
     }
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getSub_user() {
+        return sub_user;
+    }
+
+    public void setSub_user(String sub_user) {
+        this.sub_user = sub_user;
+    }
+
+    public String getSub_home() {
+        return sub_home;
+    }
+
+    public void setSub_home(String sub_home) {
+        this.sub_home = sub_home;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getOther() {
+        return other;
+    }
+
+    public void setOther(String other) {
+        this.other = other;
+    }
+
+    public String getNear_status() {
+        return near_status;
+    }
+
+    public void setNear_status(String near_status) {
+        this.near_status = near_status;
+    }
+
+    public String getNear_order() {
+        return near_order;
+    }
+
+    public void setNear_order(String near_order) {
+        this.near_order = near_order;
+    }
+
+    public String getNear_event() {
+        return near_event;
+    }
+
+    public void setNear_event(String near_event) {
+        this.near_event = near_event;
     }
 
     public String getSub_inter() {
@@ -104,6 +185,14 @@ public class Product {
 
     public void setSub_maker(String sub_maker) {
         this.sub_maker = sub_maker;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getSort_no() {
@@ -136,13 +225,5 @@ public class Product {
 
     public void setExtract(String extract) {
         this.extract = extract;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
     }
 }

@@ -63,4 +63,9 @@ public class TypeServiceImpl implements TypeService {
                 .from(Type.class)
                 .total();
     }
+
+    @Override
+    public List<Type> types() {
+        return db.select().from(Type.class).queryForList(Type.class);
+    }
 }

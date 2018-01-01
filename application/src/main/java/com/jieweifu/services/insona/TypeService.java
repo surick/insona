@@ -17,4 +17,6 @@ public interface TypeService {
     void removeType(String type_id);
 
     int getTotal();
+
+    List<Type> types();
 }

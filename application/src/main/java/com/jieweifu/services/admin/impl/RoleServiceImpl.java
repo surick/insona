@@ -71,10 +71,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<User> getProducerUser() {
-        List<User> list = db.getJdbcTemplate().queryForList("select * from base_user AS A,base_role AS B,base_role_user " +
-                "AS C WHERE A.id=C.user_id AND B.id = C.role_id AND B.role_name = '生产商'", null, null, User.class);
-        return list;
+    public List<User> getProducerUser(String roleName) {
+       return db.select().from("base_user AS A","base_role AS B","base_role_user AS C")
+                .where("A.id=C.user_id AND B.id = C.role_id AND B.role_name = ?",roleName).queryForList(User.class);
     }
 
 }

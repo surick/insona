@@ -4,15 +4,23 @@ import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.Role;
+import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.Product;
+import com.jieweifu.models.insona.ProductDealer;
+import com.jieweifu.models.insona.Type;
+import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
+import com.jieweifu.services.insona.ProductDealerService;
 import com.jieweifu.services.insona.ProductService;
+import com.jieweifu.services.insona.TypeService;
+import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +31,21 @@ import java.util.Map;
 public class ProductController {
     private ProductService productService;
     private RoleUserService roleUserService;
+    private RoleService roleService;
+    private ProductDealerService productDealerService;
+    private TypeService typeService;
 
     @Autowired
-    public ProductController(ProductService productService, RoleUserService roleUserService) {
+    public ProductController(ProductService productService,
+                             RoleUserService roleUserService,
+                             RoleService roleService,
+                             ProductDealerService productDealerService,
+                             TypeService typeService) {
         this.productService = productService;
         this.roleUserService = roleUserService;
+        this.roleService = roleService;
+        this.productDealerService = productDealerService;
+        this.typeService = typeService;
     }
 
     /**
@@ -156,18 +174,73 @@ public class ProductController {
      * 改变设备状态Status
      */
     @PutMapping("change/{status}")
-    public Result statusChange(@RequestBody List<String> ids, @PathVariable("status") String status) {
-        if (StringUtils.isBlank(status) || ids.isEmpty()) {
+    public Result statusChange(@RequestBody Sale sale, @PathVariable("status") String status) {
+        if (StringUtils.isBlank(status) || sale.getIds().isEmpty()) {
             return new Result().setError("参数有误");
         }
         try {
-            for (String id : ids) {
+            for (String id : sale.getIds()) {
                 productService.setStatus(Integer.parseInt(id), status);
+                ProductDealer productDealer = new ProductDealer();
+                productDealer.setDealer(sale.getSub_sale());
+                productDealer.setProduct_id(id);
+                productDealer.setCrt_time(String.valueOf(System.currentTimeMillis()));
+                productDealerService.saveProductDealer(productDealer);
             }
         } catch (Exception e) {
             return new Result().setError("系统繁忙，请刷新后重试");
         }
         return new Result().setMessage("更新成功");
 
+    }
+
+    /**
+     * 获取所有经销商
+     */
+    @GetMapping("getDealers")
+    public Result getDealers() {
+        List<User> list = null;
+        try {
+            list = roleService.getProducerUser("经销商");
+        } catch (Exception e) {
+            return new Result().setError("系统繁忙，请刷新后重试");
+        }
+        return new Result().setData(list);
+    }
+
+    /**
+     * 设备类别
+     */
+    @GetMapping("type")
+    public Result getTypes(){
+        List<Type> list;
+        try{
+            list = typeService.types();
+        }catch (Exception e){
+            return new Result().setError("获取类别出错");
+        }
+        return new Result().setData(list);
+    }
+
+    public static class Sale {
+        private List<String> ids;
+
+        private String sub_sale;
+
+        public List<String> getIds() {
+            return ids;
+        }
+
+        public void setIds(List<String> ids) {
+            this.ids = ids;
+        }
+
+        public String getSub_sale() {
+            return sub_sale;
+        }
+
+        public void setSub_sale(String sub_sale) {
+            this.sub_sale = sub_sale;
+        }
     }
 }

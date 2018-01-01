@@ -6,10 +6,9 @@
     <div class="access">
         <Card>
             <div slot="title">
-                设备管理
+                设备出厂
             </div>
             <div slot="extra">
-
                 <Button type="primary" @click="addProduct()">
                     <Icon type="android-add"></Icon>
                     新建
@@ -18,18 +17,10 @@
                     <Icon type="trash-a"></Icon>
                     删除
                 </Button>
-                <access-ctrl :name="'SYS_MAKE'" ref="access">
-                    <Button type="primary" @click="saleProduct(0,1)">
+                    <Button type="primary" @click="sale()">
                         <Icon type="android-add"></Icon>
-                        供应
-                        </Button>
-                </access-ctrl>
-                <access-ctrl :name="'SYS_BACK'" ref="access">
-                    <Button type="error" @click="saleProduct(0,2)">
-                        <Icon type="trash-a"></Icon>
-                        驳回
+                        销售
                     </Button>
-                </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">
@@ -82,7 +73,7 @@
                     <div class="input-label">版本号</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="product.version" placeholder="版本号"></Input></DatePicker>
+                    <Input v-model="product.version" placeholder="版本号"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -106,7 +97,11 @@
                     <div class="input-label">类别id</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="product.type" placeholder="类别id"></Input>
+                    <Select v-model="product.type" filterable style="width: auto">
+                        <Option v-for="item in types" :value="item.id" :key="item.type_id">
+                            {{ item.type_name }}
+                        </Option>
+                    </Select>
                     </Col>
                 </Row>
             </div>
@@ -114,23 +109,54 @@
                 <Button type="primary" size="large" @click="saveProduct()">确定</Button>
             </div>
         </Modal>
+        <Modal
+            v-model="saleDetail"
+            :title="'销售设备'"
+            :mask-closable="false">
+            <div class="modal-body">
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">经销商</div>
+                    </Col>
+                    <Col span="18">
+                    <Select v-model="sub_sale" filterable style="width: 250px">
+                        <Option v-for="item in dealers" :value="item.id" :key="item.name">
+                            {{ item.userName }}
+                        </Option>
+                    </Select>
+                    </Col>
+                </Row>
+            </div>
+            <div slot="footer">
+                <Button type="primary" size="large" @click="saleProduct(1)">确定</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
 <script>
     import Product from '../../http/product.js';
-    import typeRow from './insona-detail.vue';
+    import productRow from './product-expand.vue';
 
     export default {
         name: 'insona_product',
-        components: {typeRow},
+        components: {productRow},
         data: function () {
             return {
+                sub_sale: '',
+                saleDetail: false,
                 addAndEditModal: false,
                 addOrEdit: 0,
                 editId: '',
+                selected: '',
                 total: 0,
                 current: 1,
+                types: [],
+                dealers: [],
+                productSale: {
+                    sub_sale: '',
+                    ids: []
+                },
                 product: {
                     id: '',
                     did: '',
@@ -186,7 +212,7 @@
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
-                                params.row.status === '1' ? '已售' : (params.row.status === '2' ? '驳回' : '待售')
+                                params.row.status === '1' ? '已售' : (params.row.status === '2' ? '驳回' : (params.row.status === '3' ? '通过' : '待售'))
                             ]);
                         }
                     },
@@ -252,7 +278,7 @@
                         title: '更多',
                         align: 'center',
                         render: (h, params) => {
-                            return h(typeRow, {
+                            return h(productRow, {
                                 props: {
                                     row: params.row
                                 }
@@ -266,6 +292,8 @@
         mounted() {
             this.current = 1;
             this.getProducts();
+            this.getDealers();
+            this.getTypes();
         },
         computed: {
             avatorPath() {
@@ -284,9 +312,35 @@
                     }
                 });
             },
-            saleProduct(id, status) {
+            getDealers() {
+                Product.getDealers(this).then((res) => {
+                    if (res.success) {
+                        this.dealers = res.data;
+                    }
+                });
+            },
+            getTypes() {
+                Product.getTypes(this).then((res) => {
+                    if (res.success) {
+                        this.types = res.data;
+                    }
+                });
+            },
+            sale(ids) {
+                console.log(ids);
+                this.sub_sale = '';
+                if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择设备');
+                if (!ids && this.selected.length > 0) {
+                    ids = this.selected.map(item => {
+                        return item.id;
+                    });
+                }
+                this.saleDetail = true;
+            },
+            saleProduct(status, id) {
+                this.saleDetail = false;
                 var ids;
-                if (!id && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
+                if (!id && this.selected.length === 0) return this.$Message.warning('请先选择设备');
                 if (!id && this.selected.length > 0) {
                     ids = this.selected.map(item => {
                         return item.id;
@@ -294,8 +348,14 @@
                 } else {
                     ids = [id];
                 }
-                Product.changeProduct(this, status, ids).then(res => {
+                this.productSale = {
+                    ids: ids,
+                    sub_sale: this.sub_sale
+                };
+                Product.changeProduct(this, status, this.productSale).then(res => {
                     if (res.success) {
+                        this.productSale.ids = [];
+                        this.selected = '';
                         this.getProducts();
                     }
                 });

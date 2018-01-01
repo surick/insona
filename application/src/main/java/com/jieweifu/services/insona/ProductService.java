@@ -27,7 +27,7 @@ public interface ProductService {
 
     List<Product> listProducts(String status1, String status2);
 
-    List<Product> listProducts(String status);
+    List<Product> listProducts(String status1);
 
     int total(String status);
 

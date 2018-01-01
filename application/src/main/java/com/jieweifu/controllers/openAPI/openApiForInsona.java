@@ -8,6 +8,7 @@ import com.jieweifu.models.insona.Type;
 import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.TypeService;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class openApiForInsona {
      * 新增设备API
      */
     @PostMapping("saveProduct")
-    public Result saveProduct(@Valid @RequestBody Product product, @RequestBody String token, Errors errors) {
+    public Result saveProduct(@Valid @RequestBody Product product, @RequestHeader String token, Errors errors) {
         if (!token.equals(auth)) {
             return new Result().setError(401, "权限验证失败");
         }
@@ -69,7 +70,7 @@ public class openApiForInsona {
      * 新增设备类型API
      */
     @PostMapping("saveType")
-    public Result saveType(@Valid @RequestBody Type type, @RequestBody String token, Errors errors) {
+    public Result saveType(@Valid @RequestBody Type type, @RequestHeader String token, Errors errors) {
         if (!token.equals(auth)) {
             return new Result().setError(401, "权限验证失败");
         }
@@ -88,16 +89,16 @@ public class openApiForInsona {
      * 获取所有生产商API
      */
     @GetMapping("getProducer")
-    public Result getProducer(@RequestBody String token) {
+    public Result getProducer(@RequestHeader String token) {
         if (!token.equals(auth)) {
             return new Result().setError(401, "权限验证失败");
         }
         List<User> list = null;
         try {
-            list = roleService.getProducerUser();
+            list = roleService.getProducerUser("生产商");
         } catch (Exception e) {
             return new Result().setError(500, "系统繁忙，请刷新后重试");
         }
-        return new Result().setData(JSONObject.fromObject(list));
+        return new Result().setData(JSONArray.fromObject(list));
     }
 }

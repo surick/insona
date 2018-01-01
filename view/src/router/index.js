@@ -177,10 +177,18 @@ export const appRouter = [
             },
             {
                 path: 'product',
-                title: '设备管理',
+                title: '设备出厂',
                 name: 'PRODUCT',
                 component: resolve => {
                     require(['../views/insona/insona-product.vue'], resolve);
+                }
+            },
+            {
+                path: 'saleProduct',
+                title: '设备销售',
+                name: 'SALEPRODUCT',
+                component: resolve => {
+                    require(['../views/insona/insona-saleProduct.vue'], resolve);
                 }
             },
             {
