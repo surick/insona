@@ -51,6 +51,7 @@ public class ProductSaleController {
             productSale.setSub_maker(product.getSub_maker());
             productSale.setSub_inter(product.getSub_inter());
             productSale.setType(product.getType());
+
             productSaleService.saveProduct(productSale);
         } catch (Exception e) {
             return new Result().setError("系统繁忙，请稍后重试");

@@ -50,6 +50,8 @@ public class ProductSale {
     private String status;
     @Column(columnName = "extract")
     private String extract;
+    @Column(columnName = "dealer")
+    private String dealer;
 
     public int getId() {
         return id;

@@ -102,7 +102,8 @@
         <Modal
             v-model="pendingProduct"
             :title="'待审批'"
-            :mask-closable="false">
+            :mask-closable="false"
+            width="1144px">
             <Table border :columns="pending" :data="pendData"></Table>
             <div style="margin: 10px;overflow: hidden">
                 <div style="float: right;">
@@ -116,7 +117,8 @@
         <Modal
             v-model="backedProduct"
             :title="'已退回'"
-            :mask-closable="false">
+            :mask-closable="false"
+            width="944px">
             <Table border :columns="backed" :data="backData"></Table>
             <div style="margin: 10px;overflow: hidden">
                 <div style="float: right;">
@@ -141,7 +143,7 @@
 
 <script>
     import Dealer from '../../http/product-sale.js';
-    import productRow from './product-expand.vue';
+    import productRow from './sale-expand.vue';
 
     export default {
         name: 'insona_saleProduct',
@@ -450,29 +452,6 @@
                                         }
                                     }),
                                     '修改'
-                                ]),
-                                h('Button', {
-                                    props: {
-                                        type: 'ghost'
-                                    },
-                                    style: {
-                                        marginRight: '10px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.deleteProduct(params.row.id);
-                                        }
-                                    }
-                                }, [
-                                    h('Icon', {
-                                        props: {
-                                            type: 'edit'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        }
-                                    }),
-                                    '删除'
                                 ])],
                             );
                         }
@@ -589,22 +568,35 @@
                 this.getBack();
             },
             editProduct(obj) {
-                console.log(obj);
                 this.saleProduct = {
                     did: obj.did,
                     name: obj.name,
+                    gizwit_info: obj.gizwit_info,
                     insona_online: obj.insona_online,
+                    serial_code: obj.serial_code,
                     last_online: obj.last_online,
+                    version: obj.version,
                     sub_user: obj.sub_user,
                     sub_home: obj.sub_home,
                     address: obj.address,
-                    other: obj.other
+                    other: obj.other,
+                    near_status: obj.near_status,
+                    near_order: obj.near_order,
+                    near_event: obj.near_event,
+                    sub_inter: obj.sub_inter,
+                    sub_maker: obj.sub_maker,
+                    remark: obj.remark,
+                    sort_no: obj.sort_no,
+                    type: obj.type,
+                    status: obj.status,
+                    extract: obj.extract
                 };
                 this.addOrEdit = 1;
                 this.addAndEditModal = true;
                 this.editId = obj.id;
             },
             addProduct() {
+                this.addAndEditModal = false;
                 Dealer.updateProduct(this, this.editId, this.saleProduct).then(res => {
                     if (res.success) {
                         this.getList();

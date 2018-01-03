@@ -62,9 +62,10 @@ export default {
         });
     },
     updateProduct(vm, id, obj) {
+        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
-            url: '/insona/type/update',
+            url: '/insona/productSale/update',
             data: {
                 id: id,
                 did: obj.did,
