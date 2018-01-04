@@ -33,6 +33,7 @@ public class ProductSaleController {
      */
     @PostMapping("pass")
     public Result passProduct(@RequestBody List<String> ids) {
+        int userId = BaseContextHandler.getUserId();
         if (ids.isEmpty()) {
             return new Result().setError("id不合法");
         }
@@ -51,7 +52,8 @@ public class ProductSaleController {
             productSale.setSub_maker(product.getSub_maker());
             productSale.setSub_inter(product.getSub_inter());
             productSale.setType(product.getType());
-
+            productSale.setGizwit_secret(product.getGizwit_secret());
+            productSale.setDealer(String.valueOf(userId));
             productSaleService.saveProduct(productSale);
         } catch (Exception e) {
             return new Result().setError("系统繁忙，请稍后重试");

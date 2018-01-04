@@ -73,7 +73,7 @@ public class FileController {
         }
         Document document = new Document();
         document.setName(file.getOriginalFilename());
-        document.setFileType(1);
+        document.setFileType("全部");
         document.setFileUrl(String.valueOf(responseData.get("link")));
         int total = documentService.getDocumentTotal();
         document.setSortNo(total + 1);

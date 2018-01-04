@@ -15,9 +15,12 @@ public class Product {
     @NotBlank(message = "请将设备名填写完整")
     @Column(columnName = "name")
     private String name;
-    @NotBlank(message = "请将机智云信息填写完整")
+    @NotBlank(message = "请将机智云appid填写完整")
     @Column(columnName = "gizwit_info")
     private String gizwit_info;
+    @NotBlank(message = "请将机智云secret填写完整")
+    @Column(columnName = "gizwit_secret")
+    private String gizwit_secret;
     @NotBlank(message = "请将序列号填写完整")
     @Column(columnName = "serial_code")
     private String serial_code;
@@ -144,5 +147,13 @@ public class Product {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getGizwit_secret() {
+        return gizwit_secret;
+    }
+
+    public void setGizwit_secret(String gizwit_secret) {
+        this.gizwit_secret = gizwit_secret;
     }
 }

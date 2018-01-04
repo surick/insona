@@ -54,10 +54,18 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">机智云信息</div>
+                    <div class="input-label">机智云appid</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="product.gizwit_info" placeholder="机智云信息"></Input>
+                    <Input v-model="product.gizwit_info" placeholder="机智云appid"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">appsecret</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="product.gizwit_secret" placeholder="appsecret"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -162,6 +170,7 @@
                     did: '',
                     name: '',
                     gizwit_info: '',
+                    gizwit_secret: '',
                     serial_code: '',
                     version: '',
                     sub_inter: '',
@@ -189,7 +198,7 @@
                         align: 'center'
                     },
                     {
-                        title: '机智云',
+                        title: '机智云appid',
                         key: 'gizwit_info',
                         width: 150,
                         align: 'center'
@@ -374,6 +383,7 @@
                     did: '',
                     name: '',
                     gizwit_info: '',
+                    gizwit_secret: '',
                     serial_code: '',
                     version: '',
                     sub_inter: '',
@@ -407,6 +417,7 @@
                     did: obj.did,
                     name: obj.name,
                     gizwit_info: obj.gizwit_info,
+                    gizwit_secret: obj.gizwit_secret,
                     serial_code: obj.serial_code,
                     version: obj.version,
                     sub_inter: obj.sub_inter,

@@ -26,6 +26,7 @@ export default {
             method: 'POST',
             url: '/insona/document/saveDocument',
             data: {
+                id: obj.id,
                 name: obj.name,
                 fileUrl: obj.fileUrl,
                 fileType: obj.fileType,

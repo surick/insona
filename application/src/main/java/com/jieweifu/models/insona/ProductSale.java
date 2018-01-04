@@ -2,6 +2,7 @@ package com.jieweifu.models.insona;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import org.springframework.stereotype.Component;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "insona_product_sale")
@@ -14,6 +15,8 @@ public class ProductSale {
     private String name;
     @Column(columnName = "gizwit_info")
     private String gizwit_info;
+    @Column(columnName = "gizwit_secret")
+    private String gizwit_secret;
     @Column(columnName = "insona_online")
     private String insona_online;
     @Column(columnName = "serial_code")
@@ -227,5 +230,21 @@ public class ProductSale {
 
     public void setExtract(String extract) {
         this.extract = extract;
+    }
+
+    public String getGizwit_secret() {
+        return gizwit_secret;
+    }
+
+    public void setGizwit_secret(String gizwit_secret) {
+        this.gizwit_secret = gizwit_secret;
+    }
+
+    public String getDealer() {
+        return dealer;
+    }
+
+    public void setDealer(String dealer) {
+        this.dealer = dealer;
     }
 }

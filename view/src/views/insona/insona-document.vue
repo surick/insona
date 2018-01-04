@@ -28,7 +28,36 @@
             </div>
         </Card>
 
-        <!-- 编辑与新增 -->
+        <Modal
+            v-model="EditModal"
+            :title="'设备绑定'"
+            :mask-closable="false">
+            <div class="modal-body">
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">文件名称</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="document.name" placeholder="文件名称"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">可用设备</div>
+                    </Col>
+                    <Select v-model="document.fileType" filterable style="width: 250px">
+                        <Option v-for="item in productDetail" :value="item.did" :key="item.did">
+                            {{ item.did }}
+                        </Option>
+                    </Select>
+                    </Col>
+                </Row>
+            </div>
+            <div slot="footer">
+                <Button type="primary" size="large" @click="saveFileProduct()">确定</Button>
+            </div>
+        </Modal>
+        <!-- 上传 -->
         <Modal
             v-model="addAndEditModal"
             :title="['文件新增', '文件编辑'][addOrEdit]"
@@ -36,15 +65,35 @@
             <div class="modal-body" align="center">
                 <template>
                     <div>
-                        <Upload
-                            :before-upload="handleUpload"
-                            :show-upload-list="false"
-                            action="http://192.168.3.163:8080/file/DocumentUpload">
-                            <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
-                            <Button type="text" :loading="loadingStatus">
-                                {{ loadingStatus ? '正在上传' : '待上传 ' }}
-                            </Button>
-                        </Upload>
+                        <br>
+                        <Row class="margin-bottom-10">
+                            <Col span="6">
+                            <div class="input-label">可用设备</div>
+                            </Col>
+                            <Select v-model="document.fileType" filterable style="width: 250px">
+                                <Option v-for="item in productDetail" :value="item.did" :key="item.did">
+                                    {{ item.did }}
+                                </Option>
+                            </Select>
+
+                            </Col>
+                        </Row>
+                        <Row class="margin-bottom-10">
+                            <Col span="6">
+                            <div class="input-label">文件：</div>
+                            </Col>
+                            <div>
+                                <Upload
+                                    :before-upload="handleUpload"
+                                    :show-upload-list="false"
+                                    action="http://192.168.3.163:8080/file/DocumentUpload">
+                                    <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
+                                    <Button type="text" :loading="loadingStatus">
+                                        {{ loadingStatus ? '正在上传' : '待上传 ' }}
+                                    </Button>
+                                </Upload>
+                            </div>
+                        </Row>
                     </div>
                 </template>
             </div>
@@ -58,12 +107,14 @@
 <script>
     import expandRow from './insona-expand.vue';
     import Document from '../../http/document.js';
+    import UserDT from '../../http/user-product.js';
 
     export default {
         name: 'other_document',
         components: {expandRow},
         data: function () {
             return {
+                EditModal: false,
                 uploadModal: false,
                 file: null,
                 loadingStatus: false,
@@ -71,9 +122,11 @@
                 addOrEdit: 0,
                 editId: '',
                 total: 0,
+                productDetail: [],
                 current: 1,
                 documentList: [],
                 document: {
+                    id: '',
                     name: '',
                     fileUrl: '',
                     fileType: '',
@@ -91,6 +144,7 @@
                     {
                         type: 'selection',
                         width: 50,
+                        key: 'id',
                         align: 'center'
                     },
                     {
@@ -102,18 +156,50 @@
                     {
                         title: '文件链接',
                         key: 'fileUrl',
-                        width: 513,
+                        width: 500,
                         align: 'center'
                     },
                     {
                         title: '文件类型',
                         key: 'fileType',
-                        width: 220,
+                        width: 150,
                         align: 'center'
+                    }, {
+                        title: '操作',
+                        key: 'action',
+                        width: 110,
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'ghost'
+                                    },
+                                    style: {
+                                        marginRight: '10px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.editFile(params.row);
+                                        }
+                                    }
+                                }, [
+                                    h('Icon', {
+                                        props: {
+                                            type: 'edit'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        }
+                                    }),
+                                    '修改'
+                                ])],
+                            );
+                        }
                     },
                     {
                         type: 'expand',
-                        width: 80,
+                        width: 70,
                         title: '更多',
                         align: 'center',
                         render: (h, params) => {
@@ -131,6 +217,7 @@
         mounted() {
             this.current = 1;
             this.getDocument();
+            this.getProducts();
         },
         computed: {
             avatorPath() {
@@ -147,8 +234,8 @@
                 return true;
             },
             doUpload() {
-                this.addAndEditModal = false;
                 this.getDocument();
+                this.addAndEditModal = false;
             },
             uploadModel(document) {
                 this.addOrEdit = 1;
@@ -158,6 +245,13 @@
                 this.document = {
                     name: document.name
                 };
+            },
+            getProducts() {
+                UserDT.getProducts(this).then((res) => {
+                    if (res.success) {
+                        this.productDetail = res.data;
+                    }
+                });
             },
             getDocument() {
                 Document.getDocument(this, {
@@ -187,6 +281,27 @@
                     sortNo: '',
                     isDelete: 0
                 };
+            },
+            editFile(obj) {
+                console.log(obj);
+                this.document = {
+                    id: obj.id,
+                    name: obj.name,
+                    fileUrl: obj.fileUrl,
+                    fileType: obj.fileType,
+                    sortNo: obj.sortNo,
+                    isDelete: 0
+                };
+                this.editId = obj.id;
+                this.EditModal = true;
+            },
+            saveFileProduct() {
+                Document.updateDocument(this, this.editId, this.document).then(res => {
+                    if (res.success) {
+                        this.EditModal = false;
+                        this.getDocument();
+                    }
+                });
             },
             editDocument(document) {
                 this.addOrEdit = 1;

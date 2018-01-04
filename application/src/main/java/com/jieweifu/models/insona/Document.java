@@ -17,9 +17,9 @@ public class Document {
     @NotBlank(message = "图片不能为空")
     @Column(columnName = "file_url")
     private String fileUrl;
-    @Min(value = 0, message = "类型不合法")
+    @NotBlank(message = "设备不能为空")
     @Column(columnName = "file_type")
-    private Integer fileType;
+    private String fileType;
     @Min(value = 0, message = "排序不能为空")
     @Column(columnName = "sort_no")
     private Integer sortNo;
@@ -70,11 +70,11 @@ public class Document {
         this.fileUrl = fileUrl;
     }
 
-    public Integer getFileType() {
+    public String getFileType() {
         return fileType;
     }
 
-    public void setFileType(Integer fileType) {
+    public void setFileType(String fileType) {
         this.fileType = fileType;
     }
 
