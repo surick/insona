@@ -86,3 +86,17 @@ httpClient:
     post_app_sharing_code: https://api.gizwits.com/app/sharing/code/{code}
     put_app_sharing_idalias: https://api.gizwits.com/app/sharing/{id}/alias?user_alias={user_alias}
     post_app_sharing_did_transfer: https://api.gizwits.com/app/sharing/1/transfer?uid=1
+
+snoti.boot.enable: true
+snoti.boot.host: snoti.gizwits.com
+snoti.boot.port: 2017
+snoti.boot.maxFrameLength: 8192
+#多个product_key逗号分隔
+snoti.boot.productKeys: 34882cc6fb934695857bc88a53554039
+#多个authId逗号分隔,对应产品
+snoti.boot.authId: SUBIlBYnRKemOq11xirDow
+#多个authSecret逗号分隔,对应产品
+snoti.boot.authSecret: Lf68PPHBTPakV+MG/f0KHg
+snoti.boot.subkey: client
+#多个产品级事件使用&分隔.事件之间使用逗号分隔
+snoti.boot.events: device.online,device.offline,device.status.kv
