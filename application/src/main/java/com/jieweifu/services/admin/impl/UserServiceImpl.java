@@ -212,6 +212,14 @@ public class UserServiceImpl implements UserService {
                 .queryForList(User.class);
     }
 
+    @Override
+    public List<User> userList(Integer parentId) {
+        return db.select()
+                .from(User.class)
+                .where("parent_id = ?",parentId)
+                .queryForList(User.class);
+    }
+
     private List<MenuElement> generateMenuElements(List<Menu> menus, List<Element> elements) {
         List<MenuElement> menuElements = new ArrayList<>();
         findNext(-1, menus, menuElements, elements);

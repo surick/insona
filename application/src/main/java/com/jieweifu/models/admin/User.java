@@ -12,6 +12,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "base_user")
@@ -106,6 +108,10 @@ public class User {
     private String wechat;
     @Column(columnName = "phone")
     private String phone;
+    @Column(columnName = "parent_id")
+    private Integer parentId;
+    @Column(insert = false,update = false)
+    private List<User> children = new ArrayList<>();
 
     public String getType() {
         return type;
@@ -409,5 +415,21 @@ public class User {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public List<User> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<User> children) {
+        this.children = children;
     }
 }

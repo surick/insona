@@ -66,6 +66,7 @@ public class TypeServiceImpl implements TypeService {
 
     @Override
     public List<Type> types() {
-        return db.select().from(Type.class).queryForList(Type.class);
+        return db.select().from(Type.class)
+                .where("is_deleted = 0 AND enable = 1   ").queryForList(Type.class);
     }
 }

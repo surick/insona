@@ -4,6 +4,8 @@ import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.admin.Element;
+import com.jieweifu.models.admin.Menu;
 import com.jieweifu.models.admin.RoleUser;
 import com.jieweifu.models.admin.User;
 import com.jieweifu.models.regex.Regex;
@@ -110,6 +112,29 @@ public class UserController {
         return new Result().setMessage("删除成功");
     }
 
+    /**
+     * 分级查询用户
+     */
+    @GetMapping("userList")
+    @AdminAuthAnnotation(check = false)
+    public Result userList(){
+    int userId = BaseContextHandler.getUserId();
+        User user = getUserTree(userId);
+        return new Result().setData(user);
+    }
+
+    /**
+     * 生成树状
+     */
+    private User getUserTree(int cid) {
+        User pUser = userService.getUserById(cid);
+        List<User> cUserList = userService.userList(pUser.getId());
+            for (User user : cUserList) {
+            User u = getUserTree(user.getId());
+                pUser.getChildren().add(u);
+        }
+        return pUser;
+    }
 
     /**
      * 分页查询用户

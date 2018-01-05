@@ -45,4 +45,6 @@ public interface UserService {
     void isDelete(Integer ids);
 
     List<User> getUserIds(String label);
+
+    List<User> userList(Integer parentId);
 }
