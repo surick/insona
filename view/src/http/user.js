@@ -47,6 +47,7 @@ export default {
     },
 
     addUser(vm, obj) {
+        console.log(obj);
         return ajax(vm, {
             method: 'POST',
             url: '/sys/user/saveUser',
@@ -60,12 +61,30 @@ export default {
                 email: obj.email,
                 label: obj.label,
                 sex: obj.sex === '男' ? 1 : 0,
-                status: obj.status ? 1 : 0
+                status: obj.status ? 1 : 0,
+                type: obj.type,
+                gizwits: obj.gizwits,
+                qq: obj.qq,
+                wechat: obj.wechat,
+                phone: obj.phone,
+                parentId: obj.parentId
             }
         });
     },
-
+    getParent(vm, id) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/sys/user/parents/' + id
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
+    },
     updateUser(vm, id, obj) {
+        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
             url: '/sys/user/updateUser',
@@ -83,7 +102,8 @@ export default {
                 gizwits: obj.gizwits,
                 qq: obj.qq,
                 wechat: obj.wechat,
-                phone: obj.wechat
+                phone: obj.phone,
+                parentId: obj.parentId
             }
         });
     },

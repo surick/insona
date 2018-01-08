@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersByPage(int pageIndex, int pageSize, String label) {
         return db.select()
                 .from(User.class)
-                .where("isDelete = ? AND id != 1 AND label LIKE ?", 0, label + "0%")
+                .where("isDelete = ? AND id != 1 AND label LIKE ?", 0, label + "%")
                 .limit(pageIndex, pageSize)
                 .queryForList(User.class);
     }
@@ -258,5 +258,13 @@ public class UserServiceImpl implements UserService {
                 .columns("id, code, type, element_name, uri, menu_id, parent_id, path, method, description")
                 .from(Element.class)
                 .queryForList(Element.class);
+    }
+
+    @Override
+    public List<User> parents(Integer id) {
+        return db.select()
+                .from(User.class)
+                .where("isDelete = 0 AND id != 1 AND id != ?", id)
+                .queryForList(User.class);
     }
 }

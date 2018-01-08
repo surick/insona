@@ -1,35 +1,45 @@
 <template>
     <div>
-        <Row class="expand-row">
-            <Col span="6">
-                <span class="expand-key">生日：</span>
-                <span class="expand-value">{{ row.birthday }}</span>
-            </Col>
-            <Col span="6">
-                <span class="expand-key">邮箱：</span>
-                <span class="expand-value">{{ row.email }}</span>
-            </Col>
-            <Col span="6">
-                <span class="expand-key">创建人：</span>
-                <span class="expand-value">{{ row.createUserName }}</span>
-            </Col>
-            <Col span="6">
-                <span class="expand-key">创建时间：</span>
-                <span class="expand-value">{{ row.createTime }}</span>
-            </Col>
-            <Col span="6" class="margin-top-10">
-                <span class="expand-key">更新人：</span>
-                <span class="expand-value">{{ row.updateUserName }}</span>
-            </Col>
-            <Col span="6" class="margin-top-10">
-                <span class="expand-key">更新时间：</span>
-                <span class="expand-value">{{ row.updateTime }}</span>
-            </Col>
-        </Row>
+        <Table border :columns="columns" :data="row.children"></Table>
     </div>
 </template>
 <script>
     export default {
+        data() {
+            return {
+                columns: [
+                    {
+                        title: '用户名',
+                        key: 'userName',
+                        width: 120,
+                        align: 'center'
+                    },
+                    {
+                        title: '联系人',
+                        key: 'name',
+                        width: 120,
+                        align: 'center'
+                    },
+                    {
+                        title: '手机号',
+                        key: 'mobilePhone',
+                        width: 120,
+                        align: 'center'
+                    },
+                    {
+                        title: '用户分类',
+                        key: 'type',
+                        width: 120,
+                        align: 'center'
+                    },
+                    {
+                        title: '详细地址',
+                        key: 'address',
+                        align: 'center'
+                    }
+                ]
+            };
+        },
         props: {
             row: Object
         }

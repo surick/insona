@@ -20,7 +20,11 @@ public interface DocumentService {
 
     Document getDocument(Integer id);
 
-    List<Document> documentPage(int pageIndex, int pageSize);
+    List<Document> documentPage(int pageIndex, int pageSize, String label);
+
+    List<Document> documentPages(int pageIndex, int pageSize, String label);
+
+    List<Document> allList(int pageIndex, int pageSize);
 
     int getDocumentTotal();
 }

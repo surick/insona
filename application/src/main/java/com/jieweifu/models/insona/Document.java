@@ -46,6 +46,8 @@ public class Document {
     private String attr3;
     private String attr4;
 
+    private String label;
+
     public int getId() {
         return id;
     }
@@ -188,5 +190,13 @@ public class Document {
 
     public void setAttr4(String attr4) {
         this.attr4 = attr4;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

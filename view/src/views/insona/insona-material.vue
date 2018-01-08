@@ -93,8 +93,8 @@
                             :before-upload="handleUpload"
                             :show-upload-list="false"
                             :data="this.material"
-                            action="http://192.168.3.163:8080/image/materialUpload">
-                            <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
+                            :action="this.configUrl+'/image/materialUpload'">
+                            <Button type="ghost" icon="ios-cloud-upload-outline">选择图片</Button>
                             <Button type="text" :loading="loadingStatus">
                                 {{ loadingStatus ? '正在上传' : '待上传 ' }}
                             </Button>
@@ -113,12 +113,13 @@
     import textRow from './insona-text.vue';
     import Material from '../../http/material.js';
     import VueFroala from 'vue-froala-wysiwyg';
-
+    import ipconfig from '@/config/ipconfig';
     export default {
         name: 'other_material',
         components: {textRow, VueFroala},
         data: function () {
             return {
+                configUrl: ipconfig.url,
                 uploadModal: false,
                 addAndEditModal: false,
                 addOrEdit: 0,
@@ -268,9 +269,9 @@
                         'embedly', 'insertFile', 'insertTable', '|',
                         'specialCharacters', 'insertHR', 'selectAll', '|',
                         'print', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
-                    imageUploadURL: 'http://192.168.3.163:8080/image/upload',
-                    fileUploadURL: 'http://192.168.3.163:8080/file/upload',
-                    imageManagerDeleteURL: 'http://192.168.3.163:8080/image/delete',
+                    imageUploadURL: ipconfig.url + '/image/upload',
+                    fileUploadURL: ipconfig.url + '/file/upload',
+                    imageManagerDeleteURL: ipconfig.url + '/image/delete',
                     imageDefaultAlign: 'left',
                     imageDefaultDisplay: 'inline',
                     events: {

@@ -151,7 +151,7 @@
         data: function () {
             return {
                 addAndEditModal: false,
-                addOrEdit: 0,
+                addOrEdit: '',
                 editId: '',
                 total: 0,
                 current: 1,
@@ -213,7 +213,7 @@
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
-                                params.row.enable ? '是' : '否'
+                                params.row.enable ? '启用' : '禁用'
                             ]);
                         }
                     },
@@ -332,7 +332,7 @@
                     person: '',
                     technology: '',
                     communication: '',
-                    enable: 1,
+                    enable: true,
                     remark: ''
                 };
             },

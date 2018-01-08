@@ -179,6 +179,7 @@ export const appRouter = [
                 path: 'product',
                 title: '设备出厂',
                 name: 'PRODUCT',
+                access: 'PRODUCT',
                 component: resolve => {
                     require(['../views/insona/insona-product.vue'], resolve);
                 }
@@ -187,6 +188,7 @@ export const appRouter = [
                 path: 'saleProduct',
                 title: '设备销售',
                 name: 'SALEPRODUCT',
+                access: 'SALEPRODUCT',
                 component: resolve => {
                     require(['../views/insona/insona-saleProduct.vue'], resolve);
                 }

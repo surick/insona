@@ -1,5 +1,6 @@
 <style lang="less">
     @import '../../styles/common.less';
+    @import '../auth/auth.less';
 </style>
 
 <template>
@@ -10,7 +11,6 @@
             </div>
 
             <div slot="extra">
-
                 <Button type="primary" @click="addDocument()">
                     <Icon type="android-add"></Icon>
                     新增
@@ -19,6 +19,21 @@
                     <Icon type="trash-a"></Icon>
                     删除
                 </Button>
+                <access-ctrl :name="'SYS_SALE'" ref="access">
+                    <Button type="primary" icon="ios-search" @click="saleDocument()">
+                        经销商文件
+                    </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_MAKE'" ref="access">
+                    <Button type="info" icon="ios-search" @click="makeDocument()">
+                        生产商文件
+                    </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_OTHER'" ref="access">
+                    <Button type="warning" icon="ios-search" @click="otherDocument()">
+                        其他文件
+                    </Button>
+                </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">
@@ -46,8 +61,8 @@
                     <div class="input-label">可用设备</div>
                     </Col>
                     <Select v-model="document.fileType" filterable style="width: 250px">
-                        <Option v-for="item in productDetail" :value="item.did" :key="item.did">
-                            {{ item.did }}
+                        <Option v-for="item in types" :value="item.id" :key="item.type_id">
+                            {{ item.type_name }}
                         </Option>
                     </Select>
                     </Col>
@@ -60,33 +75,17 @@
         <!-- 上传 -->
         <Modal
             v-model="addAndEditModal"
-            :title="['文件新增', '文件编辑'][addOrEdit]"
+            :title="'文件新增'"
             :mask-closable="false">
             <div class="modal-body" align="center">
                 <template>
                     <div>
-                        <br>
                         <Row class="margin-bottom-10">
-                            <Col span="6">
-                            <div class="input-label">可用设备</div>
-                            </Col>
-                            <Select v-model="document.fileType" filterable style="width: 250px">
-                                <Option v-for="item in productDetail" :value="item.did" :key="item.did">
-                                    {{ item.did }}
-                                </Option>
-                            </Select>
-
-                            </Col>
-                        </Row>
-                        <Row class="margin-bottom-10">
-                            <Col span="6">
-                            <div class="input-label">文件：</div>
-                            </Col>
                             <div>
                                 <Upload
                                     :before-upload="handleUpload"
                                     :show-upload-list="false"
-                                    action="http://192.168.3.163:8080/file/DocumentUpload">
+                                    :action="this.configUrl+'/file/DocumentUpload'">
                                     <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
                                     <Button type="text" :loading="loadingStatus">
                                         {{ loadingStatus ? '正在上传' : '待上传 ' }}
@@ -108,12 +107,15 @@
     import expandRow from './insona-expand.vue';
     import Document from '../../http/document.js';
     import UserDT from '../../http/user-product.js';
+    import ipconfig from '@/config/ipconfig';
 
     export default {
         name: 'other_document',
         components: {expandRow},
         data: function () {
             return {
+                configUrl: ipconfig.url,
+                types: [],
                 EditModal: false,
                 uploadModal: false,
                 file: null,
@@ -122,6 +124,7 @@
                 addOrEdit: 0,
                 editId: '',
                 total: 0,
+                selected: '',
                 productDetail: [],
                 current: 1,
                 documentList: [],
@@ -217,7 +220,7 @@
         mounted() {
             this.current = 1;
             this.getDocument();
-            this.getProducts();
+            this.getTypes();
         },
         computed: {
             avatorPath() {
@@ -246,10 +249,10 @@
                     name: document.name
                 };
             },
-            getProducts() {
-                UserDT.getProducts(this).then((res) => {
+            getTypes() {
+                UserDT.getTypes(this).then((res) => {
                     if (res.success) {
-                        this.productDetail = res.data;
+                        this.types = res.data;
                     }
                 });
             },
@@ -283,7 +286,6 @@
                 };
             },
             editFile(obj) {
-                console.log(obj);
                 this.document = {
                     id: obj.id,
                     name: obj.name,
@@ -355,6 +357,42 @@
                         Document.deleteDocument(this, ids).then((res) => {
                             if (res.success) this.getDocument();
                         });
+                    }
+                });
+            },
+            saleDocument() {
+                Document.fileList(this, {
+                    pageIndex: this.current - 1,
+                    pageSize: 10,
+                    label: '00100010001'
+                }).then((res) => {
+                    if (res.success) {
+                        this.data = res.data.list;
+                        this.total = res.data.total;
+                    }
+                });
+            },
+            makeDocument() {
+                Document.fileList(this, {
+                    pageIndex: this.current - 1,
+                    pageSize: 10,
+                    label: '0010001'
+                }).then((res) => {
+                    if (res.success) {
+                        this.data = res.data.list;
+                        this.total = res.data.total;
+                    }
+                });
+            },
+            otherDocument() {
+                Document.fileList(this, {
+                    pageIndex: this.current - 1,
+                    pageSize: 10,
+                    label: '001'
+                }).then((res) => {
+                    if (res.success) {
+                        this.data = res.data.list;
+                        this.total = res.data.total;
                     }
                 });
             }

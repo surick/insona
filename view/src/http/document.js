@@ -56,5 +56,17 @@ export default {
             url: '/insona/document/removeDocument',
             data: ids
         });
+    },
+    fileList(vm, obj) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/document/fileList/' + obj.pageIndex + '/' + obj.pageSize + '/' + obj.label
+            }).then((res) => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
     }
 };

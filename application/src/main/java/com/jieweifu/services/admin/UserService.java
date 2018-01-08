@@ -47,4 +47,6 @@ public interface UserService {
     List<User> getUserIds(String label);
 
     List<User> userList(Integer parentId);
+
+    List<User> parents(Integer id);
 }

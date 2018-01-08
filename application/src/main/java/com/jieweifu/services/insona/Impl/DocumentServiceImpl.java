@@ -98,10 +98,10 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<Document> documentPage(int pageIndex, int pageSize) {
+    public List<Document> documentPage(int pageIndex, int pageSize,String label) {
         return db.select()
                 .from(Document.class)
-                .where("is_deleted = ?", 0)
+                .where("is_deleted = 0 AND label like ?", "%0010001%")
                 .limit(pageIndex, pageSize)
                 .queryForList(Document.class);
     }
@@ -112,5 +112,22 @@ public class DocumentServiceImpl implements DocumentService {
                 .from(Document.class)
                 .where("is_deleted = ?", 0)
                 .total();
+    }
+
+    @Override
+    public List<Document> documentPages(int pageIndex, int pageSize, String label) {
+        return db.select()
+                .from(Document.class)
+                .where("is_deleted = 0 AND label = ?", label)
+                .limit(pageIndex, pageSize)
+                .queryForList(Document.class);
+    }
+
+    @Override
+    public List<Document> allList(int pageIndex, int pageSize) {
+        return db.select()
+                .from(Document.class)
+                .limit(pageIndex, pageSize)
+                .queryForList(Document.class);
     }
 }

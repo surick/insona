@@ -33,11 +33,11 @@ export default {
             data: ids
         });
     },
-    getProducts(vm) {
+    productInfo(vm, did) {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/insona/userProduct/getProducts'
+                url: '/insona/userProduct/getProductInfo/' + did
             }).then(res => {
                 if (res.success) {
                     resolve(res);
@@ -45,11 +45,11 @@ export default {
             });
         });
     },
-    productInfo(vm, did) {
+    getTypes(vm) {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/insona/userProduct/getProductInfo/' + did
+                url: '/insona/product/type'
             }).then(res => {
                 if (res.success) {
                     resolve(res);

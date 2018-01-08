@@ -1,6 +1,9 @@
 package com.jieweifu.controllers.insona;
 
+import com.jieweifu.common.business.BaseContextHandler;
+import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.Document;
 import com.jieweifu.services.insona.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +25,13 @@ public class DocumentController {
     @Value("${custom.upload.home}")
     private String uploadPath;
 
+    private RedisUtil redisUtil;
+
     @Autowired
-    public DocumentController(DocumentService documentService) {
+    public DocumentController(DocumentService documentService,RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
         this.documentService = documentService;
+
     }
 
     /**
@@ -108,9 +115,21 @@ public class DocumentController {
     @GetMapping("pageDocument/{pageIndex}/{pageSize}")
     public Result getInfoByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
+
         if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
-        List<Document> infoList = documentService.documentPage(pageIndex, pageSize);
+        User user = BaseContextHandler.getUser();
+        redisUtil.set("label",user.getLabel());
+        List<Document> infoList = null;
+        if(user.getLabel().equals("00100010001")){
+            infoList = documentService.documentPage(pageIndex, pageSize,user.getLabel());
+        }
+        if(user.getLabel().equals("0010001")){
+            infoList = documentService.documentPages(pageIndex, pageSize,user.getLabel());
+        }
+        if(user.getLabel().equals("001") || user.getLabel().equals("0")){
+            infoList = documentService.allList(pageIndex,pageSize);
+        }
         int total = documentService.getDocumentTotal();
         Map<String, Object> map = new HashMap<>();
         map.put("list", infoList);
@@ -118,4 +137,30 @@ public class DocumentController {
         return new Result().setData(map);
     }
 
+    /**
+     * 按钮查询
+     */
+    @GetMapping("fileList/{pageIndex}/{pageSize}/{label}")
+    public Result fileList(@PathVariable("pageIndex") int pageIndex,
+                           @PathVariable("pageSize") int pageSize,
+                           @PathVariable("label") String label) {
+
+        if (pageIndex < 0 || pageSize < 0)
+            return new Result().setError("页码或条目数不合法");
+        List<Document> infoList = null;
+        if(label.equals("00100010001")){
+            infoList = documentService.documentPage(pageIndex, pageSize,label);
+        }
+        if(label.equals("0010001")){
+            infoList = documentService.documentPages(pageIndex, pageSize,label);
+        }
+        if(label.equals("001") || label.equals("0")){
+            infoList = documentService.allList(pageIndex,pageSize);
+        }
+        int total = documentService.getDocumentTotal();
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", infoList);
+        map.put("total", total);
+        return new Result().setData(map);
+    }
 }

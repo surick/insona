@@ -81,12 +81,13 @@
     import textRow from './insona-text.vue';
     import Message from '../../http/insona-message.js';
     import VueFroala from 'vue-froala-wysiwyg';
-
+    import ipconfig from '@/config/ipconfig';
     export default {
         name: 'other_message',
         components: {textRow, VueFroala},
         data: function () {
             return {
+                configUrl: ipconfig.url,
                 uploadModal: false,
                 addAndEditModal: false,
                 addOrEdit: 0,
@@ -190,9 +191,9 @@
                         'embedly', 'insertFile', 'insertTable', '|',
                         'specialCharacters', 'insertHR', 'selectAll', '|',
                         'print', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
-                    imageUploadURL: 'http://localhost:8080/image/upload',
-                    fileUploadURL: 'http://localhost:8080/file/upload',
-                    imageManagerDeleteURL: 'http://localhost:8080/image/delete',
+                    imageUploadURL: ipconfig.url + '/image/upload',
+                    fileUploadURL: ipconfig.url + '/file/upload',
+                    imageManagerDeleteURL: ipconfig.url + '/image/delete',
                     imageDefaultAlign: 'left',
                     imageDefaultDisplay: 'inline',
                     events: {

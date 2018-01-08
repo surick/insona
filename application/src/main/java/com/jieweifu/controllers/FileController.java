@@ -3,8 +3,12 @@ package com.jieweifu.controllers;
 import com.froala.editor.File;
 import com.froala.editor.file.FileOptions;
 import com.froala.editor.file.FileValidation;
+import com.jieweifu.common.business.BaseContextHandler;
+import com.jieweifu.common.utils.RedisUtil;
+import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.Document;
 import com.jieweifu.services.insona.DocumentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +27,12 @@ public class FileController {
 
     private DocumentService documentService;
 
-    public FileController(DocumentService documentService) {
+    private RedisUtil redisUtil;
+
+    @Autowired
+    public FileController(DocumentService documentService,RedisUtil redisUtil) {
         this.documentService = documentService;
+        this.redisUtil = redisUtil;
     }
 
     @Value("${custom.upload.dir}")
@@ -66,7 +74,7 @@ public class FileController {
         Map<Object, Object> responseData = new HashMap<>();
         options.setValidation(new FileValidation());
         try {
-            com.froala.editor.File.upload(request, DocumentUpload, options).forEach((key, value) -> responseData.put(key, "/uploads/home/" + value));
+            File.upload(request, DocumentUpload, options).forEach((key, value) -> responseData.put(key, "/uploads/home/" + value));
         } catch (Exception e) {
             e.printStackTrace();
             responseData.put("error", e.toString());
@@ -78,6 +86,8 @@ public class FileController {
         int total = documentService.getDocumentTotal();
         document.setSortNo(total + 1);
         document.setIsDelete(0);
+        String label = (String) redisUtil.get("label");
+        document.setLabel(label);
         documentService.saveDocument(document);
         return responseData;
     }

@@ -117,8 +117,8 @@ public class UserController {
      */
     @GetMapping("userList")
     @AdminAuthAnnotation(check = false)
-    public Result userList(){
-    int userId = BaseContextHandler.getUserId();
+    public Result userList() {
+        int userId = BaseContextHandler.getUserId();
         User user = getUserTree(userId);
         return new Result().setData(user);
     }
@@ -129,9 +129,9 @@ public class UserController {
     private User getUserTree(int cid) {
         User pUser = userService.getUserById(cid);
         List<User> cUserList = userService.userList(pUser.getId());
-            for (User user : cUserList) {
+        for (User user : cUserList) {
             User u = getUserTree(user.getId());
-                pUser.getChildren().add(u);
+            pUser.getChildren().add(u);
         }
         return pUser;
     }
@@ -148,8 +148,16 @@ public class UserController {
         String label = userService.getUserById(userId).getLabel();
         List<User> userList = userService.getUsersByPage(pageIndex, pageSize, label == null ? "" : label);
         int total = userService.getUserTotal();
+        List<User> list = new ArrayList<>(userList);
+        for (int i = 0; i < userList.size(); i++) {
+            for (int j = 0; j < userList.size(); j++) {
+                if (userList.get(j).getParentId().equals(userList.get(i).getId())) {
+                    list.get(i).getChildren().add(userList.get(j));
+                }
+            }
+        }
         Map<String, Object> map = new HashMap<>();
-        map.put("list", userList);
+        map.put("list", list);
         map.put("total", total);
         return new Result().setData(map);
     }
@@ -177,9 +185,11 @@ public class UserController {
             User user = userService.getUserById(roleInfo.getUserId());
             if (roleService.getRoleById(roleId).getRoleName().equals("经销商")) {
                 user.setLabel("00100010001");
+                user.setType("经销商");
             }
             if (roleService.getRoleById(roleId).getRoleName().equals("生产商")) {
                 user.setLabel("0010001");
+                user.setType("生产商");
                 userService.updateUser(user);
                 break;
             }
@@ -190,6 +200,7 @@ public class UserController {
             User user = userService.getUserById(roleInfo.getUserId());
             if (roleService.getRoleById(roleId).getRoleName().equals("管理员")) {
                 user.setLabel("001");
+                user.setType("管理员");
                 userService.updateUser(user);
                 break;
             }
@@ -212,6 +223,15 @@ public class UserController {
         } else {
             return new Result().setError("配置权限失败");
         }
+    }
+
+    /**
+     * 查询父类
+     */
+    @GetMapping("parents/{id}")
+    public Result parents(@PathVariable("id") Integer id) {
+        List<User> list = userService.parents(id == null ? -1 : id);
+        return new Result().setData(list);
     }
 
     public static class RoleInfo {

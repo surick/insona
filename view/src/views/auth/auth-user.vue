@@ -109,11 +109,8 @@
                     <div class="input-label">用户分类</div>
                     </Col>
                     <Col span="18">
-                    <Select v-model="user.type" filterable style="width: 250px">
-                        <Option v-for="item in type" :value="item" :key="item">
-                            {{ item }}
-                        </Option>
-                    </Select>
+                    <Input v-model="user.type" disabled placeholder="未知" style="width: 250px">
+                    </Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -156,14 +153,6 @@
                     <Input v-model="user.address" placeholder="详细地址"></Input>
                     </Col>
                 </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">Label</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="user.label" placeholder="Label"></Input>
-                    </Col>
-                </Row>
                 <Row>
                     <Col span="6">
                     <div class="input-label">状态</div>
@@ -173,6 +162,18 @@
                         <span slot="open">正常</span>
                         <span slot="close">冻结</span>
                     </i-switch>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">父级账户</div>
+                    </Col>
+                    <Col span="18">
+                    <Select v-model="user.parentId" placeholder="父级账户">
+                        <Option v-for="item in this.parents" :value="item.id" :key="item.name">
+                            {{ item.userName }}
+                        </Option>
+                    </Select>
                     </Col>
                 </Row>
             </div>
@@ -200,14 +201,12 @@
 
     export default {
         name: 'auth_user',
-        components: {expandRow},
+        components: {
+            expandRow},
 
         data() {
             return {
-                type: [
-                    '代理用户',
-                    '终端用户'
-                ],
+                parents: [],
                 access: this.$store.state.access,
                 addAndEditModal: false,
                 userId: '',
@@ -230,13 +229,14 @@
                     mobilePhone: '',
                     email: '',
                     sex: '女',
-                    label: '',
+                    label: '0',
                     status: true,
-                    type: '',
+                    type: '未知',
                     gizwits: '',
                     qq: '',
                     wechat: '',
-                    phone: ''
+                    phone: '',
+                    parentId: ''
                 },
                 roleInfo: {
                     userId: '',
@@ -376,7 +376,7 @@
                     {
                         type: 'expand',
                         width: 80,
-                        title: '更多',
+                        title: '下级',
                         align: 'center',
                         render: (h, params) => {
                             return h(expandRow, {
@@ -410,6 +410,13 @@
             ctrlAccess() {
                 this.$refs.access.updateAccess();
             },
+            getParents(id) {
+                User.getParent(this, id).then((res) => {
+                    if (res.success) {
+                        this.parents = res.data;
+                    }
+                });
+            },
             getUser() {
                 User.getUser(this, {
                     pageIndex: this.current - 1,
@@ -433,7 +440,6 @@
                     userId: this.userId,
                     roleId: roleId
                 };
-                console.log(this.roleInfo);
             },
             setRole(index, user) {
                 Role.getRoleTree(this).then(res => {
@@ -447,6 +453,7 @@
                 this.userId = user.id;
             },
             editUser(user) {
+                this.getParents(user.id);
                 this.addOrEdit = 1;
                 this.addAndEditModal = true;
                 this.editId = user.id;
@@ -466,11 +473,13 @@
                     gizwits: user.gizwits,
                     qq: user.qq,
                     wechat: user.wechat,
-                    phone: user.phone
+                    phone: user.phone,
+                    parentId: user.parentId
                 };
             },
 
             addUser() {
+                this.getParents(-1);
                 this.addOrEdit = 0;
                 this.addAndEditModal = true;
                 this.user = {
@@ -483,13 +492,14 @@
                     mobilePhone: '',
                     email: '',
                     sex: '男',
-                    label: '',
+                    label: '0',
                     status: true,
-                    type: '',
+                    type: '未知',
                     gizwits: '',
                     qq: '',
                     wechat: '',
-                    phone: ''
+                    phone: '',
+                    parentId: ''
                 };
             },
 
@@ -544,7 +554,9 @@
             },
             saveRole() {
                 console.log(this.roleInfo);
-                User.saveRole(this, this.roleInfo);
+                User.saveRole(this, this.roleInfo).then((res) => {
+                    if (res.success) this.getUser();
+                });
             }
         }
     };
