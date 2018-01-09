@@ -26,5 +26,7 @@ public interface DocumentService {
 
     List<Document> allList(int pageIndex, int pageSize);
 
+    List<Document> otherDocument(int pageIndex, int pageSize);
+
     int getDocumentTotal();
 }

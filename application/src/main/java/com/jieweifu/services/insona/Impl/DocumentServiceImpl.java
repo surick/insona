@@ -130,4 +130,13 @@ public class DocumentServiceImpl implements DocumentService {
                 .limit(pageIndex, pageSize)
                 .queryForList(Document.class);
     }
+
+    @Override
+    public List<Document> otherDocument(int pageIndex, int pageSize) {
+        return db.select()
+                .from(Document.class)
+                .where("is_deleted = 0 AND label = ?", 0)
+                .limit(pageIndex, pageSize)
+                .queryForList(Document.class);
+    }
 }

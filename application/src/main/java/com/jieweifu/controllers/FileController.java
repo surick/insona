@@ -66,7 +66,6 @@ public class FileController {
         }
         return "success";
     }
-
     @PostMapping("DocumentUpload")
     @ResponseBody
     public Map<Object, Object> DocumentUpload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {

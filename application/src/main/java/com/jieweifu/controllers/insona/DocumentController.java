@@ -115,12 +115,11 @@ public class DocumentController {
     @GetMapping("pageDocument/{pageIndex}/{pageSize}")
     public Result getInfoByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
-
         if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
         User user = BaseContextHandler.getUser();
         redisUtil.set("label",user.getLabel());
-        List<Document> infoList = null;
+        List<Document> infoList = documentService.otherDocument(pageIndex,pageSize);
         if(user.getLabel().equals("00100010001")){
             infoList = documentService.documentPage(pageIndex, pageSize,user.getLabel());
         }
@@ -155,7 +154,7 @@ public class DocumentController {
             infoList = documentService.documentPages(pageIndex, pageSize,label);
         }
         if(label.equals("001") || label.equals("0")){
-            infoList = documentService.allList(pageIndex,pageSize);
+            infoList = documentService.otherDocument(pageIndex,pageSize);
         }
         int total = documentService.getDocumentTotal();
         Map<String, Object> map = new HashMap<>();

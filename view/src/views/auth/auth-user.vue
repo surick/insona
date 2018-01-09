@@ -192,6 +192,16 @@
                 <Tree ref="roleTree" :data="roleData" show-checkbox @on-check-change="checkRole"></Tree>
             </div>
         </Modal>
+
+        <Modal
+            v-model="childrenModal"
+            title="子级用户"
+            :mask-closable="false"
+            :width="700">
+            <div class="modal-body">
+                <Table border :columns="children" :data="childrenData"></Table>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -206,6 +216,8 @@
 
         data() {
             return {
+                childrenData: [],
+                childrenModal: false,
                 parents: [],
                 access: this.$store.state.access,
                 addAndEditModal: false,
@@ -242,12 +254,7 @@
                     userId: '',
                     roleId: []
                 },
-                columns: [
-                    {
-                        type: 'selection',
-                        width: 50,
-                        align: 'center'
-                    },
+                children: [
                     {
                         title: '用户名',
                         key: 'userName',
@@ -275,13 +282,49 @@
                     {
                         title: '详细地址',
                         key: 'address',
-                        // width: 250,
+                        align: 'center'
+                    }
+                ],
+                columns: [
+                    {
+                        type: 'selection',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '用户名',
+                        key: 'userName',
+                        width: 120,
+                        align: 'center'
+                    },
+                    {
+                        title: '联系人',
+                        key: 'name',
+                        width: 100,
+                        align: 'center'
+                    },
+                    {
+                        title: '手机号',
+                        key: 'mobilePhone',
+                        width: 115,
+                        align: 'center'
+                    },
+                    {
+                        title: '用户分类',
+                        key: 'type',
+                        width: 100,
+                        align: 'center'
+                    },
+                    {
+                        title: '详细地址',
+                        key: 'address',
+                        width: 200,
                         align: 'center'
                     },
                     {
                         title: '操作',
                         key: 'action',
-                        width: 300,
+                        width: 355,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
@@ -295,7 +338,7 @@
                                         type: 'ghost'
                                     },
                                     style: {
-                                        marginRight: '10px'
+                                        marginRight: '5px'
                                     },
                                     on: {
                                         click: () => {
@@ -324,7 +367,7 @@
                                         type: 'info'
                                     },
                                     style: {
-                                        marginRight: '10px'
+                                        marginRight: '5px'
                                     },
                                     on: {
                                         click: () => {
@@ -353,6 +396,9 @@
                                         props: {
                                             type: 'error'
                                         },
+                                        style: {
+                                            marginRight: '5px'
+                                        },
                                         on: {
                                             click: () => {
                                                 this.deleteUser([params.row.id]);
@@ -369,14 +415,34 @@
                                         }),
                                         '删除'
                                     ])
+                                ]),
+                                h('Button', {
+                                    props: {
+                                        type: 'ghost'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.childrenshow(params.row);
+                                        }
+                                    }
+                                }, [
+                                    h('Icon', {
+                                        style: {
+                                            marginRight: '5px'
+                                        }
+                                    }),
+                                    '子级'
                                 ])
                             ]);
                         }
                     },
                     {
                         type: 'expand',
-                        width: 80,
-                        title: '下级',
+                        width: 70,
+                        title: '更多',
                         align: 'center',
                         render: (h, params) => {
                             return h(expandRow, {
@@ -527,7 +593,10 @@
                     });
                 }
             },
-
+            childrenshow(row) {
+                this.childrenModal = true;
+                this.childrenData = row.children;
+            },
             deleteUser(ids) {
                 if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
                 if (!ids && this.selected.length > 0) {
@@ -547,7 +616,6 @@
                     }
                 });
             },
-
             changePage(page) {
                 this.current = page;
                 this.getUser();
