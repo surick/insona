@@ -22,7 +22,7 @@ export default {
             url: '/insona/userProduct/saveUserProduct',
             data: {
                 did: obj.did,
-                baseUserId: obj.uid
+                uid: obj.uid
             }
         });
     },
@@ -49,7 +49,19 @@ export default {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/insona/product/type'
+                url: '/insona/productSale/getList'
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    getUsers(vm) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/userProduct/getUsers'
             }).then(res => {
                 if (res.success) {
                     resolve(res);

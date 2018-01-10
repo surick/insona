@@ -4,6 +4,7 @@ import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.insona.Log;
 import com.jieweifu.models.insona.Product;
 import com.jieweifu.services.insona.ProductService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,11 +113,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void setStatus(int id, String status) {
+    public void setStatus(int id, String status,String name) {
+        Product product = db.select().columns("sale")
+                .from(Product.class)
+                .where("id = ?",id)
+                .queryForEntity(Product.class);
+        if(!StringUtils.isBlank(product.getSale())){
+            name = product.getSale()+","+name;
+        }
         db.update()
                 .table(Product.class)
                 .set("status", status)
-                .set("reason", "")
+                .set("sale", name)
                 .where("id = ?", id)
                 .execute();
     }

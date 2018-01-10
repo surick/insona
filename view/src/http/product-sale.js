@@ -70,7 +70,6 @@ export default {
                 id: id,
                 did: obj.did,
                 name: obj.name,
-                gizwit_info: obj.gizwit_info,
                 insona_online: obj.insona_online,
                 serial_code: obj.serial_code,
                 last_online: obj.last_online,

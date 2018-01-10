@@ -6,10 +6,7 @@ import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
-import com.jieweifu.models.insona.Log;
-import com.jieweifu.models.insona.Product;
-import com.jieweifu.models.insona.ProductInfo;
-import com.jieweifu.models.insona.UserProduct;
+import com.jieweifu.models.insona.*;
 import com.jieweifu.services.admin.UserService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.UserProductService;
@@ -56,8 +53,6 @@ public class UserProductController {
     public Result saveUserProduct(@Valid @RequestBody UserProduct userProduct, Errors errors) {
         if (errors.hasErrors())
             return new Result().setError(ErrorUtil.getErrors(errors));
-        if (userProduct.getBaseUserId() == null)
-            return new Result().setError("信息不能为空");
         if (userProductService.getByDid(userProduct.getDid()) != null)
             return new Result().setError("该设备已绑定");
         Product product = null;
@@ -68,13 +63,11 @@ public class UserProductController {
         Product finalProduct = product;
         redisUtil.lock("saveUserProduct", 3,
                 () -> {
-                    userProduct.setUpdateDt(String.valueOf(System.currentTimeMillis()));
-                    userProduct.setTypeId(finalProduct.getType());
-                    userProduct.setName(finalProduct.getName());
+                    userProduct.setCreatetime(String.valueOf(System.currentTimeMillis()));
                     userProductService.saveUserProduct(userProduct);
                     result.setMessage("绑定成功");
                 },
-                () -> result.setError("绑定失败"));
+                () -> result.setError("绑定失败，请稍后重试"));
         return result;
     }
 
@@ -83,7 +76,7 @@ public class UserProductController {
      *
      * @param userProduct 设备
      * @return message
-     */
+     *//*
     @PostMapping("saveProduct")
     public Result saveProduct(@Valid @RequestBody UserProduct userProduct) {
         if (userProductService.getByDid(userProduct.getDid()) != null)
@@ -102,7 +95,7 @@ public class UserProductController {
                 },
                 () -> result.setError("绑定失败"));
         return result;
-    }
+    }*/
 
     /**
      * 分页查找全部经销商和其绑定的设备
@@ -117,19 +110,11 @@ public class UserProductController {
         if (pageIndex < 0 || pageSize < 0)
             return new Result().setError("页码或条目数不合法");
         int userId = BaseContextHandler.getUserId();
-        User user = userService.getUserById(userId);
-        List<User> userList = userService.getUserIds(user.getLabel());
-        List<ProductInfo> infoList = new ArrayList<>();
-        userList.forEach(
-                user1 -> {
-                    ProductInfo productInfo = userProductService.pageUserProduct(pageIndex, pageSize, String.valueOf(user1.getId()));
-                    if (productInfo != null)
-                        infoList.add(productInfo);
-                }
-        );
-        int total = userProductService.getTotal();
+        String dealer = BaseContextHandler.getName();
+        List<ProductInfo> list = userProductService.pageUserProduct(pageIndex,pageSize,dealer);
+        int total = userProductService.getTotal(dealer);
         Map<String, Object> map = new HashMap<>();
-        map.put("list", infoList);
+        map.put("list", list);
         map.put("total", total);
         return new Result().setData(map);
     }
@@ -151,27 +136,6 @@ public class UserProductController {
     }
 
     /**
-     * 经销商查找自己绑定的设备
-     *
-     * @param pageIndex 页码
-     * @param pageSize  页条目
-     * @return map
-     */
-    @GetMapping("getProduct/{pageIndex}/{pageSize}")
-    public Result getByUid(@PathVariable("pageIndex") int pageIndex,
-                           @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
-            return new Result().setError("页码或条目数不合法");
-        String uid = String.valueOf(BaseContextHandler.getUserId());
-        int total = userProductService.getTotal();
-        List<ProductInfo> userProductList = userProductService.getByUid(uid, pageIndex, pageSize);
-        Map<String, Object> map = new HashMap<>();
-        map.put("list", userProductList);
-        map.put("total", total);
-        return new Result().setData(map);
-    }
-
-    /**
      * 显示设备信息
      *
      * @param did 设备did
@@ -189,5 +153,11 @@ public class UserProductController {
     public Result getProducts() {
         List<Product> productList = productService.getProducts();
         return new Result().setData(productList);
+    }
+
+    @GetMapping("getUsers")
+    public Result getUsers() {
+        List<InsonaUser> list = userProductService.userList();
+        return new Result().setData(list);
     }
 }

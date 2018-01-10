@@ -27,8 +27,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.gizwits</groupId>
-			<artifactId>snoti-spring-boot-starter</artifactId>
-			<version>0.1.5</version>
+			<artifactId>noti-netty-client</artifactId>
+			<version>0.1.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

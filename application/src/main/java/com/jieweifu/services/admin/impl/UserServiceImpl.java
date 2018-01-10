@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getUserIds(String label) {
         return db.select()
                 .from(User.class)
-                .where("label LIKE ?",label+"%")
+                .where("label LIKE ?",label+"0%")
                 .queryForList(User.class);
     }
 

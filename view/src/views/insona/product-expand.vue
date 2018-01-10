@@ -8,6 +8,12 @@
         </Row>
         <Row class="expand-row">
             <Col>
+            <span class="expand-key">销售对象：</span>
+            <span class="expand-value">{{ row.sale }}</span>
+            </Col>
+        </Row>
+        <Row class="expand-row">
+            <Col>
             <span class="expand-key">驳回原因：</span>
             <span class="expand-value">{{ row.reason }}</span>
             </Col>

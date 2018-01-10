@@ -19,4 +19,6 @@ public interface TypeService {
     int getTotal();
 
     List<Type> types();
+
+    int newTotal(String type_name);
 }

@@ -55,22 +55,6 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">机智云appid</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="product.gizwit_info" placeholder="机智云appid"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">appsecret</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="product.gizwit_secret" placeholder="appsecret"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
                     <div class="input-label">序列号</div>
                     </Col>
                     <Col span="18">
@@ -129,7 +113,7 @@
                     </Col>
                     <Col span="18">
                     <Select v-model="sub_sale" filterable style="width: 250px">
-                        <Option v-for="item in dealers" :value="item.id" :key="item.name">
+                        <Option v-for="item in dealers" :value="item.name" :key="item.name">
                             {{ item.userName }}
                         </Option>
                     </Select>
@@ -170,8 +154,6 @@
                     id: '',
                     did: '',
                     name: '',
-                    gizwit_info: '',
-                    gizwit_secret: '',
                     serial_code: '',
                     version: '',
                     sub_inter: '',
@@ -199,15 +181,15 @@
                         align: 'center'
                     },
                     {
-                        title: '机智云appid',
-                        key: 'gizwit_info',
-                        width: 150,
+                        title: '设备类别',
+                        key: 'type',
+                        width: 130,
                         align: 'center'
                     },
                     {
-                        title: '序列号',
-                        key: 'serial_code',
-                        width: 130,
+                        title: '生产商',
+                        key: 'sub_inter',
+                        width: 150,
                         align: 'center'
                     },
                     {
@@ -350,7 +332,7 @@
             saleProduct(status, id) {
                 this.saleDetail = false;
                 var ids;
-                if (!id && this.selected.length === 0) return this.$Message.warning('请先选择设备');
+                if (!id && this.selected.length === 0) return this.$Message.warning('请先选择用户');
                 if (!id && this.selected.length > 0) {
                     ids = this.selected.map(item => {
                         return item.id;
@@ -383,8 +365,6 @@
                 this.product = {
                     did: '',
                     name: '',
-                    gizwit_info: '',
-                    gizwit_secret: '',
                     serial_code: '',
                     version: '',
                     sub_inter: '',
@@ -417,8 +397,6 @@
                 this.product = {
                     did: obj.did,
                     name: obj.name,
-                    gizwit_info: obj.gizwit_info,
-                    gizwit_secret: obj.gizwit_secret,
                     serial_code: obj.serial_code,
                     version: obj.version,
                     sub_inter: obj.sub_inter,

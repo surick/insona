@@ -1,6 +1,5 @@
 package com.jieweifu.services.insona.Impl;
 
-import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.insona.Product;
 import com.jieweifu.models.insona.ProductSale;
@@ -41,51 +40,49 @@ public class ProductSaleServiceImpl implements ProductSaleService {
     }
 
     @Override
-    public List<ProductSale> getList(int pageIndex, int pageSize) {
+    public List<ProductSale> getList(int pageIndex, int pageSize,String dealer) {
         return db.select()
                 .from(ProductSale.class)
+                .where("dealer = ?",dealer)
                 .limit(pageIndex, pageSize)
                 .queryForList(ProductSale.class);
     }
 
     @Override
-    public int total() {
-        return db.select().from(ProductSale.class)
-                .total();
-    }
-
-    @Override
-    public List<Product> getPass(int pageIndex, int pageSize, int userId) {
-        return db.select().from("insona_product AS p","insona_product_dealer AS d")
-                .where("p.id = d.product_id AND d.dealer = '"+userId+"' AND p.status = 1")
-                .queryForList(Product.class);
-        /*return db.select()
-                .from(Product.class)
-                .where("status = ?", 1)
-                .limit(pageIndex, pageSize)
-                .queryForList(Product.class);*/
-    }
-
-    @Override
-    public int passTotal() {
-        return db.select().from(Product.class)
-                .where("status = ?", 1)
-                .total();
-    }
-
-    @Override
-    public List<Product> getBack(int pageIndex, int pageSize) {
+    public int total(String dealer) {
         return db.select()
-                .from(Product.class)
-                .where("status = ?", 2)
+                .from(ProductSale.class)
+                .where("dealer = ?",dealer)
+                .total();
+    }
+
+    @Override
+    public List<Product> getPass(int pageIndex, int pageSize, String name) {
+        return db.select().from("insona_product AS p","insona_product_dealer AS d")
+                .where("p.id = d.product_id AND d.dealer = '"+name+"' AND p.status = 1")
+                .limit(pageIndex,pageSize)
+                .queryForList(Product.class);
+    }
+
+    @Override
+    public int passTotal(String name) {
+        return db.select().from("insona_product AS p","insona_product_dealer AS d")
+                .where("p.id = d.product_id AND d.dealer = '"+name+"' AND p.status = 1")
+                .total();
+    }
+
+    @Override
+    public List<Product> getBack(int pageIndex, int pageSize,String name) {
+        return db.select().from("insona_product AS p","insona_product_dealer AS d")
+                .where("p.id = d.product_id AND d.dealer = '"+name+"' AND p.status = 2")
                 .limit(pageIndex, pageSize)
                 .queryForList(Product.class);
     }
 
     @Override
-    public int backTotal() {
-        return db.select().from(Product.class)
-                .where("status = ?", 2)
+    public int backTotal(String name) {
+        return db.select().from("insona_product AS p","insona_product_dealer AS d")
+                .where("p.id = d.product_id AND d.dealer = '"+name+"' AND p.status = 2")
                 .total();
     }
 
@@ -99,5 +96,13 @@ public class ProductSaleServiceImpl implements ProductSaleService {
         return db.select().from(Product.class)
                 .where("id = ?", id)
                 .queryForEntity(Product.class);
+    }
+
+    @Override
+    public List<ProductSale> getList(String dealer) {
+        return db.select()
+                .from(ProductSale.class)
+                .where("dealer = ?",dealer)
+                .queryForList(ProductSale.class);
     }
 }

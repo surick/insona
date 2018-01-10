@@ -36,10 +36,14 @@
             <div class="modal-body">
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">用户id</div>
+                    <div class="input-label">终端用户</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="userProduct.uid" placeholder="用户id"></Input>
+                    <Select v-model="userProduct.uid" filterable>
+                        <Option v-for="item in userDetail" :value="item.uid" :key="item.username">
+                            {{ item.username }}
+                        </Option>
+                    </Select>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -47,8 +51,8 @@
                     <div class="input-label">可用设备</div>
                     </Col>
                     <Select v-model="userProduct.did" filterable style="width: 250px">
-                        <Option v-for="item in productDetail" :value="item.did" :key="item.did">
-                            {{ item.did }}
+                        <Option v-for="item in productDetail" :value="item.did" :key="item.name">
+                            {{ item.name }}
                         </Option>
                     </Select>
                     </Col>
@@ -81,6 +85,7 @@
         components: {expandRow},
         data: function () {
             return {
+                userDetail: [],
                 productModal: false,
                 addAndEditModal: false,
                 addOrEdit: 0,
@@ -91,11 +96,11 @@
                 product: {
                     did: '',
                     name: '',
-                    gizwitInfo: '',
-                    insonaOnline: '',
+                    insona_online: '',
                     serialCode: '',
                     lastOnline: '',
-                    version: ''
+                    version: '',
+                    type: ''
                 },
                 logs: [],
                 productList: [],
@@ -118,6 +123,12 @@
                     {
                         title: '用户uid',
                         key: 'uid',
+                        width: 160,
+                        align: 'center'
+                    },
+                    {
+                        title: '设备类型',
+                        key: 'type',
                         width: 180,
                         align: 'center'
                     },
@@ -134,14 +145,8 @@
                         align: 'center'
                     },
                     {
-                        title: '机智云信息',
-                        key: 'gizwitInfo',
-                        width: 160,
-                        align: 'center'
-                    },
-                    {
-                        title: '序列号',
-                        key: 'serialCode',
+                        title: '经销商',
+                        key: 'dealer',
                         width: 180,
                         align: 'center'
                     },
@@ -186,6 +191,7 @@
             this.current = 1;
             this.getUserProduct();
             this.getProducts();
+            this.getUsers();
         },
         computed: {
             avatorPath() {
@@ -200,14 +206,23 @@
                 }).then((res) => {
                     if (res.success) {
                         this.data = res.data.list;
+                        console.log(this.data);
                         this.total = res.data.total;
                     }
                 });
             },
             getProducts() {
-                UserDT.getProducts(this).then((res) => {
+                UserDT.getTypes(this).then((res) => {
                     if (res.success) {
                         this.productDetail = res.data;
+                    }
+                });
+            },
+            getUsers() {
+                UserDT.getUsers(this).then((res) => {
+                    if (res.success) {
+                        this.userDetail = res.data;
+                        console.log(this.userDetail);
                     }
                 });
             },

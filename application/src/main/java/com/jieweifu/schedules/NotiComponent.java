@@ -1,12 +1,20 @@
 package com.jieweifu.schedules;
 
 
+import com.gizwits.noti2.client.Events;
+import com.gizwits.noti2.client.LoginData;
 import com.gizwits.noti2.client.NotiClient;
 import com.gizwits.noti2.client.NotiEvent;
+import com.jieweifu.models.insona.Type;
+import com.jieweifu.services.insona.TypeService;
 import groovy.util.logging.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,21 +26,44 @@ import java.util.concurrent.TimeUnit;
 public class NotiComponent {
 
 
-    private NotiClient notiClient;
+    private TypeService typeService;
     @Autowired
-    public NotiComponent(NotiClient notiClient){
-        this.notiClient = notiClient;
+    public NotiComponent(TypeService typeService){
+        this.typeService = typeService;
     }
 
     @Async
     public void start(){
-        /*NotiClient notiClient = NotiClient
+
+        List<LoginData> loginDataList = new ArrayList<>();
+
+        List<Type> list = typeService.types();
+       /* for (Type type : list) {
+            LoginData loginData = new LoginData();
+            loginData.setAuthId(type.getAppid());
+            loginData.setAuthSecret(type.getAppsecret());
+            loginData.setProductKey(type.getProduct_key());
+            loginData.setSubkey("client");
+            loginDataList.add(loginData);
+        }*/
+        LoginData loginData = new LoginData();
+        loginData.setAuthId(list.get(0).getAppid());
+        loginData.setAuthSecret(list.get(0).getAppsecret());
+        loginData.setProductKey(list.get(0).getProduct_key());
+        loginData.setSubkey("client");
+        List<Events> events = new ArrayList<>();
+        events.add(Events.getEvent("device.online"));
+        events.add(Events.getEvent("device.offline"));
+        events.add(Events.getEvent("device.status.kv"));
+        loginData.setEvents(events);
+        loginDataList.add(loginData);
+        //List<LoginData> dataList = Arrays.asList(new LoginData("34882cc6fb934695857bc88a53554039","SUBIlBYnRKemOq11xirDow","Lf68PPHBTPakV+MG/f0KHg","client",events));
+        NotiClient notiClient = NotiClient
                 .build()
                 .setHost("snoti.gizwits.com")
                 .setPort(2017)
-                .setMaxFrameLength(8192)// 默认值是8192.可以作为扩展使用，默认可以不设置
-                .login("34882cc6fb934695857bc88a53554039", "SUBIlBYnRKemOq11xirDow", "Lf68PPHBTPakV+MG/f0KHg", "client", 50, Arrays.asList(Events.ONLINE, Events.OFFLINE, Events.STATUS_KV, Events.STATUS_RAW, Events.ATTR_ALERT, Events.ATTR_FAULT));
-*/        //启动
+                .login(loginDataList);
+        //启动
         notiClient.doStart();
         // 等待启动（启动链接耗时),否则无法发送控制指令
         try{
@@ -48,7 +79,7 @@ public class NotiComponent {
         //订阅(接收)推送事件消息,接收推送事件类型查看PushEvents枚举类
         Thread thread = new Thread(() -> {
             String messgae = null;
-            while ((messgae = notiClient.reveiceMessgae()) != null) {
+            while ((messgae = notiClient.receiveMessage()) != null) {
                 System.out.println("实时接收snoti消息:" + messgae);
             }
         });

@@ -33,7 +33,6 @@ public class ProductSaleController {
      */
     @PostMapping("pass")
     public Result passProduct(@RequestBody List<String> ids) {
-        int userId = BaseContextHandler.getUserId();
         if (ids.isEmpty()) {
             return new Result().setError("id不合法");
         }
@@ -44,7 +43,6 @@ public class ProductSaleController {
             ProductSale productSale = new ProductSale();
             productSale.setDid(product.getDid());
             productSale.setName(product.getName());
-            productSale.setGizwit_info(product.getGizwit_info());
             productSale.setSerial_code(product.getSerial_code());
             productSale.setVersion(product.getVersion());
             productSale.setStatus(product.getStatus());
@@ -52,8 +50,7 @@ public class ProductSaleController {
             productSale.setSub_maker(product.getSub_maker());
             productSale.setSub_inter(product.getSub_inter());
             productSale.setType(product.getType());
-            productSale.setGizwit_secret(product.getGizwit_secret());
-            productSale.setDealer(String.valueOf(userId));
+            productSale.setDealer(BaseContextHandler.getName());
             productSaleService.saveProduct(productSale);
         } catch (Exception e) {
             return new Result().setError("系统繁忙，请稍后重试");
@@ -66,7 +63,6 @@ public class ProductSaleController {
      */
     @PutMapping("back")
     public Result backProduct(@RequestBody BackReason reason) {
-        System.out.println("============: " + reason.getId());
         try {
             productSaleService.backProduct(Integer.parseInt(reason.getId()), reason.getText());
         } catch (Exception e) {
@@ -89,7 +85,7 @@ public class ProductSaleController {
     }
 
     /**
-     * 获取设备
+     * 获取设备分页
      */
     @GetMapping("getList/{pageIndex}/{pageSize}")
     public Result getList(@PathVariable("pageIndex") int pageIndex,
@@ -100,15 +96,26 @@ public class ProductSaleController {
         List<ProductSale> list;
         int total = 0;
         Map<String, Object> map = new HashMap<>();
+        String dealer = BaseContextHandler.getName();
         try {
-            list = productSaleService.getList(pageIndex, pageSize);
-            total = productSaleService.total();
+            list = productSaleService.getList(pageIndex, pageSize, dealer);
+            total = productSaleService.total(dealer);
             map.put("list", list);
             map.put("total", total);
         } catch (Exception e) {
             return new Result().setError("系统繁忙，请稍后重试");
         }
         return new Result().setData(map);
+    }
+
+    /**
+     * 获取设备
+     */
+    @GetMapping("getList")
+    public Result getList() {
+        String dealer = BaseContextHandler.getName();
+        List<ProductSale> list = productSaleService.getList(dealer);
+        return new Result().setData(list);
     }
 
     /**
@@ -120,13 +127,13 @@ public class ProductSaleController {
         if (pageIndex < 0 || pageSize < 1) {
             return new Result().setError("目录错误，请重新选页");
         }
-        int userId = BaseContextHandler.getUserId();
+        String name = BaseContextHandler.getName();
         List<Product> list;
         int total = 0;
         Map<String, Object> map = new HashMap<>();
         try {
-            list = productSaleService.getPass(pageIndex, pageSize, userId);
-            total = productSaleService.passTotal();
+            list = productSaleService.getPass(pageIndex, pageSize, name);
+            total = productSaleService.passTotal(name);
             map.put("list", list);
             map.put("total", total);
         } catch (Exception e) {
@@ -147,9 +154,10 @@ public class ProductSaleController {
         List<Product> list;
         int total = 0;
         Map<String, Object> map = new HashMap<>();
+        String name = BaseContextHandler.getName();
         try {
-            list = productSaleService.getBack(pageIndex, pageSize);
-            total = productSaleService.backTotal();
+            list = productSaleService.getBack(pageIndex, pageSize, name);
+            total = productSaleService.backTotal(name);
             map.put("list", list);
             map.put("total", total);
         } catch (Exception e) {

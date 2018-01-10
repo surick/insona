@@ -50,11 +50,15 @@ public class BaseContextHandler {
         return getUser().getId();
     }
 
+    public static String getName() {
+        return getUser().getName();
+    }
+
     public static String getUserName() {
         return getUser().getUserName();
     }
 
-    public static void setUserIsAdmin(boolean isAdmin){
+    public static void setUserIsAdmin(boolean isAdmin) {
         set(UserConstant.USER_IS_ADMIN, isAdmin);
     }
 
@@ -71,25 +75,25 @@ public class BaseContextHandler {
         return requestIp;
     }
 
-    public static void setActionStartTime(){
+    public static void setActionStartTime() {
         set(CommonConstant.ACTION_START_TIME, Instant.now());
     }
 
-    public static void setActionEndTime(){
+    public static void setActionEndTime() {
         set(CommonConstant.ACTION_END_TIME, Instant.now());
     }
 
-    public static Instant getActionStartTime(){
+    public static Instant getActionStartTime() {
         Instant instant = (Instant) get(CommonConstant.ACTION_START_TIME);
-        if(instant == null){
+        if (instant == null) {
             instant = Instant.now();
         }
         return instant;
     }
 
-    public static Instant getActionEndTime(){
+    public static Instant getActionEndTime() {
         Instant instant = (Instant) get(CommonConstant.ACTION_END_TIME);
-        if(instant == null){
+        if (instant == null) {
             instant = Instant.now();
         }
         return instant;

@@ -15,12 +15,6 @@ public class Product {
     @NotBlank(message = "请将设备名填写完整")
     @Column(columnName = "name")
     private String name;
-    @NotBlank(message = "请将机智云appid填写完整")
-    @Column(columnName = "gizwit_info")
-    private String gizwit_info;
-    @NotBlank(message = "请将机智云secret填写完整")
-    @Column(columnName = "gizwit_secret")
-    private String gizwit_secret;
     @NotBlank(message = "请将序列号填写完整")
     @Column(columnName = "serial_code")
     private String serial_code;
@@ -44,6 +38,16 @@ public class Product {
     private String extract;
     @Column(columnName = "reason")
     private String reason;
+    @Column(columnName = "sale")
+    private String sale;
+
+    public String getSale() {
+        return sale;
+    }
+
+    public void setSale(String sale) {
+        this.sale = sale;
+    }
 
     public int getId() {
         return id;
@@ -67,14 +71,6 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getGizwit_info() {
-        return gizwit_info;
-    }
-
-    public void setGizwit_info(String gizwit_info) {
-        this.gizwit_info = gizwit_info;
     }
 
     public String getSerial_code() {
@@ -149,11 +145,4 @@ public class Product {
         this.reason = reason;
     }
 
-    public String getGizwit_secret() {
-        return gizwit_secret;
-    }
-
-    public void setGizwit_secret(String gizwit_secret) {
-        this.gizwit_secret = gizwit_secret;
-    }
 }

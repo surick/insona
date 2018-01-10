@@ -29,13 +29,16 @@ export default {
                 maker: obj.maker,
                 model_no: obj.model_no,
                 make_time: moment(obj.make_time).format('YYYY-MM-DD'),
-                make_no: obj.make_no,
+                appid: obj.appid,
+                appsecret: obj.appsecret,
+                product_key: obj.product_key,
                 into_time: obj.into_time,
                 person: obj.person,
                 technology: obj.technology,
                 communication: obj.communication,
                 enable: obj.enable ? 1 : 0,
                 remark: obj.remark,
+                batch: obj.batch,
                 is_deleted: 0
             }
         });
@@ -70,13 +73,40 @@ export default {
                 maker: obj.maker,
                 model_no: obj.model_no,
                 make_time: moment(obj.make_time).format('YYYY-MM-DD'),
-                make_no: obj.make_no,
+                appid: obj.appid,
+                appsecret: obj.appsecret,
+                into_time: obj.into_time,
+                product_key: obj.product_key,
+                person: obj.person,
+                technology: obj.technology,
+                communication: obj.communication,
+                enable: obj.enable ? 1 : 0,
+                remark: obj.remark,
+                batch: obj.batch
+            }
+        });
+    },
+    newType(vm, obj) {
+        return ajax(vm, {
+            method: 'POST',
+            url: '/insona/type/new',
+            data: {
+                type_id: obj.type_id,
+                type_name: obj.type_name,
+                maker: obj.maker,
+                model_no: obj.model_no,
+                make_time: moment(obj.make_time).format('YYYY-MM-DD'),
+                appid: obj.appid,
+                appsecret: obj.appsecret,
+                product_key: obj.product_key,
                 into_time: obj.into_time,
                 person: obj.person,
                 technology: obj.technology,
                 communication: obj.communication,
                 enable: obj.enable ? 1 : 0,
-                remark: obj.remark
+                remark: obj.remark,
+                batch: obj.batch,
+                is_deleted: 0
             }
         });
     }

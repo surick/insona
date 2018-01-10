@@ -23,8 +23,6 @@ export default {
             data: {
                 did: obj.did,
                 name: obj.name,
-                gizwit_info: obj.gizwit_info,
-                gizwit_secret: obj.gizwit_secret,
                 serial_code: obj.serial_code,
                 version: obj.version,
                 sub_inter: obj.sub_inter,
@@ -44,13 +42,11 @@ export default {
     updateProduct(vm, id, obj) {
         return ajax(vm, {
             method: 'PUT',
-            url: '/insona/type/update',
+            url: '/insona/product/update',
             data: {
                 id: id,
                 did: obj.did,
                 name: obj.name,
-                gizwit_info: obj.gizwit_info,
-                gizwit_secret: obj.gizwit_secret,
                 serial_code: obj.serial_code,
                 version: obj.version,
                 sub_inter: obj.sub_inter,

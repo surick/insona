@@ -1,5 +1,6 @@
 package com.jieweifu.services.insona;
 
+import com.jieweifu.models.insona.InsonaUser;
 import com.jieweifu.models.insona.ProductInfo;
 import com.jieweifu.models.insona.UserProduct;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface UserProductService {
 
-    ProductInfo pageUserProduct(int pageIndex, int pageSize, String id);
+    List<ProductInfo> pageUserProduct(int pageIndex, int pageSize, String dealer);
 
     void saveUserProduct(UserProduct userProduct);
 
@@ -15,11 +16,13 @@ public interface UserProductService {
 
     UserProduct getByDid(String did);
 
-    int getTotal();
+    int getTotal(String dealer);
 
     UserProduct getByid(Integer id);
 
-    List<ProductInfo> getByUid(String uid, int pageIndex, int pageSize);
+    List<UserProduct> getByDealer(String dealer);
 
     List<UserProduct> listUserProduct(String uid);
+
+    List<InsonaUser> userList();
 }

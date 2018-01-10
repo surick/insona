@@ -69,4 +69,12 @@ public class TypeServiceImpl implements TypeService {
         return db.select().from(Type.class)
                 .where("is_deleted = 0 AND enable = 1   ").queryForList(Type.class);
     }
+
+    @Override
+    public int newTotal(String type_name) {
+        return db.select()
+                .from(Type.class)
+                .where("type_name = ?",type_name)
+                .total();
+    }
 }

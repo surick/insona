@@ -23,9 +23,15 @@ public class Type {
     private String model_no;
     @Column(columnName = "make_time")
     private String make_time;
-    @NotBlank(message = "请填写生产批号")
-    @Column(columnName = "make_no")
-    private String make_no;
+    @NotBlank(message = "请填写appid")
+    @Column(columnName = "appid")
+    private String appid;
+    @NotBlank(message = "请填写appsecret")
+    @Column(columnName = "appsecret")
+    private String appsecret;
+    @NotBlank(message = "请填写product_key")
+    @Column(columnName = "product_key")
+    private String product_key;
     @Column(columnName = "into_time")
     private String into_time;
     @NotBlank(message = "请填写操作人")
@@ -43,6 +49,9 @@ public class Type {
     private boolean is_deleted;
     @Column(columnName = "remark")
     private String remark;
+    @NotBlank(message = "请填写生成批次")
+    @Column(columnName = "batch")
+    private String batch;
 
     @Column(columnName = "crt_time")
     private String createTime;
@@ -104,12 +113,28 @@ public class Type {
         this.make_time = make_time;
     }
 
-    public String getMake_no() {
-        return make_no;
+    public String getAppid() {
+        return appid;
     }
 
-    public void setMake_no(String make_no) {
-        this.make_no = make_no;
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+
+    public String getProduct_key() {
+        return product_key;
+    }
+
+    public void setProduct_key(String product_key) {
+        this.product_key = product_key;
+    }
+
+    public String getAppsecret() {
+        return appsecret;
+    }
+
+    public void setAppsecret(String appsecret) {
+        this.appsecret = appsecret;
     }
 
     public String getInto_time() {
@@ -198,5 +223,13 @@ public class Type {
 
     public void setUpdateHost(String updateHost) {
         this.updateHost = updateHost;
+    }
+
+    public String getBatch() {
+        return batch;
+    }
+
+    public void setBatch(String batch) {
+        this.batch = batch;
     }
 }

@@ -44,6 +44,24 @@ public class TypeController {
         }
         return new Result().setMessage("保存成功");
     }
+    /**
+     * 新增类型批次
+     */
+    @PostMapping("new")
+    public Result newType(@Valid @RequestBody Type type, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
+        int batch = typeService.newTotal(type.getType_name());
+        if(batch>0)
+            type.setBatch(String.valueOf(batch+1));
+        try {
+            typeService.saveType(type);
+        } catch (Exception e) {
+            return new Result().setError(500, "系统繁忙，请刷新后重试");
+        }
+        return new Result().setMessage("新增批次成功");
+    }
 
     /**
      * 删除设备类型

@@ -1,9 +1,7 @@
 package com.jieweifu.services.insona.Impl;
 
 import com.jieweifu.common.dbservice.DB;
-import com.jieweifu.models.insona.Product;
-import com.jieweifu.models.insona.ProductInfo;
-import com.jieweifu.models.insona.UserProduct;
+import com.jieweifu.models.insona.*;
 import com.jieweifu.services.insona.UserProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,19 +18,19 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    public ProductInfo pageUserProduct(int pageIndex, int pageSize, String id) {
+    public List<ProductInfo> pageUserProduct(int pageIndex, int pageSize, String dealer) {
         return db.select()
-                .columns("B.id,B.did,A.name,A.gizwit_info,A.serial_code,A.type,A.version,B.base_user_id")
+                .columns("B.id,B.uid,B.did,A.name,A.insona_online,A.type,A.dealer")
                 .from(UserProduct.class, "B")
-                .leftOuterJoin(Product.class, "A", "A.did = B.did")
-                .where("B.base_user_id = ? AND B.base_user_id != 1", id)
+                .leftOuterJoin(ProductSale.class, "A", "A.did = B.did")
+                .where("A.dealer = ?", dealer)
                 .limit(pageIndex, pageSize)
-                .queryForEntity(ProductInfo.class);
+                .queryForList(ProductInfo.class);
     }
 
     @Override
     public void saveUserProduct(UserProduct userProduct) {
-        userProduct.setUpdateDt(String.valueOf(System.currentTimeMillis()));
+        userProduct.setCreatetime(String.valueOf(System.currentTimeMillis()));
         db.insert()
                 .save(userProduct)
                 .execute();
@@ -55,9 +53,12 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    public int getTotal() {
+    public int getTotal(String dealer) {
         return db.select()
-                .from(UserProduct.class)
+                .columns("B.id,B.did,A.name,A.insona_online,A.type,A.dealer")
+                .from(UserProduct.class, "B")
+                .leftOuterJoin(ProductSale.class, "A", "A.did = B.did")
+                .where("A.dealer = ?", dealer)
                 .total();
     }
 
@@ -70,21 +71,27 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    public List<ProductInfo> getByUid(String uid, int pageIndex, int pageSize) {
+    public List<UserProduct> getByDealer(String dealer) {
         return db.select()
-                .columns("B.id,B.did,A.insona_online,A.is_disabled,A.dev_alias,B.base_user_id")
-                .from(Product.class, "A")
+                .columns("B.*")
+                .from(ProductSale.class, "A")
                 .leftOuterJoin(UserProduct.class, "B", "A.did = B.did")
-                .where("B.base_user_id = ?", uid)
-                .limit(pageIndex, pageSize)
-                .queryForList(ProductInfo.class);
+                .where("A.dealer = ?", dealer)
+                .queryForList(UserProduct.class);
     }
 
     @Override
     public List<UserProduct> listUserProduct(String uid) {
         return db.select()
                 .from(UserProduct.class)
-                .where("base_user_id = ?", uid)
+                .where("uid = ?", uid)
                 .queryForList(UserProduct.class);
+    }
+
+    @Override
+    public List<InsonaUser> userList() {
+        return db.select()
+                .from(InsonaUser.class)
+                .queryForList(InsonaUser.class);
     }
 }

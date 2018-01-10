@@ -10,6 +10,7 @@ import com.jieweifu.models.insona.ProductDealer;
 import com.jieweifu.models.insona.Type;
 import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
+import com.jieweifu.services.admin.UserService;
 import com.jieweifu.services.insona.ProductDealerService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.TypeService;
@@ -34,6 +35,7 @@ public class ProductController {
     private RoleService roleService;
     private ProductDealerService productDealerService;
     private TypeService typeService;
+    private UserService userService;
 
     @Autowired
     public ProductController(ProductService productService,
@@ -180,7 +182,7 @@ public class ProductController {
         }
         try {
             for (String id : sale.getIds()) {
-                productService.setStatus(Integer.parseInt(id), status);
+                productService.setStatus(Integer.parseInt(id), status, sale.getSub_sale());
                 ProductDealer productDealer = new ProductDealer();
                 productDealer.setDealer(sale.getSub_sale());
                 productDealer.setProduct_id(id);
@@ -212,11 +214,11 @@ public class ProductController {
      * 设备类别
      */
     @GetMapping("type")
-    public Result getTypes(){
+    public Result getTypes() {
         List<Type> list;
-        try{
+        try {
             list = typeService.types();
-        }catch (Exception e){
+        } catch (Exception e) {
             return new Result().setError("获取类别出错");
         }
         return new Result().setData(list);

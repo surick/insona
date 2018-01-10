@@ -179,7 +179,6 @@
                     id: '',
                     did: '',
                     name: '',
-                    gizwit_info: '',
                     insona_online: '',
                     serial_code: '',
                     last_online: '',
@@ -219,9 +218,9 @@
                         align: 'center'
                     },
                     {
-                        title: '机智云',
-                        key: 'gizwit_info',
-                        width: 150,
+                        title: '设备类别',
+                        key: 'type',
+                        width: 130,
                         align: 'center'
                     },
                     {
@@ -237,7 +236,7 @@
                         align: 'center'
                     },
                     {
-                        width: 70,
+                        width: 90,
                         title: '状态',
                         align: 'center',
                         render: (h, params) => {
@@ -280,9 +279,9 @@
                         align: 'center'
                     },
                     {
-                        title: '机智云',
-                        key: 'gizwit_info',
-                        width: 150,
+                        title: '设备类别',
+                        key: 'type',
+                        width: 130,
                         align: 'center'
                     },
                     {
@@ -298,7 +297,7 @@
                         align: 'center'
                     },
                     {
-                        width: 70,
+                        width: 90,
                         title: '状态',
                         align: 'center',
                         render: (h, params) => {
@@ -397,15 +396,15 @@
                         align: 'center'
                     },
                     {
-                        title: '机智云',
-                        key: 'gizwit_info',
-                        width: 150,
-                        align: 'center'
-                    },
-                    {
                         title: '序列号',
                         key: 'serial_code',
                         width: 130,
+                        align: 'center'
+                    },
+                    {
+                        title: '设备类别',
+                        key: 'type',
+                        width: 150,
                         align: 'center'
                     },
                     {
@@ -512,8 +511,8 @@
                 this.reasonProduct = false;
                 Dealer.backProduct(this, this.reason).then(res => {
                     if (res.success) {
-                        this.getList();
                         this.getPass();
+                        this.getBack();
                     }
                 });
             },
@@ -555,6 +554,7 @@
                     if (res.success) {
                         this.getList();
                         this.getPass();
+                        this.getBack();
                     }
                 });
             },
@@ -602,6 +602,7 @@
                     if (res.success) {
                         this.getList();
                         this.getPass();
+                        this.getBack();
                     }
                 });
             }

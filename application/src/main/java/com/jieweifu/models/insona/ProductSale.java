@@ -13,10 +13,6 @@ public class ProductSale {
     private String did;
     @Column(columnName = "name")
     private String name;
-    @Column(columnName = "gizwit_info")
-    private String gizwit_info;
-    @Column(columnName = "gizwit_secret")
-    private String gizwit_secret;
     @Column(columnName = "insona_online")
     private String insona_online;
     @Column(columnName = "serial_code")
@@ -78,14 +74,6 @@ public class ProductSale {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getGizwit_info() {
-        return gizwit_info;
-    }
-
-    public void setGizwit_info(String gizwit_info) {
-        this.gizwit_info = gizwit_info;
     }
 
     public String getInsona_online() {
@@ -230,14 +218,6 @@ public class ProductSale {
 
     public void setExtract(String extract) {
         this.extract = extract;
-    }
-
-    public String getGizwit_secret() {
-        return gizwit_secret;
-    }
-
-    public void setGizwit_secret(String gizwit_secret) {
-        this.gizwit_secret = gizwit_secret;
     }
 
     public String getDealer() {

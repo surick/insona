@@ -4,11 +4,9 @@ import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
-import com.jieweifu.models.insona.InsonaProductUser;
-import com.jieweifu.models.insona.InsonaUser;
-import com.jieweifu.models.insona.Product;
-import com.jieweifu.models.insona.UserProduct;
+import com.jieweifu.models.insona.*;
 import com.jieweifu.services.admin.UserService;
+import com.jieweifu.services.insona.ProductSaleService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.TerminalUserService;
 import com.jieweifu.services.insona.UserProductService;
@@ -29,16 +27,19 @@ public class TerminalUserController {
     private ProductService productService;
     private UserService userService;
     private UserProductService userProductService;
+    private ProductSaleService productSaleService;
 
     @Autowired
     public TerminalUserController(TerminalUserService terminalUserService,
                                   ProductService productService,
                                   UserService userService,
-                                  UserProductService userProductService) {
+                                  UserProductService userProductService,
+                                  ProductSaleService productSaleService) {
         this.terminalUserService = terminalUserService;
         this.productService = productService;
         this.userService = userService;
         this.userProductService = userProductService;
+        this.productSaleService = productSaleService;
     }
 
     /**
@@ -51,23 +52,24 @@ public class TerminalUserController {
             return new Result().setError("页码或条目数不合法");
         //得到登录用户
         User user = BaseContextHandler.getUser();
-        //得到子厂商
+        //得到下级厂商
         List<User> userList = userService.getUserIds(user.getLabel());
+        //将自身加入集合
+        userList.add(user);
         //得到子厂商绑定的设备
-        List<UserProduct> productList = new ArrayList<>();
+        List<ProductSale> productList = new ArrayList<>();
         for (User user1 : userList) {
             System.out.println(user1.getId());
             try {
-                userProductService.listUserProduct(String.valueOf(user1.getId()));
-                productList.addAll(userProductService.listUserProduct(String.valueOf(user1.getId())));
+                productList.addAll(productSaleService.getList(user1.getName()));
             } catch (NullPointerException ignored) {
                 productList.add(null);
             }
         }
         //得到登录设备的用户关系
-        List<InsonaProductUser> users = new ArrayList<>();
-        for (UserProduct product : productList) {
-            users.addAll(terminalUserService.listUser(product.getDid()));
+        List<UserProduct> users = new ArrayList<>();
+        for (ProductSale product : productList) {
+            users.addAll(userProductService.getByDealer(product.getDealer()));
         }
         //取uid
         List<String> uids = new ArrayList<>();

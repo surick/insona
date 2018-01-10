@@ -33,5 +33,5 @@ public interface ProductService {
 
     int total(String status1, String status2);
 
-    void setStatus(int id, String status);
+    void setStatus(int id, String status,String name);
 }

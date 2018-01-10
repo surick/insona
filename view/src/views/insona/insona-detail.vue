@@ -14,8 +14,8 @@
             <span class="expand-value">{{ row.technology }}</span>
             </Col>
             <Col span="6">
-            <span class="expand-key">通讯类型：</span>
-            <span class="expand-value">{{ row.communication }}</span>
+            <span class="expand-key">备注：</span>
+            <span class="expand-value">{{ row.remark }}</span>
             </Col>
             <Col span="6" class="margin-top-10">
             <span class="expand-key">创建人：</span>

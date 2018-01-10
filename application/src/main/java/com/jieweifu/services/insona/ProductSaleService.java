@@ -13,17 +13,19 @@ public interface ProductSaleService {
 
     void updateProduct(ProductSale productSale);
 
-    List<ProductSale> getList(int pageIndex,int pageSize);
+    List<ProductSale> getList(int pageIndex,int pageSize,String dealer);
 
-    int total();
+    List<ProductSale> getList(String dealer);
 
-    List<Product> getPass(int pageIndex,int pageSize,int userId);
+    int total(String dealer);
 
-    int passTotal();
+    List<Product> getPass(int pageIndex,int pageSize,String name);
 
-    List<Product> getBack(int pageIndex,int pageSize);
+    int passTotal(String name);
 
-    int backTotal();
+    List<Product> getBack(int pageIndex,int pageSize,String name);
+
+    int backTotal(String name);
 
     void saveProduct(ProductSale productSale);
 

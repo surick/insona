@@ -71,15 +71,40 @@
                     <div class="input-label">生产日期</div>
                     </Col>
                     <Col span="18">
-                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time"  style="width:344px"></DatePicker>
+                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time"
+                                style="width:344px"></DatePicker>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">生产批号</div>
+                    <div class="input-label">appid</div>
                     </Col>
                     <Col span="18">
-                    <Input v-model="type.make_no" placeholder="生产批号"></Input>
+                    <Input v-model="type.appid" placeholder="appid"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">secret</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.appsecret" placeholder="asecret"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">key</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.product_key" placeholder="product_key"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">批次</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.batch" placeholder="批次"></Input>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -87,7 +112,8 @@
                     <div class="input-label">入库时间</div>
                     </Col>
                     <Col span="18">
-                    <DatePicker type="date" placeholder="入库时间" v-model="type.into_time" style="width:344px"></DatePicker>
+                    <DatePicker type="date" placeholder="入库时间" v-model="type.into_time"
+                                style="width:344px"></DatePicker>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -162,13 +188,16 @@
                     maker: '',
                     model_no: '',
                     make_time: '',
-                    make_no: '',
+                    appid: '',
+                    appsecret: '',
+                    product_key: '',
                     into_time: '',
                     person: '',
                     technology: '',
                     communication: '',
                     enable: '',
-                    remark: ''
+                    remark: '',
+                    batch: ''
                 },
                 columns: [
                     {
@@ -180,31 +209,31 @@
                     {
                         title: '类型名称',
                         key: 'type_name',
-                        width: 150,
+                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '生产商',
                         key: 'maker',
-                        width: 150,
+                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '型号',
                         key: 'model_no',
-                        width: 150,
-                        align: 'center'
-                    },
-                    {
-                        title: '生产日期',
-                        key: 'make_time',
                         width: 130,
                         align: 'center'
                     },
                     {
-                        title: '生产批号',
-                        key: 'make_no',
-                        width: 140,
+                        title: '通讯类型',
+                        key: 'communication',
+                        width: 130,
+                        align: 'center'
+                    },
+                    {
+                        title: '生产批次',
+                        key: 'batch',
+                        width: 130,
                         align: 'center'
                     },
                     {
@@ -220,16 +249,36 @@
                     {
                         title: '操作',
                         key: 'action',
-                        width: 200,
+                        width: 270,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
                                 h('Button', {
                                     props: {
-                                        type: 'ghost'
+                                        type: 'success'
                                     },
                                     style: {
-                                        marginRight: '10px'
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.newType(params.row);
+                                        }
+                                    }
+                                }, [
+                                    h('Icon', {
+                                        style: {
+                                            marginRight: '5px'
+                                        }
+                                    }),
+                                    '新批次'
+                                ]),
+                                h('Button', {
+                                    props: {
+                                        type: 'primary'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
                                     },
                                     on: {
                                         click: () => {
@@ -249,10 +298,10 @@
                                 ]),
                                 h('Button', {
                                     props: {
-                                        type: 'ghost'
+                                        type: 'error'
                                     },
                                     style: {
-                                        marginRight: '10px'
+                                        marginRight: '5px'
                                     },
                                     on: {
                                         click: () => {
@@ -262,7 +311,7 @@
                                 }, [
                                     h('Icon', {
                                         props: {
-                                            type: 'edit'
+                                            type: 'trash-a'
                                         },
                                         style: {
                                             marginRight: '5px'
@@ -327,13 +376,16 @@
                     maker: '',
                     model_no: '',
                     make_time: '',
-                    make_no: '',
+                    appid: '',
+                    appsecret: '',
+                    product_key: '',
                     into_time: '',
                     person: '',
                     technology: '',
                     communication: '',
                     enable: true,
-                    remark: ''
+                    remark: '',
+                    batch: '1'
                 };
             },
             saveType() {
@@ -363,13 +415,16 @@
                     maker: obj.maker,
                     model_no: obj.model_no,
                     make_time: obj.make_time,
-                    make_no: obj.make_no,
+                    appid: obj.appid,
+                    appsecret: obj.appsecret,
+                    product_key: obj.product_key,
                     into_time: obj.into_time,
                     person: obj.person,
                     technology: obj.technology,
                     communication: obj.communication,
                     enable: obj.enable,
-                    remark: obj.remark
+                    remark: obj.remark,
+                    batch: obj.batch
                 };
                 this.addOrEdit = 1;
                 this.addAndEditModal = true;
@@ -387,7 +442,7 @@
                 }
                 this.$Modal.confirm({
                     title: '提示',
-                    content: '确定删除用户？',
+                    content: '确定删除该类别？',
                     okText: '确定',
                     cancelText: '取消',
                     onOk: () => {
@@ -395,6 +450,11 @@
                             if (res.success) this.getTypes();
                         });
                     }
+                });
+            },
+            newType(obj) {
+                Type.newType(this, obj).then((res) => {
+                    if (res.success) this.getTypes();
                 });
             }
         }
