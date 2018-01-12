@@ -7,6 +7,14 @@
             </Col>
         </Row>
     </div>
+    <div>
+        <Row class="expand-row">
+            <Col>
+            <span class="expand-key">详细信息：</span>
+            <span class="expand-value">{{ row.reason }}</span>
+            </Col>
+        </Row>
+    </div>
 </template>
 <script>
     export default {
