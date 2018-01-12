@@ -26,7 +26,7 @@ public class CorsFilterConfig implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain   chain) throws IOException, ServletException {
         if (Arrays.stream(environment.getActiveProfiles()).filter(profile -> profile.equalsIgnoreCase("dev")).count() > 0) {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setHeader("Access-Control-Allow-Origin", "*");

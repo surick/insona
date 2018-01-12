@@ -138,9 +138,9 @@ public class ProductController {
         List<Product> list = null;
         int total = 0;
         Map<String, Object> map = new HashMap<>();
-        if (role.getRoleName().equals("生产商")) {
+        if (role.getRoleName().equals("生产商") || role.getRoleName().equals("管理员") || role.getRoleName().equals("超级管理员")) {
             try {
-                list = productService.listProducts("0", "2");
+                list = productService.getProducts(pageIndex, pageSize);
                 total = productService.total("0", "2");
                 map.put("list", list);
                 map.put("total", total);
@@ -152,16 +152,6 @@ public class ProductController {
             try {
                 list = productService.listProducts("1");
                 total = productService.total("1");
-                map.put("list", list);
-                map.put("total", total);
-                return new Result().setData(map);
-            } catch (Exception e) {
-                return new Result().setError("系统繁忙，请刷新后重试");
-            }
-        } else if (role.getRoleName().equals("管理员") || role.getRoleName().equals("超级管理员")) {
-            try {
-                list = productService.getProducts(pageIndex, pageSize);
-                total = productService.total();
                 map.put("list", list);
                 map.put("total", total);
                 return new Result().setData(map);

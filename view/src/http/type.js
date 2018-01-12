@@ -33,7 +33,6 @@ export default {
                 appsecret: obj.appsecret,
                 product_key: obj.product_key,
                 into_time: obj.into_time,
-                person: obj.person,
                 technology: obj.technology,
                 communication: obj.communication,
                 enable: obj.enable ? 1 : 0,
@@ -48,18 +47,6 @@ export default {
             method: 'DELETE',
             url: '/insona/type/remove',
             data: ids
-        });
-    },
-    getType(vm, id) {
-        return new Promise((resolve, reject) => {
-            ajax(vm, {
-                method: 'GET',
-                url: '/insona/type/get' + id
-            }).then(res => {
-                if (res.success) {
-                    resolve(res);
-                }
-            });
         });
     },
     updateType(vm, id, obj) {
@@ -77,7 +64,6 @@ export default {
                 appsecret: obj.appsecret,
                 into_time: obj.into_time,
                 product_key: obj.product_key,
-                person: obj.person,
                 technology: obj.technology,
                 communication: obj.communication,
                 enable: obj.enable ? 1 : 0,

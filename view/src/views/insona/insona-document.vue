@@ -19,17 +19,17 @@
                     <Icon type="trash-a"></Icon>
                     删除
                 </Button>
-                <access-ctrl :name="'SYS_SALE'" ref="access">
+                <access-ctrl :name="'SYS_INS_SALE'" ref="access">
                     <Button type="primary" icon="ios-search" @click="saleDocument()">
                         经销商文件
                     </Button>
                 </access-ctrl>
-                <access-ctrl :name="'SYS_MAKE'" ref="access">
+                <access-ctrl :name="'SYS_INS_MAKE'" ref="access">
                     <Button type="info" icon="ios-search" @click="makeDocument()">
                         生产商文件
                     </Button>
                 </access-ctrl>
-                <access-ctrl :name="'SYS_OTHER'" ref="access">
+                <access-ctrl :name="'SYS_INS_OTHER'" ref="access">
                     <Button type="warning" icon="ios-search" @click="otherDocument()">
                         其他文件
                     </Button>
@@ -61,9 +61,7 @@
                     <div class="input-label">可用设备</div>
                     </Col>
                     <Select v-model="document.fileType" filterable style="width: 250px">
-                        <Option v-for="item in types" :value="item.id" :key="item.type_id">
-                            {{ item.type_name }}
-                        </Option>
+                        <Option v-for="item in types" :value="item.type_name+item.batch" :key="item.type_name+item.batch">{{ item.type_name }}{{ item.batch }}</Option>
                     </Select>
                     </Col>
                 </Row>
@@ -106,7 +104,6 @@
 <script>
     import expandRow from './insona-expand.vue';
     import Document from '../../http/document.js';
-    import UserDT from '../../http/user-product.js';
     import ipconfig from '@/config/ipconfig';
 
     export default {
@@ -250,9 +247,10 @@
                 };
             },
             getTypes() {
-                UserDT.getTypes(this).then((res) => {
+                Document.types(this).then((res) => {
                     if (res.success) {
                         this.types = res.data;
+                        console.log(this.types);
                     }
                 });
             },
@@ -305,42 +303,6 @@
                     }
                 });
             },
-            editDocument(document) {
-                this.addOrEdit = 1;
-                this.addAndEditModal = true;
-                this.editId = document.id;
-                this.document = {
-                    name: document.name,
-                    fileUrl: document.fileUrl,
-                    fileType: document.fileType,
-                    sortNo: document.sortNo,
-                    isDelete: 0
-                };
-            },
-            saveDocument() {
-                if (this.addOrEdit === 0) {
-                    if (this.$commonFun.checkObject(this.document, ['name'])) {
-                        return this.$Message.warning('请将信息填写完整！');
-                    }
-                    Document.addDocument(this, this.document).then(res => {
-                        if (res.success) {
-                            this.addAndEditModal = false;
-                            this.getDocument();
-                        }
-                    });
-                } else {
-                    if (this.$commonFun.checkObject(this.document, ['fileUrl'])) {
-                        return this.$Message.warning('请将信息填写完整！');
-                    }
-
-                    Document.updateDocument(this, this.editId, this.document).then(res => {
-                        if (res.success) {
-                            this.addAndEditModal = false;
-                            this.getDocument();
-                        }
-                    });
-                }
-            },
             deleteDocument(ids) {
                 if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
                 if (!ids && this.selected.length > 0) {
@@ -350,7 +312,7 @@
                 }
                 this.$Modal.confirm({
                     title: '提示',
-                    content: '确定删除用户？',
+                    content: '确定删除文件？',
                     okText: '确定',
                     cancelText: '取消',
                     onOk: () => {

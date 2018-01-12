@@ -127,6 +127,7 @@ public class DocumentServiceImpl implements DocumentService {
     public List<Document> allList(int pageIndex, int pageSize) {
         return db.select()
                 .from(Document.class)
+                .where("is_deleted = 0")
                 .limit(pageIndex, pageSize)
                 .queryForList(Document.class);
     }

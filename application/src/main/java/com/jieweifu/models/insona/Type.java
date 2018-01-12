@@ -34,9 +34,6 @@ public class Type {
     private String product_key;
     @Column(columnName = "into_time")
     private String into_time;
-    @NotBlank(message = "请填写操作人")
-    @Column(columnName = "person")
-    private String person;
     @NotBlank(message = "请填写技术方案")
     @Column(columnName = "technology")
     private String technology;
@@ -143,14 +140,6 @@ public class Type {
 
     public void setInto_time(String into_time) {
         this.into_time = into_time;
-    }
-
-    public String getPerson() {
-        return person;
-    }
-
-    public void setPerson(String person) {
-        this.person = person;
     }
 
     public String getTechnology() {

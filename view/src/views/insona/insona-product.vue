@@ -10,18 +10,24 @@
                 设备出厂
             </div>
             <div slot="extra">
+                <access-ctrl :name="'SYS_INS_ADD'" ref="access">
                 <Button type="primary" @click="addProduct()">
                     <Icon type="android-add"></Icon>
                     新建
                 </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_INS_MOVE'" ref="access">
                 <Button type="error" @click="deleteProduct()">
                     <Icon type="trash-a"></Icon>
                     删除
                 </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_INS_PAY'" ref="access">
                     <Button type="primary" @click="sale()">
                         <Icon type="android-add"></Icon>
                         销售
                     </Button>
+                </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">
@@ -87,13 +93,11 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">类别id</div>
+                    <div class="input-label">设备类别</div>
                     </Col>
                     <Col span="18">
-                    <Select v-model="product.type" filterable style="width: auto">
-                        <Option v-for="item in types" :value="item.id" :key="item.type_id">
-                            {{ item.type_name }}
-                        </Option>
+                    <Select v-model="product.type" filterable>
+                        <Option v-for="item in types" :value="item.type_name+item.batch" :key="item.type_name+item.batch">{{ item.type_name }}{{ item.batch }}</Option>
                     </Select>
                     </Col>
                 </Row>

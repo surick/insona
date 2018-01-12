@@ -47,10 +47,21 @@ public class MenuController {
         return new Result().setData(menuList);
     }
 
+    public List<Menu> getAll() {
+        List<Menu> pMenuList = menuService.getMenuByParentId(-1);
+        List<Menu> menuList = new ArrayList<>();
+        pMenuList.forEach(
+                menu -> {
+                    Menu menu1 = getMenuTree(menu.getId());
+                    menuList.add(menu1);
+                }
+        );
+        return menuList;
+    }
     /**
      * 递归生成Tree
      */
-    private Menu getMenuTree(int cid) {
+    public Menu getMenuTree(int cid) {
         Menu pMenu = menuService.getMenuById(cid);
         List<Menu> cMenuList = menuService.getMenuByParentId(pMenu.getId());
         for (Menu Menu : cMenuList) {

@@ -68,5 +68,17 @@ export default {
                 }
             });
         });
+    },
+    types(vm) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/type/types'
+            }).then((res) => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
     }
 };

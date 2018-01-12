@@ -68,15 +68,6 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">生产日期</div>
-                    </Col>
-                    <Col span="18">
-                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time"
-                                style="width:344px"></DatePicker>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
                     <div class="input-label">appid</div>
                     </Col>
                     <Col span="18">
@@ -107,23 +98,7 @@
                     <Input v-model="type.batch" placeholder="批次"></Input>
                     </Col>
                 </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">入库时间</div>
-                    </Col>
-                    <Col span="18">
-                    <DatePicker type="date" placeholder="入库时间" v-model="type.into_time"
-                                style="width:344px"></DatePicker>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
-                    <div class="input-label">操作人</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="type.person" placeholder="操作人"></Input>
-                    </Col>
-                </Row>
+
                 <Row class="margin-bottom-10">
                     <Col span="6">
                     <div class="input-label">技术方案</div>
@@ -138,6 +113,22 @@
                     </Col>
                     <Col span="18">
                     <Input v-model="type.communication" placeholder="通讯类型"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">生产日期</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time"></DatePicker>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">入库时间</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" placeholder="入库时间" v-model="type.into_time" style="width: auto"></DatePicker>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -192,7 +183,6 @@
                     appsecret: '',
                     product_key: '',
                     into_time: '',
-                    person: '',
                     technology: '',
                     communication: '',
                     enable: '',
@@ -380,12 +370,11 @@
                     appsecret: '',
                     product_key: '',
                     into_time: '',
-                    person: '',
                     technology: '',
                     communication: '',
                     enable: true,
                     remark: '',
-                    batch: '1'
+                    batch: ''
                 };
             },
             saveType() {
@@ -419,7 +408,6 @@
                     appsecret: obj.appsecret,
                     product_key: obj.product_key,
                     into_time: obj.into_time,
-                    person: obj.person,
                     technology: obj.technology,
                     communication: obj.communication,
                     enable: obj.enable,
@@ -453,9 +441,24 @@
                 });
             },
             newType(obj) {
-                Type.newType(this, obj).then((res) => {
-                    if (res.success) this.getTypes();
-                });
+                this.type = {
+                    type_id: obj.type_id,
+                    type_name: obj.type_name,
+                    maker: obj.maker,
+                    model_no: obj.model_no,
+                    make_time: obj.make_time,
+                    appid: obj.appid,
+                    appsecret: obj.appsecret,
+                    product_key: obj.product_key,
+                    into_time: obj.into_time,
+                    technology: obj.technology,
+                    communication: obj.communication,
+                    enable: obj.enable,
+                    remark: obj.remark,
+                    batch: ''
+                };
+                this.addOrEdit = 0;
+                this.addAndEditModal = true;
             }
         }
     };

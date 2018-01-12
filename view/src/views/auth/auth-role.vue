@@ -150,7 +150,7 @@
             :mask-closable="false"
             @on-ok="saveAuth">
             <div class="modal-body">
-                <Tree ref="authTree" :data="authData" show-checkbox @on-select-change="treeAuthSelect"></Tree>
+                <Tree ref="authTree" :data="authData" show-checkbox multiple @on-select-change="treeAuthSelect"></Tree>
             </div>
         </Modal>
     </div>
@@ -175,8 +175,8 @@
                 roleData: [],
                 roleDetail: {
                     id: '',
-                    parentId: '',
                     title: '',
+                    parentId: '',
                     code: '',
                     status: true
                 },
@@ -223,31 +223,29 @@
                     }
                 });
             },
-            getAuthTree() {
-                Role.getAuthTree(this).then(res => {
+            getAuthTree(id) {
+                Role.getAuthTree(this, id).then(res => {
                     if (res.success) {
                         this.authData = Role.dealAuthTree(res.data);
+                        console.log(res);
                     }
                 });
             },
             treeAuthSelect(node) {
                 this.authDetail = node;
-                console.log(node);
             },
             updateRole() {
-                console.log(this.roleDetail);
                 Role.updateRole(this, this.roleDetail);
                 this.getRoleTree();
             },
             treeNodeSelect(node) {
                 this.roleDetail = {
-                    title: node[0].title,
                     parentId: node[0].parentId,
+                    title: node[0].title,
                     code: node[0].code,
                     id: node[0].id,
                     status: true
                 };
-                console.log(node);
             },
             saveAdd() {
                 if (this.addRoleEdit === 0) {
@@ -256,7 +254,6 @@
                     }
                     Role.addRole(this, this.addRoleDetail).then(res => {
                         if (res.success) {
-                            console.log(this.addRoleDetail);
                             this.addModal = false;
                             this.addRoleDetail = {};
                             this.getRoleTree();
@@ -279,7 +276,7 @@
                 this.addModal = true;
             },
             authSet() {
-                this.getAuthTree();
+                this.getAuthTree(this.roleDetail.id);
                 this.authModal = true;
             },
             saveAuth() {
@@ -292,12 +289,10 @@
                 let codes = auth.map(item => {
                     return item.code;
                 });
-                console.log('code=' + codes);
                 this.authDetail = {
                     codes: codes,
                     roleId: roleId[0]
                 };
-                console.log(this.authDetail);
                 Role.saveAuth(this, this.authDetail);
                 this.getRoleTree();
             },

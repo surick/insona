@@ -100,8 +100,6 @@ public class User {
 
     @Column(columnName = "type")
     private String type;
-    @Column(columnName = "gizwits")
-    private String gizwits;
     @Column(columnName = "qq")
     private String qq;
     @Column(columnName = "wechat")
@@ -119,14 +117,6 @@ public class User {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getGizwits() {
-        return gizwits;
-    }
-
-    public void setGizwits(String gizwits) {
-        this.gizwits = gizwits;
     }
 
     public String getQq() {

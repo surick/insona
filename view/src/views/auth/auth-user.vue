@@ -115,14 +115,6 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">机智云账号</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="user.gizwits" placeholder="机智云账号"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
                     <div class="input-label">QQ账号</div>
                     </Col>
                     <Col span="18">
@@ -244,7 +236,6 @@
                     label: '0',
                     status: true,
                     type: '未知',
-                    gizwits: '',
                     qq: '',
                     wechat: '',
                     phone: '',
@@ -536,7 +527,6 @@
                     label: user.label,
                     status: user.status === 1,
                     type: user.type,
-                    gizwits: user.gizwits,
                     qq: user.qq,
                     wechat: user.wechat,
                     phone: user.phone,
@@ -561,7 +551,6 @@
                     label: '0',
                     status: true,
                     type: '未知',
-                    gizwits: '',
                     qq: '',
                     wechat: '',
                     phone: '',

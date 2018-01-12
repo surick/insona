@@ -299,4 +299,24 @@ public class Menu {
     public List<Menu> getChildren() {
         return children;
     }
+    @Column(insert = false, update = false)
+    private boolean selected;
+
+    private boolean checked;
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 }

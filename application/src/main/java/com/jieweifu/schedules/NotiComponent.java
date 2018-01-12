@@ -36,27 +36,27 @@ public class NotiComponent {
     public void start(){
 
         List<LoginData> loginDataList = new ArrayList<>();
-
+        List<Events> events = new ArrayList<>();
+        events.add(Events.getEvent("device.online"));
+        events.add(Events.getEvent("device.offline"));
+        events.add(Events.getEvent("device.status.kv"));
         List<Type> list = typeService.types();
-       /* for (Type type : list) {
+        for (Type type : list) {
             LoginData loginData = new LoginData();
             loginData.setAuthId(type.getAppid());
             loginData.setAuthSecret(type.getAppsecret());
             loginData.setProductKey(type.getProduct_key());
             loginData.setSubkey("client");
+            loginData.setEvents(events);
             loginDataList.add(loginData);
-        }*/
-        LoginData loginData = new LoginData();
+        }
+        /*LoginData loginData = new LoginData();
         loginData.setAuthId(list.get(0).getAppid());
         loginData.setAuthSecret(list.get(0).getAppsecret());
         loginData.setProductKey(list.get(0).getProduct_key());
         loginData.setSubkey("client");
-        List<Events> events = new ArrayList<>();
-        events.add(Events.getEvent("device.online"));
-        events.add(Events.getEvent("device.offline"));
-        events.add(Events.getEvent("device.status.kv"));
         loginData.setEvents(events);
-        loginDataList.add(loginData);
+        loginDataList.add(loginData);*/
         //List<LoginData> dataList = Arrays.asList(new LoginData("34882cc6fb934695857bc88a53554039","SUBIlBYnRKemOq11xirDow","Lf68PPHBTPakV+MG/f0KHg","client",events));
         NotiClient notiClient = NotiClient
                 .build()

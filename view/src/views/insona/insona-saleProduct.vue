@@ -10,14 +10,18 @@
                 设备管理
             </div>
             <div slot="extra">
+                <access-ctrl :name="'SYS_INS_PASS'" ref="access">
                 <Button type="primary" @click="passProduct()">
                     <Icon type="android-add"></Icon>
                     待审批
                 </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_INS_BACK'" ref="access">
                 <Button type="primary" @click="backProduct()">
                     <Icon type="android-add"></Icon>
                     已退回
                 </Button>
+                </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">

@@ -35,6 +35,17 @@ public class Element implements Serializable {
     private String method;
     private String description;
 
+    @Column(insert = false, update = false)
+    private boolean selected;
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
     @Column(columnName = "crt_time")
     private String createTime;
 

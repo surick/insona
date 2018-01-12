@@ -2,11 +2,14 @@ package com.jieweifu.controllers.admin;
 
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
+import com.jieweifu.models.MenuElements;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.Element;
+import com.jieweifu.models.admin.Menu;
 import com.jieweifu.models.admin.RoleAuthority;
 import com.jieweifu.models.admin.Role;
 import com.jieweifu.services.admin.*;
+import com.jieweifu.vo.admin.MenuElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -151,7 +154,6 @@ public class RoleController {
         return new Result().setMessage("新增成功");
     }
 
-
     /**
      * 添加权限
      */
@@ -177,11 +179,20 @@ public class RoleController {
                                 roleAuthority1.setRoleId(Integer.parseInt(id));
                                 roleAuthorityService.addRoleAuthority(roleAuthority1);
                             }
-                            if (roleAuthorityService.getRoleAuth("MENU", 1, Integer.parseInt(id)) == null) {
+                            if (roleAuthorityService.getRoleAuth("MENU", 1, Integer.parseInt(id)) == null
+                                    && !cd.startsWith("SYS_INS")) {
                                 RoleAuthority roleAuthority2 = new RoleAuthority();
                                 roleAuthority2.setRoleId(Integer.parseInt(id));
                                 roleAuthority2.setResourceType("MENU");
                                 roleAuthority2.setResourceId(1);
+                                roleAuthorityService.addRoleAuthority(roleAuthority2);
+                            }
+                            if (roleAuthorityService.getRoleAuth("MENU", 6, Integer.parseInt(id)) == null
+                                    && cd.startsWith("SYS_INS")) {
+                                RoleAuthority roleAuthority2 = new RoleAuthority();
+                                roleAuthority2.setRoleId(Integer.parseInt(id));
+                                roleAuthority2.setResourceType("MENU");
+                                roleAuthority2.setResourceId(6);
                                 roleAuthorityService.addRoleAuthority(roleAuthority2);
                             }
                             roleAuthority.setRoleId(Integer.parseInt(id));
@@ -189,8 +200,7 @@ public class RoleController {
                             roleAuthority.setResourceId(element.getId());
                             roleAuthorityService.addRoleAuthority(roleAuthority);
                         } else if (cd.startsWith("AUTH")) {
-                            if (roleAuthorityService.getRoleAuth(
-                                    "MENU", menuService.getMenuByCode(cd).getId(), Integer.parseInt(id)) == null) {
+                            if (roleAuthorityService.getRoleAuth("MENU", menuService.getMenuByCode(cd).getId(), Integer.parseInt(id)) == null) {
                                 RoleAuthority roleAuthority1 = new RoleAuthority();
                                 roleAuthority1.setResourceType("MENU");
                                 roleAuthority1.setResourceId(menuService.getMenuByCode(cd).getId());
@@ -217,8 +227,42 @@ public class RoleController {
      * 显示角色权限
      */
     @GetMapping("getUserPower/{id}")
+    @AdminAuthAnnotation(check = false)
     public Result getUserPower(@PathVariable("id") int roleId) {
-        return new Result().setData(roleAuthorityService.getMenuElements(roleId));
+        MenuController menuController = new MenuController(menuService, elementService);
+        //获取角色权限
+        MenuElements menuElements = roleAuthorityService.getMenuElements(roleId);
+        //获取所有权限
+        List<Menu> list = menuController.getAll();
+        //复制所有权限模板
+        List<Menu> menuList = new ArrayList<>();
+        //权限设置->auth1
+        Menu auth1 = list.get(0);
+        //英索纳管理->auth2
+        Menu auth2 = list.get(1);
+        //获取权限设置
+        menuList.add(get(auth1, menuElements));
+        //获取英索纳管理
+        menuList.add(get(auth2, menuElements));
+
+        return new Result().setData(menuList);
     }
 
+    //判断方法
+    public Menu get(Menu auth, MenuElements menuElements) {
+        Menu cAuth = auth;
+        for (int i = 0; i < auth.getChildren().size(); i++) {
+            //遍历菜单按钮
+            for (int j = 0; j < auth.getChildren().get(i).getChildren().size(); j++) {
+                //遍历已有权限
+                for (int k = 0; k < menuElements.getElements().size(); k++) {
+                    //设置已有权限按钮为true
+                    if (auth.getChildren().get(i).getChildren().get(j).getCode().equals(menuElements.getElements().get(k).getCode())) {
+                        cAuth.getChildren().get(i).getChildren().get(j).setChecked(true);
+                    }
+                }
+            }
+        }
+        return cAuth;
+    }
 }

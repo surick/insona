@@ -79,7 +79,7 @@ public class TypeController {
     }
 
     /**
-     * 获取所有类型
+     * 分页获取所有类型
      */
     @GetMapping("list/{pageIndex}/{pageSize}")
     public Result listTypes(@PathVariable("pageIndex") int pageIndex,
@@ -132,5 +132,19 @@ public class TypeController {
             return new Result().setError("系统繁忙，请刷新后重试");
         }
         return new Result().setData(type);
+    }
+
+    /**
+     * 获取设备类型
+     */
+    @GetMapping("types")
+    public Result types(){
+        List<Type> list;
+        try{
+            list = typeService.types();
+        }catch (Exception e){
+            return new Result().setError("获取设备类型错误");
+        }
+        return new Result().setData(list);
     }
 }

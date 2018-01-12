@@ -121,25 +121,16 @@ export const appRouter = [
                 component: resolve => {
                     require(['../views/auth/auth-role.vue'], resolve);
                 }
-            },
-
-            {
-                path: 'group',
-                title: '用户组管理',
-                name: 'AUTH_GROUP',
-                access: 'AUTH_GROUP',
-                component: resolve => {
-                    require(['../views/auth/auth-group.vue'], resolve);
-                }
             }
         ]
     },
 
     {
-        path: '/insona',
+        path: '/access',
         icon: 'key',
-        name: 'insona',
-        title: '英索纳',
+        name: 'AUTH_NONE',
+        access: 'AUTH_NONE',
+        title: '英索纳管理',
         component: Main,
         children: [
             {
@@ -150,7 +141,6 @@ export const appRouter = [
                     require(['../views/insona/insona-info.vue'], resolve);
                 }
             },
-
             {
                 path: 'home',
                 title: '家庭背景',
@@ -178,8 +168,8 @@ export const appRouter = [
             {
                 path: 'product',
                 title: '设备出厂',
-                name: 'PRODUCT',
-                access: 'PRODUCT',
+                name: 'AUTH_PRODUCT',
+                access: 'AUTH_PRODUCT',
                 component: resolve => {
                     require(['../views/insona/insona-product.vue'], resolve);
                 }
@@ -187,8 +177,8 @@ export const appRouter = [
             {
                 path: 'saleProduct',
                 title: '设备销售',
-                name: 'SALEPRODUCT',
-                access: 'SALEPRODUCT',
+                name: 'AUTH_SALEPRODUCT',
+                access: 'AUTH_SALEPRODUCT',
                 component: resolve => {
                     require(['../views/insona/insona-saleProduct.vue'], resolve);
                 }

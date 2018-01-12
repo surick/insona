@@ -7,10 +7,10 @@ export default {
             url: '/sys/role/listAllRoles'
         });
     },
-    getAuthTree(vm) {
+    getAuthTree(vm, id) {
         return ajax(vm, {
             method: 'GET',
-            url: '/sys/menu/listAllMenus'
+            url: '/sys/role/getUserPower/' + id
         });
     },
     dealAuthTree(tree) {
@@ -21,6 +21,8 @@ export default {
             if (item.children && item.children.length > 0) {
                 obj.children = this.dealAuthTree(item.children);
             }
+            obj.checked = item.checked;
+            obj.selected = item.selected;
             obj.resourceId = item.id;
             obj.title = item.title;
             obj.code = item.code;
