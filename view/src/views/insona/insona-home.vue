@@ -82,7 +82,7 @@
                             :before-upload="handleUpload"
                             :show-upload-list="false"
                             :data="this.home"
-                            action="http://192.168.3.163:8080/image/homeUpload">
+                            :action="this.configUrl+'/image/homeUpload'">
                             <Button type="ghost" icon="ios-cloud-upload-outline">选择图片</Button>
                             <Button type="text" :loading="loadingStatus">
                                 {{ loadingStatus ? '正在上传' : '待上传' }}
@@ -101,12 +101,14 @@
 <script>
     import expandRow from './insona-expand.vue';
     import Home from '../../http/insona-home.js';
+    import ipconfig from '@/config/ipconfig';
 
     export default {
         name: 'other_home',
         components: {expandRow},
         data: function () {
             return {
+                configUrl: ipconfig.url,
                 uploadModal: false,
                 addAndEditModal: false,
                 addOrEdit: 0,
@@ -136,30 +138,27 @@
                     {
                         title: '家庭背景标题',
                         key: 'title',
-                        width: 230,
                         align: 'center'
                     },
                     {
                         title: '家庭背景链接',
                         key: 'imgUrl',
-                        width: 330,
                         align: 'center'
                     },
                     {
                         title: '家庭背景',
                         key: 'avatar',
-                        columns: {
-                            'width': '50px'
-                        },
+                        width: 135,
+                        align: 'center',
                         render: (h, params) => {
                             return h('div', [
                                 h('img', {
                                     attrs: {
-                                        src: 'http://192.168.3.163:8080' + params.row.imgUrl
+                                        src: this.configUrl + params.row.imgUrl.replace('home/', 'home/thumb/')
                                     },
                                     style: {
-                                        width: '40px',
-                                        height: '40px'
+                                        width: '100px',
+                                        height: '100px'
                                     }
                                 })
                             ]);
@@ -168,7 +167,7 @@
                     {
                         title: '操作',
                         key: 'action',
-                        width: 330,
+                        width: 200,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [

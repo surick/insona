@@ -1,5 +1,6 @@
 package com.jieweifu.services.insona.Impl;
 
+import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.insona.InsonaProductUser;
 import com.jieweifu.models.insona.InsonaUser;
@@ -32,7 +33,7 @@ public class TerminalUserServiceImpl implements TerminalUserService {
     public InsonaUser getUserById(String id) {
         return db.select()
                 .from(InsonaUser.class)
-                .where("uid = ?", id)
+                .where("id = ?", id)
                 .queryForEntity(InsonaUser.class);
     }
 
@@ -65,5 +66,25 @@ public class TerminalUserServiceImpl implements TerminalUserService {
                 .from(InsonaProductUser.class)
                 .where("uid = ?", uid)
                 .queryForList(InsonaProductUser.class);
+    }
+
+    @Override
+    public void save(InsonaUser insonaUser) {
+        OperateHandler.assignCreateUser(insonaUser);
+        db.insert().save(insonaUser).execute();
+    }
+
+    @Override
+    public void update(InsonaUser insonaUser) {
+        db.update().save(insonaUser).execute();
+
+    }
+
+    @Override
+    public InsonaUser get(String username) {
+        return db.select()
+                .from(InsonaUser.class)
+                .where("username = ?",username)
+                .queryForEntity(InsonaUser.class);
     }
 }

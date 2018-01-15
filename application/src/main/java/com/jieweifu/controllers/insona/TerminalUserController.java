@@ -72,26 +72,26 @@ public class TerminalUserController {
             users.addAll(userProductService.getByDealer(product.getDealer()));
         }
         //取uid
-        List<String> uids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         users.forEach(
                 insonaProductUser ->
-                        uids.add(insonaProductUser.getUid())
+                        ids.add(insonaProductUser.getUid())
         );
         //去重
-        HashSet<String> h = new HashSet<>(uids);
-        uids.clear();
-        uids.addAll(h);
+        HashSet<String> h = new HashSet<>(ids);
+        ids.clear();
+        ids.addAll(h);
         //去空
-        for (int i = 0; i < uids.size(); i++) {
+        for (int i = 0; i < ids.size(); i++) {
             if (users.get(i) == null) {
-                uids.remove(i);
+                ids.remove(i);
             }
         }
         //查用户 ->id
         List<InsonaUser> listUser = new ArrayList<>();
-        uids.forEach(
-                uid -> {
-                    listUser.add(terminalUserService.getUserById(uid));
+        ids.forEach(
+                id -> {
+                    listUser.add(terminalUserService.getUserById(id));
                 }
         );
         //手动分页

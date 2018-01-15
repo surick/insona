@@ -175,31 +175,26 @@
                     {
                         title: '设备did',
                         key: 'did',
-                        width: 150,
                         align: 'center'
                     },
                     {
                         title: '设备名称',
                         key: 'name',
-                        width: 150,
                         align: 'center'
                     },
                     {
                         title: '设备类别',
                         key: 'type',
-                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '生产商',
                         key: 'sub_inter',
-                        width: 150,
                         align: 'center'
                     },
                     {
                         title: '版本号',
                         key: 'version',
-                        width: 140,
                         align: 'center'
                     },
                     {

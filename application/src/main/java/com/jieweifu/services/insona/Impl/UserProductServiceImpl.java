@@ -73,10 +73,10 @@ public class UserProductServiceImpl implements UserProductService {
     @Override
     public List<UserProduct> getByDealer(String dealer) {
         return db.select()
-                .columns("B.*")
-                .from(ProductSale.class, "A")
-                .leftOuterJoin(UserProduct.class, "B", "A.did = B.did")
-                .where("A.dealer = ?", dealer)
+                .columns("A.*")
+                .from(UserProduct.class, "A")
+                .leftOuterJoin(ProductSale.class, "B", "A.did = B.did")
+                .where("B.dealer = ?", dealer)
                 .queryForList(UserProduct.class);
     }
 

@@ -199,31 +199,26 @@
                     {
                         title: '类型名称',
                         key: 'type_name',
-                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '生产商',
                         key: 'maker',
-                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '型号',
                         key: 'model_no',
-                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '通讯类型',
                         key: 'communication',
-                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '生产批次',
                         key: 'batch',
-                        width: 130,
                         align: 'center'
                     },
                     {

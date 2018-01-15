@@ -73,7 +73,6 @@
                     {
                         title: '设备did',
                         key: 'did',
-                        width: 180,
                         align: 'center'
                     },
                     {
@@ -109,31 +108,26 @@
                     {
                         title: '用户uid',
                         key: 'uid',
-                        width: 120,
                         align: 'center'
                     },
                     {
                         title: '用户名',
                         key: 'username',
-                        width: 180,
                         align: 'center'
                     },
                     {
                         title: '手机号',
                         key: 'phone',
-                        width: 180,
                         align: 'center'
                     },
                     {
                         title: '邮箱',
                         key: 'email',
-                        width: 160,
                         align: 'center'
                     },
                     {
                         title: '姓名',
                         key: 'name',
-                        width: 160,
                         align: 'center'
                     },
                     {
@@ -158,7 +152,7 @@
                                     },
                                     on: {
                                         click: () => {
-                                            this.getProducts(params.row.uid);
+                                            this.getProducts(params.row.id);
                                         }
                                     }
                                 }, [

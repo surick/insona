@@ -204,7 +204,8 @@
     export default {
         name: 'auth_user',
         components: {
-            expandRow},
+            expandRow
+        },
 
         data() {
             return {
@@ -285,31 +286,26 @@
                     {
                         title: '用户名',
                         key: 'userName',
-                        width: 120,
                         align: 'center'
                     },
                     {
                         title: '联系人',
                         key: 'name',
-                        width: 100,
                         align: 'center'
                     },
                     {
                         title: '手机号',
                         key: 'mobilePhone',
-                        width: 115,
                         align: 'center'
                     },
                     {
                         title: '用户分类',
                         key: 'type',
-                        width: 100,
                         align: 'center'
                     },
                     {
                         title: '详细地址',
                         key: 'address',
-                        width: 200,
                         align: 'center'
                     },
                     {

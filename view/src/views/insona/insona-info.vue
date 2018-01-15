@@ -109,19 +109,16 @@
                     {
                         title: '信息标题',
                         key: 'title',
-                        width: 230,
                         align: 'center'
                     },
                     {
                         title: '信息分类',
                         key: 'infoType',
-                        width: 220,
                         align: 'center'
                     },
                     {
                         title: '信息描述',
                         key: 'description',
-                        width: 230,
                         align: 'center'
                     },
                     {

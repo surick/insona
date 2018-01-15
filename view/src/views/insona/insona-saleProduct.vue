@@ -390,7 +390,6 @@
                     {
                         title: '设备did',
                         key: 'did',
-                        width: 150,
                         align: 'center'
                     },
                     {
@@ -402,19 +401,16 @@
                     {
                         title: '序列号',
                         key: 'serial_code',
-                        width: 130,
                         align: 'center'
                     },
                     {
                         title: '设备类别',
                         key: 'type',
-                        width: 150,
                         align: 'center'
                     },
                     {
                         title: '版本号',
                         key: 'version',
-                        width: 140,
                         align: 'center'
                     },
                     {
@@ -430,7 +426,7 @@
                     {
                         title: '操作',
                         key: 'action',
-                        width: 200,
+                        width: 110,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [

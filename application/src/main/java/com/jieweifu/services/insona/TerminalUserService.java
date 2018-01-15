@@ -20,4 +20,10 @@ public interface TerminalUserService {
     List<InsonaProductUser> listUser(String did);
 
     List<InsonaProductUser> listProducts(String uid);
+
+    void save(InsonaUser insonaUser);
+
+    void update(InsonaUser insonaUser);
+
+    InsonaUser get(String username);
 }

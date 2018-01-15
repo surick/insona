@@ -150,19 +150,16 @@
                     {
                         title: '文件标题',
                         key: 'name',
-                        width: 230,
                         align: 'center'
                     },
                     {
                         title: '文件链接',
                         key: 'fileUrl',
-                        width: 500,
                         align: 'center'
                     },
                     {
                         title: '文件类型',
                         key: 'fileType',
-                        width: 150,
                         align: 'center'
                     }, {
                         title: '操作',

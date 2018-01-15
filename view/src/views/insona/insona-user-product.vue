@@ -39,10 +39,8 @@
                     <div class="input-label">终端用户</div>
                     </Col>
                     <Col span="18">
-                    <Select v-model="userProduct.uid" filterable>
-                        <Option v-for="item in userDetail" :value="item.uid" :key="item.username">
-                            {{ item.username }}
-                        </Option>
+                    <Select v-model="userProduct.uid" filterable style="width: 250px">
+                        <Option v-for="item in userDetail" :value="item.id">{{ item.username }}</Option>
                     </Select>
                     </Col>
                 </Row>
@@ -51,9 +49,7 @@
                     <div class="input-label">可用设备</div>
                     </Col>
                     <Select v-model="userProduct.did" filterable style="width: 250px">
-                        <Option v-for="item in productDetail" :value="item.did" :key="item.name">
-                            {{ item.name }}
-                        </Option>
+                        <Option v-for="item in productDetail" :value="item.did">{{ item.name }}</Option>
                     </Select>
                     </Col>
                 </Row>
@@ -123,46 +119,38 @@
                     {
                         title: '用户uid',
                         key: 'uid',
-                        width: 160,
                         align: 'center'
                     },
                     {
                         title: '设备类型',
                         key: 'type',
-                        width: 180,
                         align: 'center'
                     },
                     {
                         title: '设备did',
                         key: 'did',
-                        width: 180,
                         align: 'center'
                     },
                     {
                         title: '设备名称',
                         key: 'name',
-                        width: 180,
                         align: 'center'
                     },
                     {
                         title: '经销商',
                         key: 'dealer',
-                        width: 180,
                         align: 'center'
                     },
                     {
                         title: '操作',
                         key: 'action',
-                        width: 180,
+                        width: 130,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
                                 h('Button', {
                                     props: {
                                         type: 'ghost'
-                                    },
-                                    style: {
-                                        marginRight: '10px'
                                     },
                                     on: {
                                         click: () => {
@@ -175,7 +163,7 @@
                                             type: 'edit'
                                         },
                                         style: {
-                                            marginRight: '5px'
+                                            marginRight: '10px'
                                         }
                                     }),
                                     '详情'

@@ -110,7 +110,6 @@
                     {
                         title: '标题',
                         key: 'title',
-                        width: 230,
                         align: 'center'
                     },
                     {
@@ -125,13 +124,11 @@
                     {
                         title: '推送人',
                         key: 'publishUser',
-                        width: 230,
                         align: 'center'
                     },
                     {
                         title: '推送时间',
                         key: 'publishTime',
-                        width: 230,
                         align: 'center'
                     },
                     {

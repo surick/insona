@@ -2,12 +2,17 @@ package com.jieweifu.models.insona;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import org.hibernate.validator.constraints.NotBlank;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "insona_user")
 public class InsonaUser {
     @Column(primaryKey = true)
+    private int id;
+    @NotBlank(message = "uid不能为空")
+    @Column(columnName = "uid")
     private String uid;
+    @NotBlank(message = "用户名不能为空")
     @Column(columnName = "username")
     private String username;
     @Column(columnName = "phone")
@@ -28,6 +33,14 @@ public class InsonaUser {
     private String remar;
     @Column(columnName = "is_anonymous")
     private int isAnonymous;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUid() {
         return uid;

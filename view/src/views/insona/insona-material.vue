@@ -150,13 +150,11 @@
                     {
                         title: '标题',
                         key: 'title',
-                        width: 230,
                         align: 'center'
                     },
                     {
                         title: '类型',
                         key: 'type',
-                        width: 100,
                         align: 'center'
                     },
                     {
@@ -172,18 +170,16 @@
                         title: '图片',
                         align: 'center',
                         key: 'avatar',
-                        columns: {
-                            'width': '50px'
-                        },
+                        width: 135,
                         render: (h, params) => {
                             return h('div', [
                                 h('img', {
                                     attrs: {
-                                        src: 'http://192.168.3.163:8080' + params.row.imgUrl
+                                        src: this.configUrl + params.row.imgUrl.replace('material/', 'material/thumb/')
                                     },
                                     style: {
-                                        width: '40px',
-                                        height: '40px'
+                                        width: '100px',
+                                        height: '100px'
                                     }
                                 })
                             ]);

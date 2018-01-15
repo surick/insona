@@ -3,10 +3,13 @@ package com.jieweifu.controllers.GizWits;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.common.utils.TemplateUtil;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.insona.InsonaUser;
 import com.jieweifu.models.insona.Url;
 import com.jieweifu.models.regex.Regex;
+import com.jieweifu.services.insona.TerminalUserService;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +34,13 @@ public class UsersController {
 
     private RedisUtil redisUtil;
     private Url url;
+    private TerminalUserService terminalUserService;
 
     @Autowired
-    public UsersController(RedisUtil redisUtil, Url url) {
+    public UsersController(RedisUtil redisUtil, Url url, TerminalUserService terminalUserService) {
         this.redisUtil = redisUtil;
         this.url = url;
+        this.terminalUserService = terminalUserService;
     }
 
 
@@ -94,6 +99,13 @@ public class UsersController {
         redisUtil.delete("GWUserToken");
         JSONObject jsonObject =
                 TemplateUtil.restHttp(url.getPostUser(), getHeader(), object, HttpMethod.POST);
+        if (!StringUtils.isBlank(String.valueOf(jsonObject.get("uid")))
+                && !StringUtils.isBlank(String.valueOf(jsonObject.get("username")))) {
+            InsonaUser insonaUser = new InsonaUser();
+            insonaUser.setUsername(String.valueOf(jsonObject.get("username")));
+            insonaUser.setUid(String.valueOf(jsonObject.get("uid")));
+            terminalUserService.save(insonaUser);
+        }
         return new Result().setData(jsonObject);
     }
 
@@ -117,7 +129,7 @@ public class UsersController {
      * birthday	string	否	body	生日，日期格式：YYYY-MM-DD or MM-DD
      * address	string	否	body	地址
      * lang 	string	否	body	语言版本en, zh-cn
-     * remar	string	否	body	备注
+     * remark	string	否	body	备注
      *
      * @return 返回值
      * 参数       	类型	    描述
@@ -125,11 +137,36 @@ public class UsersController {
      * token	    string	用户token
      * expire_at	integer	token过期时间（时间戳）
      */
-    @PutMapping("putUser}")
+    @PutMapping("putUser")
     public Result putUser(@RequestBody JSONObject object) {
         JSONObject result =
                 TemplateUtil.restHttp(url.getPutUser(), getHeader(), object, HttpMethod.PUT);
+        InsonaUser insonaUser = terminalUserService.get(getStr(object,"username"));
+        insonaUser.setUsername(getStr(object,"username"));
+        insonaUser.setPhone(getStr(object,"phone"));
+        insonaUser.setEmail(getStr(object,"email"));
+        insonaUser.setName(getStr(object,"name"));
+        insonaUser.setGender(getStr(object,"gender"));
+        insonaUser.setBirthday(getStr(object,"birthday"));
+        insonaUser.setAddress(getStr(object,"address"));
+        insonaUser.setLang(getStr(object,"lang"));
+        insonaUser.setRemar(getStr(object,"remark"));
+        terminalUserService.update(insonaUser);
         return new Result().setData(result);
+    }
+    String getStr(JSONObject object, String key) {
+        String result;
+        if (object.get(key) == null){
+            result = "";
+            return result;
+        }else {
+            try {
+                result = String.valueOf(object.get(key));
+            } catch (Exception e){
+                result = "";
+            }
+        }
+        return result;
     }
 
     /**
