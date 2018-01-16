@@ -72,32 +72,6 @@ public class UserProductController {
     }
 
     /**
-     * 经销商绑定设备,只能绑定自己uid的设备
-     *
-     * @param userProduct 设备
-     * @return message
-     *//*
-    @PostMapping("saveProduct")
-    public Result saveProduct(@Valid @RequestBody UserProduct userProduct) {
-        if (userProductService.getByDid(userProduct.getDid()) != null)
-            return new Result().setError("该设备已绑定");
-        Product product = null;
-        product = productService.getByDid(userProduct.getDid());
-        if (product == null)
-            return new Result().setError("设备不存在");
-        Result result = new Result();
-        redisUtil.lock("saveUserProduct", 3,
-                () -> {
-                    userProduct.setBaseUserId(String.valueOf(BaseContextHandler.getUserId()));
-                    userProduct.setUpdateDt(String.valueOf(System.currentTimeMillis()));
-                    userProductService.saveUserProduct(userProduct);
-                    result.setMessage("绑定成功");
-                },
-                () -> result.setError("绑定失败"));
-        return result;
-    }*/
-
-    /**
      * 分页查找全部经销商和其绑定的设备
      *
      * @param pageIndex 页码

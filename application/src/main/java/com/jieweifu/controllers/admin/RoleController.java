@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 用户角色接口
+ */
 @SuppressWarnings("unused")
 @RestController("SystemRole")
 @RequestMapping("sys/role")

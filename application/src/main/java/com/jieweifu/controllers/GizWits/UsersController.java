@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * 用户接口
+ */
 @SuppressWarnings("unused")
 @RestController("GizWitsUsers")
 @RequestMapping("giz/users")

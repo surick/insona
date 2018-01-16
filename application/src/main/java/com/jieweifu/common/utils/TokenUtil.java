@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * token验证工具集
+ */
 @SuppressWarnings("unused")
 @Service
 public class TokenUtil {
@@ -33,6 +36,7 @@ public class TokenUtil {
     private String publicKey;
 
     private RedisUtil redisUtil;
+
     private UserService userService;
 
     private static RsaKeyUtil rsaKeyUtil = new RsaKeyUtil();

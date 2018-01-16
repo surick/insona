@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * 分享接口
+ */
 @SuppressWarnings("unused")
 @RestController("GizWitsShare")
 @RequestMapping("giz/share")

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 设备绑定接口
+ */
 @SuppressWarnings("unused")
 @RestController("GizWitsBlind")
 @RequestMapping("giz/blind")

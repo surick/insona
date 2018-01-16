@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 场景接口
+ */
 @SuppressWarnings("unused")
 @RestController("GizWitsScene")
 @RequestMapping("giz/scene")

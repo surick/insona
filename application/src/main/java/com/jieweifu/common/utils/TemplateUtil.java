@@ -10,6 +10,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+/**
+ * https请求工具集
+ */
 public class TemplateUtil {
 
     /**

@@ -9,6 +9,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+/**
+ * http工具集（GET）
+ */
 public class HttpUtil {
 
     /**

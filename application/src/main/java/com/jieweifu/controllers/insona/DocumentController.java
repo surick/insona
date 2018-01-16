@@ -6,6 +6,7 @@ import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.Document;
 import com.jieweifu.services.insona.DocumentService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
@@ -85,7 +86,7 @@ public class DocumentController {
      */
     @GetMapping("AllDocumentByType")
     public Result AllDocumentByType(@Param("type") String type) {
-        if (type.length() < 1)
+        if (StringUtils.isBlank(type))
             return new Result().setError("type不能为空");
         List<Document> documentList = documentService.AllDocumentByType(type);
         return new Result().setData(documentList);

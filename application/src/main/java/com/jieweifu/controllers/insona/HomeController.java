@@ -4,6 +4,7 @@ import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.insona.Home;
 import com.jieweifu.services.insona.HomeService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
@@ -85,7 +86,7 @@ public class HomeController {
      */
     @GetMapping("AllHomeByTitle")
     public Result AllHomeByTitle(@Param("title") String title) {
-        if (title.length() < 1)
+        if (StringUtils.isBlank(title))
             return new Result().setError("title不能为空");
         Home home = homeService.getHomeByTitle(title);
         return new Result().setData(home);

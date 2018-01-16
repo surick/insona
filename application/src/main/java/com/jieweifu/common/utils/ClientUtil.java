@@ -2,6 +2,9 @@ package com.jieweifu.common.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 客户端操作方法
+ */
 public class ClientUtil {
     /**
      * 获取客户端真实ip

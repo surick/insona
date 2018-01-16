@@ -6,6 +6,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * 上传文件工具
+ */
 public class FileUtil {
     public static File uploadFile(MultipartFile mFile, String filePath, String fileName) throws Exception {
         SimpleDateFormat sdf =

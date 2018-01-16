@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * redis封装工具集
+ */
 @SuppressWarnings("SpellCheckingInspection")
 @Service
 public class RedisUtil {
