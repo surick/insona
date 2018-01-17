@@ -82,24 +82,27 @@ public class UsersController {
      * 必填:X-Gizwits-Application-Id
      * 类型   必填 参数类型  描述
      * phone_id	string	否	body	匿名标识,匿名注册的请求参数
-     * username	string	否	body	用户名,用户名密码注册的请求参数
-     * password	string	否	body	密码,用户名密码注册、手机注册、邮箱注册的请求参数
+     * username	string	是	body	用户名,用户名密码注册的请求参数
+     * password	string	是	body	密码,用户名密码注册、手机注册、邮箱注册的请求参数
      * email	string	否	body	邮件地址,邮箱注册的请求参数
-     * phone	string	否	body	手机号码,手机号码，手机注册的请求参数
+     * phone	string	是	body	手机号码,手机号码，手机注册的请求参数
      * code	    string	否	body	验证码,短信验证码，手机注册的请求参数
      * lang	    string	否	body	语言:en，zh-cn
      * src	    string	否	body	平台类型:qq,sina,baidu,wechat,twitter,facebook,google, amazon
      * uid	    string	否	body	第三方登录平台返回的uid
      * token	string	否	body	第三方登录平台返回的token
+     *
+     * username，password，phone为必填项
      */
     @PostMapping("postUser")
     public Result postUser(@RequestBody List<JSONObject> objects) {
         List<JSONObject> list = null;
         for(JSONObject object: objects){
-            String appid = String.valueOf(object.get("appid"));
-            if (appid == null || appid.equals("")) {
-                return new Result().setError("appid不能为空");
+            if (object.get("appid") == null || object.get("username") == null
+                    || object.get("password") == null) {
+                return new Result().setError("请填写必要参数");
             }
+            String appid = String.valueOf(object.get("appid"));
             //redisUtil.set("GWappid", appid);
             //redisUtil.delete("GWUserToken");
             //Map<String, String> map = getHeader();
