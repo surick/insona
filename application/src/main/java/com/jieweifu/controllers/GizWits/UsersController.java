@@ -99,12 +99,20 @@ public class UsersController {
         }
         redisUtil.set("GWappid", appid);
         redisUtil.delete("GWUserToken");
+        Map<String, String> map = getHeader();
+        map.remove("X-Gizwits-User-token");
         JSONObject jsonObject =
-                TemplateUtil.restHttp(url.getPostUser(), getHeader(), object, HttpMethod.POST);
-        if (!StringUtils.isBlank(String.valueOf(jsonObject.get("uid")))
-                && !StringUtils.isBlank(String.valueOf(jsonObject.get("username")))) {
+                TemplateUtil.restHttp(url.getPostUser(), map, object, HttpMethod.POST);
+        String userToken = jsonObject.get("token").toString();
+        Integer timeValue = Integer.valueOf(jsonObject.get("expire_at").toString()) - 20;
+        redisUtil.setEX("GWToken", userToken, timeValue, TimeUnit.MILLISECONDS);
+        if (jsonObject.get("uid") != null
+                && !StringUtils.isBlank(String.valueOf(object.get("phone")))
+                && object.get("phone") != null) {
+            redisUtil.setEX("phone", String.valueOf(object.get("phone")), timeValue, TimeUnit.MILLISECONDS);
             InsonaUser insonaUser = new InsonaUser();
-            insonaUser.setUsername(String.valueOf(jsonObject.get("username")));
+            insonaUser.setPhone(String.valueOf(object.get("phone")));
+            insonaUser.setUsername("手机用户"+String.valueOf(object.get("phone")));
             insonaUser.setUid(String.valueOf(jsonObject.get("uid")));
             terminalUserService.save(insonaUser);
         }
@@ -143,28 +151,30 @@ public class UsersController {
     public Result putUser(@RequestBody JSONObject object) {
         JSONObject result =
                 TemplateUtil.restHttp(url.getPutUser(), getHeader(), object, HttpMethod.PUT);
-        InsonaUser insonaUser = terminalUserService.get(getStr(object,"username"));
-        insonaUser.setUsername(getStr(object,"username"));
-        insonaUser.setPhone(getStr(object,"phone"));
-        insonaUser.setEmail(getStr(object,"email"));
-        insonaUser.setName(getStr(object,"name"));
-        insonaUser.setGender(getStr(object,"gender"));
-        insonaUser.setBirthday(getStr(object,"birthday"));
-        insonaUser.setAddress(getStr(object,"address"));
-        insonaUser.setLang(getStr(object,"lang"));
-        insonaUser.setRemar(getStr(object,"remark"));
+        String phone = String.valueOf(redisUtil.get("phone"));
+        InsonaUser insonaUser = terminalUserService.getByPhone(phone);
+        insonaUser.setUsername(getStr(object, "username"));
+        insonaUser.setPhone(getStr(object, "phone"));
+        insonaUser.setEmail(getStr(object, "email"));
+        insonaUser.setName(getStr(object, "name"));
+        insonaUser.setGender(getStr(object, "gender"));
+        insonaUser.setBirthday(getStr(object, "birthday"));
+        insonaUser.setAddress(getStr(object, "address"));
+        insonaUser.setLang(getStr(object, "lang"));
+        insonaUser.setRemar(getStr(object, "remark"));
         terminalUserService.update(insonaUser);
         return new Result().setData(result);
     }
+
     String getStr(JSONObject object, String key) {
         String result;
-        if (object.get(key) == null){
+        if (object.get(key) == null) {
             result = "";
             return result;
-        }else {
+        } else {
             try {
                 result = String.valueOf(object.get(key));
-            } catch (Exception e){
+            } catch (Exception e) {
                 result = "";
             }
         }
@@ -237,6 +247,7 @@ public class UsersController {
         String GWToken = jsonObject.get("token").toString();
         Integer timeValue = Integer.valueOf(String.valueOf(jsonObject.get("expired_at"))) - 20;
         redisUtil.setEX("GWToken", GWToken, timeValue, TimeUnit.MILLISECONDS);
+        redisUtil.set("GWappid", id);
         return new Result().setData(jsonObject);
     }
 
@@ -538,11 +549,17 @@ public class UsersController {
     }
 
     private Map<String, String> getHeader() {
-        String token = String.valueOf(redisUtil.get("GWUserToken"));
+        String token = null;
+        if (redisUtil.get("GWUserToken") != null) {
+            token = String.valueOf(redisUtil.get("GWUserToken"));
+        } else if (redisUtil.get("GWToken") != null) {
+            token = String.valueOf(redisUtil.get("GWToken"));
+        }
         Map<String, String> map = new HashMap<>();
         String appid = String.valueOf(redisUtil.get("GWappid"));
         map.put("X-Gizwits-Application-Id", appid);
-        map.put("X-Gizwits-User-token", token);
+        if (token != null)
+            map.put("X-Gizwits-User-token", token);
         return map;
     }
 }

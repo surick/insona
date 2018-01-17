@@ -87,4 +87,12 @@ public class TerminalUserServiceImpl implements TerminalUserService {
                 .where("username = ?",username)
                 .queryForEntity(InsonaUser.class);
     }
+
+    @Override
+    public InsonaUser getByPhone(String phone) {
+        return db.select()
+                .from(InsonaUser.class)
+                .where("phone = ?",phone)
+                .queryForEntity(InsonaUser.class);
+    }
 }

@@ -26,4 +26,6 @@ public interface TerminalUserService {
     void update(InsonaUser insonaUser);
 
     InsonaUser get(String username);
+
+    InsonaUser getByPhone(String phone);
 }
