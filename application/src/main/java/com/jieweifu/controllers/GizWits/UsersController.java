@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -92,31 +93,36 @@ public class UsersController {
      * token	string	否	body	第三方登录平台返回的token
      */
     @PostMapping("postUser")
-    public Result postUser(@RequestBody JSONObject object) {
-        String appid = String.valueOf(object.get("appid"));
-        if (appid == null || appid.equals("")) {
-            return new Result().setError("appid不能为空");
+    public Result postUser(@RequestBody List<JSONObject> objects) {
+        List<JSONObject> list = null;
+        for(JSONObject object: objects){
+            String appid = String.valueOf(object.get("appid"));
+            if (appid == null || appid.equals("")) {
+                return new Result().setError("appid不能为空");
+            }
+            //redisUtil.set("GWappid", appid);
+            //redisUtil.delete("GWUserToken");
+            //Map<String, String> map = getHeader();
+            //map.remove("X-Gizwits-User-token");
+            Map <String,String> map = new HashMap<>();
+            map.put("X-Gizwits-Application-Id",String.valueOf(object.get("appid")));
+            JSONObject jsonObject =
+                    TemplateUtil.restHttp(url.getPostUser(), map, object, HttpMethod.POST);
+            String userToken = jsonObject.get("token").toString();
+            Integer timeValue = Integer.valueOf(jsonObject.get("expire_at").toString()) - 20;
+            redisUtil.setEX("GWToken", userToken, timeValue, TimeUnit.MILLISECONDS);
+            if (jsonObject.get("uid") != null
+                    && object.get("username") != null
+                    && object.get("username") != null) {
+                InsonaUser insonaUser = new InsonaUser();
+                insonaUser.setPhone(String.valueOf(object.get("phone")));
+                insonaUser.setUsername(String.valueOf(object.get("username")));
+                insonaUser.setUid(String.valueOf(jsonObject.get("uid")));
+                terminalUserService.save(insonaUser);
+            }
+            list.add(jsonObject);
         }
-        redisUtil.set("GWappid", appid);
-        redisUtil.delete("GWUserToken");
-        Map<String, String> map = getHeader();
-        map.remove("X-Gizwits-User-token");
-        JSONObject jsonObject =
-                TemplateUtil.restHttp(url.getPostUser(), map, object, HttpMethod.POST);
-        String userToken = jsonObject.get("token").toString();
-        Integer timeValue = Integer.valueOf(jsonObject.get("expire_at").toString()) - 20;
-        redisUtil.setEX("GWToken", userToken, timeValue, TimeUnit.MILLISECONDS);
-        if (jsonObject.get("uid") != null
-                && !StringUtils.isBlank(String.valueOf(object.get("phone")))
-                && object.get("phone") != null) {
-            redisUtil.setEX("phone", String.valueOf(object.get("phone")), timeValue, TimeUnit.MILLISECONDS);
-            InsonaUser insonaUser = new InsonaUser();
-            insonaUser.setPhone(String.valueOf(object.get("phone")));
-            insonaUser.setUsername("手机用户"+String.valueOf(object.get("phone")));
-            insonaUser.setUid(String.valueOf(jsonObject.get("uid")));
-            terminalUserService.save(insonaUser);
-        }
-        return new Result().setData(jsonObject);
+        return new Result().setData(list);
     }
 
     /**
@@ -151,8 +157,7 @@ public class UsersController {
     public Result putUser(@RequestBody JSONObject object) {
         JSONObject result =
                 TemplateUtil.restHttp(url.getPutUser(), getHeader(), object, HttpMethod.PUT);
-        String phone = String.valueOf(redisUtil.get("phone"));
-        InsonaUser insonaUser = terminalUserService.getByPhone(phone);
+        InsonaUser insonaUser = terminalUserService.get(String.valueOf(object.get("username")));
         insonaUser.setUsername(getStr(object, "username"));
         insonaUser.setPhone(getStr(object, "phone"));
         insonaUser.setEmail(getStr(object, "email"));
