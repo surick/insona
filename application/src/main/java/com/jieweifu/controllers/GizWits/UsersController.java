@@ -96,8 +96,11 @@ public class UsersController {
      */
     @PostMapping("postUser")
     public Result postUser(@RequestBody List<JSONObject> objects) {
+        //用于存放返回值
         List<JSONObject> list = null;
+        //遍历用户集合
         for(JSONObject object: objects){
+            //判断参数
             if (object.get("appid") == null || object.get("username") == null
                     || object.get("password") == null) {
                 return new Result().setError("请填写必要参数");
@@ -111,6 +114,7 @@ public class UsersController {
             if (jsonObject.get("uid") != null && !StringUtils.isBlank(String.valueOf("uid"))
                     && object.get("username") != null && !StringUtils.isBlank(String.valueOf("username"))
                     && object.get("password") != null && !StringUtils.isBlank(String.valueOf("password"))) {
+                //生成用户信息
                 InsonaUser insonaUser = new InsonaUser();
                 insonaUser.setPhone(String.valueOf(object.get("phone")));
                 insonaUser.setUsername(String.valueOf(object.get("username")));
