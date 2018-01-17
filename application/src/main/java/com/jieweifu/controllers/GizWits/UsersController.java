@@ -103,20 +103,14 @@ public class UsersController {
                 return new Result().setError("请填写必要参数");
             }
             String appid = String.valueOf(object.get("appid"));
-            //redisUtil.set("GWappid", appid);
-            //redisUtil.delete("GWUserToken");
-            //Map<String, String> map = getHeader();
-            //map.remove("X-Gizwits-User-token");
             Map <String,String> map = new HashMap<>();
             map.put("X-Gizwits-Application-Id",String.valueOf(object.get("appid")));
             JSONObject jsonObject =
                     TemplateUtil.restHttp(url.getPostUser(), map, object, HttpMethod.POST);
             String userToken = jsonObject.get("token").toString();
-            Integer timeValue = Integer.valueOf(jsonObject.get("expire_at").toString()) - 20;
-            redisUtil.setEX("GWToken", userToken, timeValue, TimeUnit.MILLISECONDS);
-            if (jsonObject.get("uid") != null
-                    && object.get("username") != null
-                    && object.get("username") != null) {
+            if (jsonObject.get("uid") != null && !StringUtils.isBlank(String.valueOf("uid"))
+                    && object.get("username") != null && !StringUtils.isBlank(String.valueOf("username"))
+                    && object.get("password") != null && !StringUtils.isBlank(String.valueOf("password"))) {
                 InsonaUser insonaUser = new InsonaUser();
                 insonaUser.setPhone(String.valueOf(object.get("phone")));
                 insonaUser.setUsername(String.valueOf(object.get("username")));
