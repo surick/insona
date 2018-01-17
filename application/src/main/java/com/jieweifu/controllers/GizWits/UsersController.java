@@ -108,9 +108,10 @@ public class UsersController {
             String appid = String.valueOf(object.get("appid"));
             Map <String,String> map = new HashMap<>();
             map.put("X-Gizwits-Application-Id",String.valueOf(object.get("appid")));
+            //机智云注册
             JSONObject jsonObject =
                     TemplateUtil.restHttp(url.getPostUser(), map, object, HttpMethod.POST);
-            String userToken = jsonObject.get("token").toString();
+            //判断返回值
             if (jsonObject.get("uid") != null && !StringUtils.isBlank(String.valueOf("uid"))
                     && object.get("username") != null && !StringUtils.isBlank(String.valueOf("username"))
                     && object.get("password") != null && !StringUtils.isBlank(String.valueOf("password"))) {
