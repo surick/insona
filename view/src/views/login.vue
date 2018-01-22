@@ -1,7 +1,7 @@
 <template>
     <div class="login-background">
         <div class="login">
-            <img src="https://app.astralapp.com/images/logo.svg" alt="">
+            <img src="static/img/logo_title.png" alt="">
             <div class="input-box">
                 <input type="text" placeholder="账号" v-model="form.loginName" @keyup.enter="login">
             </div>
