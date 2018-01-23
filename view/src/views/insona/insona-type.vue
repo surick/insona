@@ -28,7 +28,6 @@
             </div>
         </Card>
 
-        <!-- 绑定与解绑 -->
         <Modal
             v-model="addAndEditModal"
             :title="['新增类别', '编辑类别'][addOrEdit]"
@@ -120,7 +119,7 @@
                     <div class="input-label">生产日期</div>
                     </Col>
                     <Col span="18">
-                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time"></DatePicker>
+                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time" @on-change="getDate"></DatePicker>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -128,7 +127,8 @@
                     <div class="input-label">入库时间</div>
                     </Col>
                     <Col span="18">
-                    <DatePicker type="date" placeholder="入库时间" v-model="type.into_time" style="width: auto"></DatePicker>
+                    <DatePicker type="date" :options="options1" :disabled=this.dateShow placeholder="入库时间" v-model="type.into_time"
+                                style="width: auto"></DatePicker>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -167,6 +167,9 @@
         components: {typeRow},
         data: function () {
             return {
+                dateShow: true,
+                options1: {
+                },
                 addAndEditModal: false,
                 addOrEdit: '',
                 editId: '',
@@ -334,6 +337,14 @@
             }
         },
         methods: {
+            getDate(value) {
+                this.dateShow = false;
+                this.options1 = {
+                    disabledDate(date) {
+                        return date && date.valueOf() < Date.parse(value.valueOf()) - 86400000;
+                    }
+                };
+            },
             getTypes() {
                 Type.getTypes(this, {
                     pageIndex: this.current - 1,
@@ -374,9 +385,6 @@
             },
             saveType() {
                 if (this.addOrEdit === 0) {
-                    if (this.$commonFun.checkObject(this.type, ['type_id'])) {
-                        return this.$Message.warning('请将信息填写完整！');
-                    }
                     Type.addType(this, this.type).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;

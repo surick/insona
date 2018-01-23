@@ -9,4 +9,5 @@ public class Regex {
     public static final String NOTNULL_REX = "^\\s*$";
     public static final String ALL_PHONE_REX = "^\\+[1-9]{1,3}1([34578])\\d{9}$";
     public static final String TYPE_ONE_ZERO = "[0,1]";
+    public static final String VERSION = "^\\d+(\\.\\d+)?$";
 }

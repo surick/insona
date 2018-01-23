@@ -66,7 +66,7 @@
                     <div class="input-label">内容</div>
                     </Col>
                     <Col span="18" style="line-height: 32px;">
-                    <froala :tag="'textarea'" :config="config" v-model="message.content">Init text</froala>
+                    <froala :tag="'textarea'" :config="config" v-model="material.content">Init text</froala>
                     </Col>
                 </Row>
             </div>
@@ -82,11 +82,16 @@
     import Message from '../../http/insona-message.js';
     import VueFroala from 'vue-froala-wysiwyg';
     import ipconfig from '@/config/ipconfig';
+    import Uediter from '../components/ue.vue';
     export default {
         name: 'other_message',
-        components: {textRow, VueFroala},
+        components: {textRow, VueFroala, Uediter},
         data: function () {
             return {
+                ueditor: {
+                    value: '编辑器默认文字',
+                    config: {}
+                },
                 configUrl: ipconfig.url,
                 uploadModal: false,
                 addAndEditModal: false,

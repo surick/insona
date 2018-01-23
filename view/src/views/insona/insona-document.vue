@@ -153,12 +153,7 @@
                         align: 'center'
                     },
                     {
-                        title: '文件链接',
-                        key: 'fileUrl',
-                        align: 'center'
-                    },
-                    {
-                        title: '文件类型',
+                        title: '可用设备',
                         key: 'fileType',
                         align: 'center'
                     }, {

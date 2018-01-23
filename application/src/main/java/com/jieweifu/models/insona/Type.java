@@ -54,13 +54,13 @@ public class Type {
     private String createTime;
 
     @Column(columnName = "crt_host")
-    private String createHost;
+    private String createUserName;
 
     @Column(columnName = "upd_time")
     private String updateTime;
 
     @Column(columnName = "upd_host")
-    private String updateHost;
+    private String updateUserName;
 
     public int getId() {
         return id;
@@ -190,14 +190,6 @@ public class Type {
         this.createTime = createTime;
     }
 
-    public String getCreateHost() {
-        return createHost;
-    }
-
-    public void setCreateHost(String createHost) {
-        this.createHost = createHost;
-    }
-
     public String getUpdateTime() {
         return updateTime;
     }
@@ -206,12 +198,20 @@ public class Type {
         this.updateTime = updateTime;
     }
 
-    public String getUpdateHost() {
-        return updateHost;
+    public String getCreateUserName() {
+        return createUserName;
     }
 
-    public void setUpdateHost(String updateHost) {
-        this.updateHost = updateHost;
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
+    public String getUpdateUserName() {
+        return updateUserName;
+    }
+
+    public void setUpdateUserName(String updateUserName) {
+        this.updateUserName = updateUserName;
     }
 
     public String getBatch() {

@@ -2,14 +2,17 @@ package com.jieweifu.models.insona;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import com.jieweifu.models.regex.Regex;
 import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.Pattern;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "insona_product")
 public class Product {
     @Column(primaryKey = true)
     private int id;
-    @NotBlank(message = "请将设备did填写完整")
+    @Pattern(regexp = Regex.USERNAME_REX,message = "设备did格式错误")
     @Column(columnName = "did")
     private String did;
     @NotBlank(message = "请将设备名填写完整")
@@ -18,7 +21,7 @@ public class Product {
     @NotBlank(message = "请将序列号填写完整")
     @Column(columnName = "serial_code")
     private String serial_code;
-    @NotBlank(message = "请将版本号填写完整")
+    @Pattern(regexp = Regex.VERSION,message = "版本号格式错误")
     @Column(columnName = "version")
     private String version;
     @NotBlank(message = "请将集成商信息填写完整")

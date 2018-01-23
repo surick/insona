@@ -13,6 +13,11 @@ import zhTLocale from 'iview/src/locale/lang/zh-TW';
 import Loading from './components/loading';
 import AccessCtrl from './components/accessCtrl';
 import commonFun from './libs/commonFun';
+// 配置百度编辑器
+import '../static/ue/ueditor.config.js';
+import '../static/ue/ueditor.all.min.js';
+import '../static/ue/lang/zh-cn/zh-cn.js';
+import '../static/ue/ueditor.parse.min.js';
 
 require('froala-editor/js/froala_editor.pkgd.min');
 require('froala-editor/css/froala_editor.pkgd.min.css');

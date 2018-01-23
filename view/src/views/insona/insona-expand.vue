@@ -3,7 +3,7 @@
         <Row class="expand-row">
             <Col span="6">
             <span class="expand-key">创建人：</span>
-            <span class="expand-value">{{ row.createUser }}</span>
+            <span class="expand-value">{{ row.createUserName }}</span>
             </Col>
             <Col span="6">
             <span class="expand-key">创建时间：</span>
@@ -11,7 +11,7 @@
             </Col>
             <Col span="6">
             <span class="expand-key">更新人：</span>
-            <span class="expand-value">{{ row.updateUser}}</span>
+            <span class="expand-value">{{ row.updateUserName}}</span>
             </Col>
             <Col span="6">
             <span class="expand-key">更新时间：</span>
