@@ -7,7 +7,7 @@
     <div class="access">
         <Card>
             <div slot="title">
-                设备出厂
+                设备管理
             </div>
             <div slot="extra">
                 <access-ctrl :name="'SYS_INS_ADD'" ref="access">
@@ -216,7 +216,7 @@
                             return h('div', [
                                 h('Button', {
                                     props: {
-                                        type: 'ghost'
+                                        type: 'primary'
                                     },
                                     style: {
                                         marginRight: '10px'
@@ -239,7 +239,7 @@
                                 ]),
                                 h('Button', {
                                     props: {
-                                        type: 'ghost'
+                                        type: 'error'
                                     },
                                     style: {
                                         marginRight: '10px'

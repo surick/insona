@@ -167,7 +167,7 @@ export const appRouter = [
             },
             {
                 path: 'product',
-                title: '设备出厂',
+                title: '设备管理',
                 name: 'AUTH_PRODUCT',
                 access: 'AUTH_PRODUCT',
                 component: resolve => {

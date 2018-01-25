@@ -2,12 +2,12 @@
     <div>
         <Row class="expand-row">
             <Col span="6">
-            <span class="expand-key">入库时间：</span>
-            <span class="expand-value">{{ row.into_time }}</span>
+            <span class="expand-key">生产日期：</span>
+            <span class="expand-value">{{ row.make_time }}</span>
             </Col>
             <Col span="6">
-            <span class="expand-key">操作人：</span>
-            <span class="expand-value">{{ row.person }}</span>
+            <span class="expand-key">入库日期：</span>
+            <span class="expand-value">{{ row.into_time }}</span>
             </Col>
             <Col span="6">
             <span class="expand-key">技术方案：</span>
@@ -19,7 +19,7 @@
             </Col>
             <Col span="6" class="margin-top-10">
             <span class="expand-key">创建人：</span>
-            <span class="expand-value">{{ row.crt_host }}</span>
+            <span class="expand-value">{{ row.createUserName }}</span>
             </Col>
             <Col span="6" class="margin-top-10">
             <span class="expand-key">创建时间：</span>
@@ -27,7 +27,7 @@
             </Col>
             <Col span="6" class="margin-top-10">
             <span class="expand-key">修改人：</span>
-            <span class="expand-value">{{ row.upd_host }}</span>
+            <span class="expand-value">{{ row.updateUserName }}</span>
             </Col>
             <Col span="6" class="margin-top-10">
             <span class="expand-key">修改时间：</span>

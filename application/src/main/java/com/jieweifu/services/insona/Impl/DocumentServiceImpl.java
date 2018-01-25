@@ -1,20 +1,28 @@
 package com.jieweifu.services.insona.Impl;
 
+import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
+import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.models.insona.Document;
 import com.jieweifu.services.insona.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
     private DB db;
+    private RedisUtil redisUtil;
 
     @Autowired
-    public DocumentServiceImpl(DB db) {
+    public DocumentServiceImpl(DB db,RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
         this.db = db;
     }
 
@@ -23,7 +31,8 @@ public class DocumentServiceImpl implements DocumentService {
      */
     @Override
     public void saveDocument(Document document) {
-        OperateHandler.assignCreateUser(document);
+        document.setCreateUserName((String) redisUtil.get("userName"));
+        document.setCreateTime(String.valueOf(Instant.now().toEpochMilli()));
         db.insert()
                 .save(document)
                 .execute();
@@ -46,7 +55,8 @@ public class DocumentServiceImpl implements DocumentService {
      */
     @Override
     public void updateDocument(Document document) {
-        OperateHandler.assignUpdateUser(document);
+        document.setUpdateUserName((String) redisUtil.get("userName"));
+        document.setUpdateTime(String.valueOf(Instant.now().toEpochMilli()));
         db.update()
                 .save(document)
                 .execute();

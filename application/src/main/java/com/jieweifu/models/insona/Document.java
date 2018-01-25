@@ -120,7 +120,7 @@ public class Document {
         this.createHost = createHost;
     }
 
-    public String getUpdateTime() {
+    public String getUpdateTime(String s) {
         return updateTime;
     }
 

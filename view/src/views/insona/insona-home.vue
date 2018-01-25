@@ -44,14 +44,6 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">家庭背景链接</div>
-                    </Col>
-                    <Col span="18">
-                    <Input v-model="home.imgUrl" placeholder="家庭背景链接"></Input>
-                    </Col>
-                </Row>
-                <Row class="margin-bottom-10">
-                    <Col span="6">
                     <div class="input-label">排序</div>
                     </Col>
                     <Col span="18">
@@ -84,9 +76,6 @@
                             :data="this.home"
                             :action="this.configUrl+'/image/homeUpload'">
                             <Button type="ghost" icon="ios-cloud-upload-outline">选择图片</Button>
-                            <Button type="text" :loading="loadingStatus">
-                                {{ loadingStatus ? '正在上传' : '待上传' }}
-                            </Button>
                         </Upload>
                     </div>
                 </template>
@@ -141,14 +130,9 @@
                         align: 'center'
                     },
                     {
-                        title: '家庭背景链接',
-                        key: 'imgUrl',
-                        align: 'center'
-                    },
-                    {
                         title: '家庭背景',
                         key: 'avatar',
-                        width: 135,
+                        width: 300,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', [
@@ -157,7 +141,7 @@
                                         src: this.configUrl + params.row.imgUrl.replace('home/', 'home/thumb/')
                                     },
                                     style: {
-                                        width: '100px',
+                                        width: '200px',
                                         height: '100px'
                                     }
                                 })
@@ -305,7 +289,8 @@
             },
             saveHome() {
                 if (this.addOrEdit === 0) {
-                    if (this.$commonFun.checkObject(this.home, ['title'])) {
+                    console.log(this.home);
+                    if (this.$commonFun.checkObject(this.home, ['imgUrl'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
                     Home.addHome(this, this.home).then(res => {
@@ -315,7 +300,7 @@
                         }
                     });
                 } else {
-                    if (this.$commonFun.checkObject(this.home, ['imgUrl'])) {
+                    if (this.$commonFun.checkObject(this.home, ['title'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
 

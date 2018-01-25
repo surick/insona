@@ -9,7 +9,7 @@ public class OperateHandler {
     }
 
     private String getUserName() {
-        return BaseContextHandler.getUserName();
+        return BaseContextHandler.getName();
     }
 
     private String getOperateIp() {
@@ -30,7 +30,7 @@ public class OperateHandler {
                         method.invoke(model, operateHandler.getOperateTime());
                         break;
                     case "setCreateUser":
-                        method.invoke(model, operateHandler.getUserId());
+                        method.invoke(model, operateHandler.getUserName());
                         break;
                     case "setCreateUserName":
                         method.invoke(model, operateHandler.getUserName());
@@ -55,7 +55,7 @@ public class OperateHandler {
                         method.invoke(model, operateHandler.getOperateTime());
                         break;
                     case "setUpdateUser":
-                        method.invoke(model, operateHandler.getUserId());
+                        method.invoke(model, operateHandler.getUserName());
                         break;
                     case "setUpdateUserName":
                         method.invoke(model, operateHandler.getUserName());

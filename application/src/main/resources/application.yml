@@ -14,7 +14,6 @@ custom:
     dir: ${custom.path}/static/uploads/images/
     home: ${custom.path}/static/uploads/home/
     material: ${custom.path}/static/uploads/material/
-
 spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/insona?useUnicode\=true&characterEncoding\=utf-8&autoReconnect\=true

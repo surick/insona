@@ -15,7 +15,6 @@ public class Home {
     @NotBlank(message = "title不能为空")
     @Column(columnName = "title")
     private String title;
-    @NotBlank(message = "图片不能为空")
     @Column(columnName = "img_url")
     private String imgUrl;
     @Min(value = 0, message = "排序不能为空")

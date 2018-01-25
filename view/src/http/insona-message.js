@@ -17,26 +17,26 @@ export default {
             });
         });
     },
-    addMessage(vm, obj) {
+    addMessage(vm, obj, content) {
         return ajax(vm, {
             method: 'POST',
             url: '/insona/message/saveMessage',
             data: {
                 title: obj.title,
-                content: obj.content,
+                content: content,
                 isPublished: obj.is_published ? 1 : 0,
                 sortNo: obj.sort_no
             }
         });
     },
-    updateMessage(vm, id, obj) {
+    updateMessage(vm, id, obj, content) {
         return ajax(vm, {
             method: 'PUT',
             url: '/insona/message/updateMessage',
             data: {
                 id: id,
                 title: obj.title,
-                content: obj.content,
+                content: content,
                 isPublished: obj.is_published ? 1 : 0,
                 sortNo: obj.sort_no
             }

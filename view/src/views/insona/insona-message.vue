@@ -66,7 +66,10 @@
                     <div class="input-label">内容</div>
                     </Col>
                     <Col span="18" style="line-height: 32px;">
-                    <froala :tag="'textarea'" :config="config" v-model="material.content">Init text</froala>
+                    <UE id="ue" :message="message.content" :config=UEconfig ref="ue"></UE>
+<!--
+                     <froala :tag="'textarea'" :config="config" v-model="material.content">Init text</froala>
+-->
                     </Col>
                 </Row>
             </div>
@@ -82,15 +85,16 @@
     import Message from '../../http/insona-message.js';
     import VueFroala from 'vue-froala-wysiwyg';
     import ipconfig from '@/config/ipconfig';
-    import Uediter from '../components/ue.vue';
+    import UE from '../components/ue.vue';
     export default {
         name: 'other_message',
-        components: {textRow, VueFroala, Uediter},
+        components: {textRow, VueFroala, UE},
         data: function () {
             return {
-                ueditor: {
-                    value: '编辑器默认文字',
-                    config: {}
+                defaultMsg: '',
+                UEconfig: {
+                    initialFrameWidth: null,
+                    initialFrameHeight: 350
                 },
                 configUrl: ipconfig.url,
                 uploadModal: false,
@@ -225,7 +229,6 @@
                         this.data = res.data.list;
                         this.total = res.data.total;
                     }
-                    console.log(this.data);
                 });
             },
             selectChange(selection) {
@@ -247,7 +250,7 @@
                 this.addAndEditModal = true;
             },
             editMessage(message) {
-                console.log(message);
+                console.log(this.$refs.ue);
                 this.message = {
                     id: message.id,
                     title: message.title,
@@ -260,11 +263,12 @@
                 this.editId = message.id;
             },
             saveMessage() {
+                let content = this.$refs.ue.getUEContent();
                 if (this.addOrEdit === 0) {
                     if (this.$commonFun.checkObject(this.message, ['id'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
-                    Message.addMessage(this, this.message).then(res => {
+                    Message.addMessage(this, this.message, content).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;
                             this.getMessage();
@@ -275,7 +279,7 @@
                         return this.$Message.warning('请将信息填写完整！');
                     }
 
-                    Message.updateMessage(this, this.editId, this.message).then(res => {
+                    Message.updateMessage(this, this.editId, this.message, content).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;
                             this.getMessage();

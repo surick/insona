@@ -72,6 +72,7 @@ public class TokenUtil {
             //将token存到数据库, 并设置过期时间, 此操作会覆盖之前的token, 只允许一个账号有且只有一个客户端登录后台管理系统
             String redisUserId = String.format("_%s_%s", UserConstant.USER_ID, userId);
             redisUtil.setEX(redisUserId, token, 120, TimeUnit.MINUTES);
+
         }
         return token;
     }

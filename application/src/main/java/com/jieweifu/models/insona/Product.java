@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 public class Product {
     @Column(primaryKey = true)
     private int id;
-    @Pattern(regexp = Regex.USERNAME_REX,message = "设备did格式错误")
+    @Pattern(regexp = Regex.DID,message = "设备did格式错误")
     @Column(columnName = "did")
     private String did;
     @NotBlank(message = "请将设备名填写完整")

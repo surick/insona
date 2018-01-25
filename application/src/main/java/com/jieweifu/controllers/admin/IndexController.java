@@ -2,6 +2,7 @@ package com.jieweifu.controllers.admin;
 
 import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.ErrorUtil;
+import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.common.utils.TokenUtil;
 import com.jieweifu.constants.UserConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 管理登录类
@@ -28,11 +30,13 @@ public class IndexController {
 
     private UserService userService;
     private TokenUtil tokenUtil;
+    private RedisUtil redisUtil;
 
     @Autowired
-    public IndexController(UserService userService, TokenUtil tokenUtil) {
+    public IndexController(UserService userService, TokenUtil tokenUtil, RedisUtil redisUtil) {
         this.userService = userService;
         this.tokenUtil = tokenUtil;
+        this.redisUtil = redisUtil;
     }
 
     /**
@@ -51,6 +55,7 @@ public class IndexController {
             tokenUtil.refreshAuthorization(user.getId(), userService.getIsAdmin(user.getId()));
             Map<String, String> userInfo = new WeakHashMap<>();
             userInfo.put(UserConstant.USER_TOKEN, tokenUtil.generateToken(String.valueOf(user.getId())));
+            redisUtil.setEX("userName",user.getName(),120, TimeUnit.MINUTES);
             userInfo.put(UserConstant.USER_NAME, user.getName());
             userInfo.put(UserConstant.USER_HEAD_IMG, user.getHeadImgUrl());
             return new Result().setData(userInfo);

@@ -2,10 +2,13 @@ package com.froala.editor;
 
 import com.froala.editor.file.FileOptions;
 import com.froala.editor.image.ImageOptions;
+import com.jieweifu.common.utils.AliyunOSSClientUtil;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -19,6 +22,7 @@ import java.util.Objects;
  *
  * @author florin@froala.com
  */
+@Component
 public final class File {
 
     /**
@@ -132,7 +136,9 @@ public final class File {
                 linkObject.put("link", "thumb/" + name);
             }
         }
-
+        if(!targetFile.getAbsolutePath().matches("^.*thumb.*$")){
+            AliyunOSSClientUtil.uploadObject2OSS(targetFile);
+        }
         return linkObject;
     }
 

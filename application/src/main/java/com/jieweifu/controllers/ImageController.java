@@ -91,6 +91,8 @@ public class ImageController {
                                           @RequestParam(value = "keepAspectRatio", defaultValue = "false") boolean keepAspectRatio,
                                           @RequestParam(value = "onlyThumb", defaultValue = "false") boolean onlyThumb,
                                           @RequestParam(value = "noThumb", defaultValue = "false") boolean noThumb) {
+        int a=1;
+        System.out.println(++a);
         ImageOptions options = new ImageOptions();
         options.setResize(width, height, keepAspectRatio);
         if (onlyThumb)
@@ -104,7 +106,7 @@ public class ImageController {
         home.setTitle(title);
         home.setImgUrl((String) responseData.get("link"));
         homeService.updateHome(home);
-        return homeUploadImage(request, homeUpload, options);
+        return responseData;
     }
 
     private Map<Object, Object> homeUploadImage(HttpServletRequest request, String path, ImageOptions options) {

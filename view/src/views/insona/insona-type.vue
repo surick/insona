@@ -27,6 +27,60 @@
                 </div>
             </div>
         </Card>
+        <Modal
+            v-model="newTime"
+            :title="'新批次'"
+            :mask-closable="false">
+            <div class="modal-body">
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">批次</div>
+                    </Col>
+                    <Col span="18">
+                    <Input v-model="type.batch" placeholder="批次"></Input>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">生产日期</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" placeholder="生产日期" v-model="type.make_time" @on-change="getDate"></DatePicker>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">入库日期</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" :options="options1" :disabled=this.dateShow placeholder="入库时间" v-model="type.into_time"
+                                style="width: auto"></DatePicker>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">是否可用</div>
+                    </Col>
+                    <Col span="18">
+                    <i-switch size="large" v-model="type.enable">
+                        <span slot="open">启用</span>
+                        <span slot="close">禁用</span>
+                    </i-switch>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">备注</div>
+                    </Col>
+                    <Col span="18">
+                    <Input type="textarea" v-model="type.remark" placeholder="备注"></Input>
+                    </Col>
+                </Row>
+            </div>
+            <div slot="footer">
+                <Button type="primary" size="large" @click="saveType()">确定</Button>
+            </div>
+        </Modal>
 
         <Modal
             v-model="addAndEditModal"
@@ -124,11 +178,10 @@
                 </Row>
                 <Row class="margin-bottom-10">
                     <Col span="6">
-                    <div class="input-label">入库时间</div>
+                    <div class="input-label">入库日期</div>
                     </Col>
                     <Col span="18">
-                    <DatePicker type="date" :options="options1" :disabled=this.dateShow placeholder="入库时间" v-model="type.into_time"
-                                style="width: auto"></DatePicker>
+                    <DatePicker type="date" :options="options1" :disabled=this.dateShow placeholder="入库时间" v-model="type.into_time" style="width: auto"></DatePicker>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">
@@ -167,6 +220,7 @@
         components: {typeRow},
         data: function () {
             return {
+                newTime: false,
                 dateShow: true,
                 options1: {
                 },
@@ -388,6 +442,7 @@
                     Type.addType(this, this.type).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;
+                            this.newTime = false;
                             this.getTypes();
                         }
                     });
@@ -449,19 +504,19 @@
                     type_name: obj.type_name,
                     maker: obj.maker,
                     model_no: obj.model_no,
-                    make_time: obj.make_time,
+                    make_time: '',
                     appid: obj.appid,
                     appsecret: obj.appsecret,
                     product_key: obj.product_key,
-                    into_time: obj.into_time,
+                    into_time: '',
                     technology: obj.technology,
                     communication: obj.communication,
                     enable: obj.enable,
-                    remark: obj.remark,
+                    remark: '',
                     batch: ''
                 };
                 this.addOrEdit = 0;
-                this.addAndEditModal = true;
+                this.newTime = true;
             }
         }
     };
