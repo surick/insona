@@ -91,8 +91,6 @@ public class ImageController {
                                           @RequestParam(value = "keepAspectRatio", defaultValue = "false") boolean keepAspectRatio,
                                           @RequestParam(value = "onlyThumb", defaultValue = "false") boolean onlyThumb,
                                           @RequestParam(value = "noThumb", defaultValue = "false") boolean noThumb) {
-        int a=1;
-        System.out.println(++a);
         ImageOptions options = new ImageOptions();
         options.setResize(width, height, keepAspectRatio);
         if (onlyThumb)

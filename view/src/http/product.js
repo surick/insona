@@ -1,5 +1,5 @@
 import ajax from './api';
-
+import moment from 'moment';
 export default {
     getProducts(vm, obj) {
         return new Promise((resolve, reject) => {
@@ -28,7 +28,8 @@ export default {
                 sub_inter: obj.sub_inter,
                 sub_maker: obj.sub_maker,
                 type: obj.type,
-                status: '0'
+                status: '0',
+                repair_time: moment(obj.repair_time).format('YYYY-MM-DD')
             }
         });
     },
@@ -52,7 +53,8 @@ export default {
                 sub_inter: obj.sub_inter,
                 sub_maker: obj.sub_maker,
                 type: obj.type,
-                status: obj.status
+                status: obj.status,
+                repair_time: moment(obj.repair_time).format('YYYY-MM-DD')
             }
         });
     },
@@ -63,7 +65,8 @@ export default {
             url: '/insona/product/change/' + status,
             data: {
                 ids: obj.ids,
-                sub_sale: obj.sub_sale
+                sub_sale: obj.sub_sale,
+                sale_time: moment(obj.sale_time).format('YYYY-MM-DD')
             }
         });
     },
@@ -84,6 +87,18 @@ export default {
             ajax(vm, {
                 method: 'GET',
                 url: '/insona/product/type'
+            }).then(res => {
+                if (res.success) {
+                    resolve(res);
+                }
+            });
+        });
+    },
+    getLink(vm) {
+        return new Promise((resolve, reject) => {
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/product/link'
             }).then(res => {
                 if (res.success) {
                     resolve(res);

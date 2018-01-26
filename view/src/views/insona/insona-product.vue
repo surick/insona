@@ -7,26 +7,56 @@
     <div class="access">
         <Card>
             <div slot="title">
-                设备管理
+                设备列表
             </div>
             <div slot="extra">
                 <access-ctrl :name="'SYS_INS_ADD'" ref="access">
-                <Button type="primary" @click="addProduct()">
-                    <Icon type="android-add"></Icon>
-                    新建
-                </Button>
+                    <Button type="primary" @click="addProduct()">
+                        <Icon type="android-add"></Icon>
+                        新建
+                    </Button>
+                </access-ctrl>
+
+                <access-ctrl :name="'SYS_INS_ADD'" ref="access">
+                    <Upload
+                        :before-upload="handleUpload"
+                        :show-upload-list="false"
+                        :on-success="handleSuccess"
+                        :format="['xls','xlsx']"
+                        :on-format-error="handleFormatError"
+                        :action="this.configUrl+'/file/products'">
+                        <Button type="success" icon="ios-cloud-upload-outline">批量上传</Button>
+                    </Upload>
                 </access-ctrl>
                 <access-ctrl :name="'SYS_INS_MOVE'" ref="access">
-                <Button type="error" @click="deleteProduct()">
-                    <Icon type="trash-a"></Icon>
-                    删除
-                </Button>
+                    <Button type="error" @click="deleteProduct()">
+                        <Icon type="trash-a"></Icon>
+                        删除
+                    </Button>
                 </access-ctrl>
                 <access-ctrl :name="'SYS_INS_PAY'" ref="access">
                     <Button type="primary" @click="sale()">
                         <Icon type="android-add"></Icon>
                         销售
                     </Button>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_INS_ADD'" ref="access">
+                    <a v-bind:href=this.configUrl+this.link>
+                        <Button type="primary">
+                            下载模版
+                        </Button>
+                    </a>
+                </access-ctrl>
+                <access-ctrl :name="'SYS_INS_ADD'" ref="access">
+                    <Upload
+                        :before-upload="handleUpload"
+                        :show-upload-list="false"
+                        :on-success="fileSuccess"
+                        :format="['xls','xlsx']"
+                        :on-format-error="handleFormatError"
+                        :action="this.configUrl+'/file/example'">
+                        <Button type="success">上传模板</Button>
+                    </Upload>
                 </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
@@ -97,8 +127,18 @@
                     </Col>
                     <Col span="18">
                     <Select v-model="product.type" filterable>
-                        <Option v-for="item in types" :value="item.type_name+item.batch" :key="item.type_name+item.batch">{{ item.type_name }}{{ item.batch }}</Option>
+                        <Option v-for="item in types" :value="item.type_name+item.batch"
+                                :key="item.type_name+item.batch">{{ item.type_name }}{{ item.batch }}
+                        </Option>
                     </Select>
+                    </Col>
+                </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">保修时间</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" placeholder="保修时间" v-model="product.repair_time"></DatePicker>
                     </Col>
                 </Row>
             </div>
@@ -123,6 +163,14 @@
                     </Select>
                     </Col>
                 </Row>
+                <Row class="margin-bottom-10">
+                    <Col span="6">
+                    <div class="input-label">销售日期</div>
+                    </Col>
+                    <Col span="18">
+                    <DatePicker type="date" placeholder="销售日期" v-model="sale_time"></DatePicker>
+                    </Col>
+                </Row>
             </div>
             <div slot="footer">
                 <Button type="primary" size="large" @click="saleProduct(1)">确定</Button>
@@ -134,13 +182,17 @@
 <script>
     import Product from '../../http/product.js';
     import productRow from './product-expand.vue';
+    import ipconfig from '@/config/ipconfig';
 
     export default {
         name: 'insona_product',
         components: {productRow},
         data: function () {
             return {
+                link: '',
+                configUrl: ipconfig.url,
                 sub_sale: '',
+                sale_time: '',
                 saleDetail: false,
                 addAndEditModal: false,
                 addOrEdit: 0,
@@ -152,7 +204,8 @@
                 dealers: [],
                 productSale: {
                     sub_sale: '',
-                    ids: []
+                    ids: [],
+                    sale_time: ''
                 },
                 product: {
                     id: '',
@@ -163,7 +216,8 @@
                     sub_inter: '',
                     sub_maker: '',
                     type: '',
-                    status: '0'
+                    status: '0',
+                    repair_time: ''
                 },
                 columns: [
                     {
@@ -183,7 +237,7 @@
                         align: 'center'
                     },
                     {
-                        title: '设备类别',
+                        title: '类别批次',
                         key: 'type',
                         align: 'center'
                     },
@@ -252,7 +306,7 @@
                                 }, [
                                     h('Icon', {
                                         props: {
-                                            type: 'edit'
+                                            type: 'trash-a'
                                         },
                                         style: {
                                             marginRight: '5px'
@@ -285,6 +339,7 @@
             this.getProducts();
             this.getDealers();
             this.getTypes();
+            this.getLink();
         },
         computed: {
             avatorPath() {
@@ -292,6 +347,47 @@
             }
         },
         methods: {
+            getLink() {
+                Product.getLink(this).then((res) => {
+                    if (res.success) {
+                        this.link = res.data.fileUrl;
+                    }
+                });
+            },
+            handleUpload() {
+                this.loadingStatus = true;
+                setTimeout(() => {
+                    this.loadingStatus = false;
+                }, 1000);
+                return true;
+            },
+            handleFormatError(file) {
+                this.$Notice.warning({
+                    title: '文件格式错误',
+                    desc: '文件： ' + file.name + ' 不是xls或xlsx格式，请重新上传！'
+                });
+            },
+            fileSuccess(res) {
+                this.link = res.link;
+                this.$Notice.warning({
+                    title: '成功',
+                    desc: '上传模板成功'
+                });
+            },
+            handleSuccess(res) {
+                if (!res.success) {
+                    this.$Notice.warning({
+                        title: '错误',
+                        desc: res.message + ',请检查文件格式后重试！'
+                    });
+                } else {
+                    this.$Notice.warning({
+                        title: '成功',
+                        desc: res.message
+                    });
+                }
+                this.getProducts();
+            },
             getProducts() {
                 Product.getProducts(this, {
                     pageIndex: this.current - 1,
@@ -318,7 +414,6 @@
                 });
             },
             sale(ids) {
-                console.log(ids);
                 this.sub_sale = '';
                 if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择设备');
                 if (!ids && this.selected.length > 0) {
@@ -341,7 +436,8 @@
                 }
                 this.productSale = {
                     ids: ids,
-                    sub_sale: this.sub_sale
+                    sub_sale: this.sub_sale,
+                    sale_time: this.sale_time
                 };
                 Product.changeProduct(this, status, this.productSale).then(res => {
                     if (res.success) {
@@ -369,7 +465,8 @@
                     sub_inter: '',
                     sub_maker: '',
                     type: '',
-                    status: '0'
+                    status: '0',
+                    repair_time: ''
                 };
             },
             saveProduct() {
@@ -401,7 +498,8 @@
                     sub_inter: obj.sub_inter,
                     sub_maker: obj.sub_maker,
                     type: obj.type,
-                    status: obj.status
+                    status: obj.status,
+                    repair_time: obj.repair_time
                 };
                 this.addOrEdit = 1;
                 this.addAndEditModal = true;
@@ -419,7 +517,7 @@
                 }
                 this.$Modal.confirm({
                     title: '提示',
-                    content: '确定删除用户？',
+                    content: '确定删除设备？',
                     okText: '确定',
                     cancelText: '取消',
                     onOk: () => {

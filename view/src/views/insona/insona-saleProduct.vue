@@ -16,7 +16,7 @@
                     待审批
                 </Button>
                 </access-ctrl>
-                <access-ctrl :name="'SYS_INS_BACK'" ref="access">
+                <access-ctrl :name="'SYS_INS_BACK_HIDDEN'" ref="access">
                 <Button type="primary" @click="backProduct()">
                     <Icon type="android-add"></Icon>
                     已退回
@@ -319,7 +319,7 @@
                             return h('div', [
                                 h('Button', {
                                     props: {
-                                        type: 'ghost'
+                                        type: 'success'
                                     },
                                     style: {
                                         marginRight: '10px'
@@ -340,7 +340,12 @@
                                     }),
                                     '通过'
                                 ]),
-                                h('Button', {
+                                h('access-ctrl', {
+                                    props: {
+                                        name: 'SYS_USER_REMOVE',
+                                        ref: 'access'
+                                    }
+                                }, [h('Button', {
                                     props: {
                                         type: 'ghost'
                                     },
@@ -355,13 +360,15 @@
                                 }, [
                                     h('Icon', {
                                         props: {
-                                            type: 'edit'
+                                            type: 'edit',
+                                            disabled: 'true'
                                         },
                                         style: {
                                             marginRight: '5px'
                                         }
                                     }),
                                     '退回'
+                                ])
                                 ])],
                             );
                         }
@@ -432,7 +439,7 @@
                             return h('div', [
                                 h('Button', {
                                     props: {
-                                        type: 'ghost'
+                                        type: 'primary'
                                     },
                                     style: {
                                         marginRight: '10px'

@@ -5,23 +5,23 @@ import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.Role;
 import com.jieweifu.models.admin.User;
+import com.jieweifu.models.insona.Example;
 import com.jieweifu.models.insona.Product;
 import com.jieweifu.models.insona.ProductDealer;
 import com.jieweifu.models.insona.Type;
 import com.jieweifu.services.admin.RoleService;
 import com.jieweifu.services.admin.RoleUserService;
 import com.jieweifu.services.admin.UserService;
+import com.jieweifu.services.insona.ExampleService;
 import com.jieweifu.services.insona.ProductDealerService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.TypeService;
-import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,18 +36,21 @@ public class ProductController {
     private ProductDealerService productDealerService;
     private TypeService typeService;
     private UserService userService;
+    private ExampleService exampleService;
 
     @Autowired
     public ProductController(ProductService productService,
                              RoleUserService roleUserService,
                              RoleService roleService,
                              ProductDealerService productDealerService,
-                             TypeService typeService) {
+                             TypeService typeService,
+                             ExampleService exampleService) {
         this.productService = productService;
         this.roleUserService = roleUserService;
         this.roleService = roleService;
         this.productDealerService = productDealerService;
         this.typeService = typeService;
+        this.exampleService = exampleService;
     }
 
     /**
@@ -172,7 +175,7 @@ public class ProductController {
         }
         try {
             for (String id : sale.getIds()) {
-                productService.setStatus(Integer.parseInt(id), status, sale.getSub_sale());
+                productService.setStatus(Integer.parseInt(id), status, sale.getSub_sale(),sale.getSale_time());
                 ProductDealer productDealer = new ProductDealer();
                 productDealer.setDealer(sale.getSub_sale());
                 productDealer.setProduct_id(id);
@@ -219,6 +222,16 @@ public class ProductController {
 
         private String sub_sale;
 
+        private String sale_time;
+
+        public String getSale_time() {
+            return sale_time;
+        }
+
+        public void setSale_time(String sale_time) {
+            this.sale_time = sale_time;
+        }
+
         public List<String> getIds() {
             return ids;
         }
@@ -234,5 +247,16 @@ public class ProductController {
         public void setSub_sale(String sub_sale) {
             this.sub_sale = sub_sale;
         }
+    }
+
+    @GetMapping("link")
+    public Result getLink() {
+        Example example;
+        try {
+            example = exampleService.get();
+        } catch (Exception e) {
+            return new Result().setError("获取模板下载链接出错");
+        }
+        return new Result().setData(example);
     }
 }

@@ -43,6 +43,26 @@ public class Product {
     private String reason;
     @Column(columnName = "sale")
     private String sale;
+    @Column(columnName = "repair_time")
+    private String repair_time;
+    @Column(columnName = "sale_time")
+    private String sale_time;
+
+    public String getRepair_time() {
+        return repair_time;
+    }
+
+    public void setRepair_time(String repair_time) {
+        this.repair_time = repair_time;
+    }
+
+    public String getSale_time() {
+        return sale_time;
+    }
+
+    public void setSale_time(String sale_time) {
+        this.sale_time = sale_time;
+    }
 
     public String getSale() {
         return sale;

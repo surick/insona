@@ -2,6 +2,12 @@
     <div>
         <Row class="expand-row">
             <Col>
+            <span class="expand-key">保修日期：</span>
+            <span class="expand-value">{{ row.repair_time }}</span>
+            </Col>
+        </Row>
+        <Row class="expand-row">
+            <Col>
             <span class="expand-key">详细信息：</span>
             <span class="expand-value">{{ row.extract }}</span>
             </Col>
@@ -14,7 +20,7 @@
         </Row>
         <Row class="expand-row">
             <Col>
-            <span class="expand-key">驳回原因：</span>
+            <span class="expand-key" hidden>驳回原因：</span>
             <span class="expand-value">{{ row.reason }}</span>
             </Col>
         </Row>

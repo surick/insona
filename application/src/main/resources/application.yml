@@ -11,6 +11,7 @@ custom:
   redis:
     prefix: InSona
   upload:
+    file: ${custom.path}/static/uploads/file/
     dir: ${custom.path}/static/uploads/images/
     home: ${custom.path}/static/uploads/home/
     material: ${custom.path}/static/uploads/material/

@@ -76,6 +76,9 @@
                             :data="this.home"
                             :action="this.configUrl+'/image/homeUpload'">
                             <Button type="ghost" icon="ios-cloud-upload-outline">选择图片</Button>
+                            <Button type="text" :loading="loadingStatus" disabled>
+                                {{ loadingStatus ? '正在上传' : '待上传' }}
+                            </Button>
                         </Upload>
                     </div>
                 </template>

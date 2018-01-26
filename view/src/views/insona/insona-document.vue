@@ -85,7 +85,7 @@
                                     :show-upload-list="false"
                                     :action="this.configUrl+'/file/DocumentUpload'">
                                     <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
-                                    <Button type="text" :loading="loadingStatus">
+                                    <Button type="text" :loading="loadingStatus" disabled>
                                         {{ loadingStatus ? '正在上传' : '待上传 ' }}
                                     </Button>
                                 </Upload>

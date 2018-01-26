@@ -181,7 +181,7 @@
                     <div class="input-label">入库日期</div>
                     </Col>
                     <Col span="18">
-                    <DatePicker type="date" :options="options1" :disabled=this.dateShow placeholder="入库时间" v-model="type.into_time" style="width: auto"></DatePicker>
+                    <DatePicker type="date" :options="options1" :disabled=this.dateShow placeholder="入库日期" v-model="type.into_time" style="width: auto"></DatePicker>
                     </Col>
                 </Row>
                 <Row class="margin-bottom-10">

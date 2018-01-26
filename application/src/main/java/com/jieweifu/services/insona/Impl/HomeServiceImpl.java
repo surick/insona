@@ -2,20 +2,24 @@ package com.jieweifu.services.insona.Impl;
 
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
+import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.models.insona.Home;
 import com.jieweifu.services.insona.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
 public class HomeServiceImpl implements HomeService {
     private DB db;
+    private RedisUtil redisUtil;
 
     @Autowired
-    public HomeServiceImpl(DB db) {
+    public HomeServiceImpl(DB db,RedisUtil redisUtil) {
         this.db = db;
+        this.redisUtil = redisUtil;
     }
 
     /**
@@ -23,7 +27,8 @@ public class HomeServiceImpl implements HomeService {
      */
     @Override
     public void saveHome(Home home) {
-        OperateHandler.assignCreateUser(home);
+        home.setCreateUserName((String) redisUtil.get("userName"));
+        home.setCreateTime(String.valueOf(Instant.now().toEpochMilli()));
         db.insert()
                 .save(home)
                 .execute();
@@ -34,7 +39,8 @@ public class HomeServiceImpl implements HomeService {
      */
     @Override
     public void updateHome(Home home) {
-        OperateHandler.assignUpdateUser(home);
+        home.setUpdateUserName((String) redisUtil.get("userName"));
+        home.setUpdateTime(String.valueOf(Instant.now().toEpochMilli()));
         db.update()
                 .save(home)
                 .execute();

@@ -27,7 +27,7 @@ public class Home {
     @Column(columnName = "crt_user")
     private String createUser;
     @Column(columnName = "crt_name")
-    private String createName;
+    private String createUserName;
     @Column(columnName = "crt_host")
     private String createHost;
     @Column(columnName = "upd_time")
@@ -35,7 +35,7 @@ public class Home {
     @Column(columnName = "upd_user")
     private String updateUser;
     @Column(columnName = "upd_name")
-    private String updateName;
+    private String updateUserName;
     @Column(columnName = "upd_host")
     private String updateHost;
     private String attr1;
@@ -99,14 +99,6 @@ public class Home {
         this.createUser = createUser;
     }
 
-    public String getCreateName() {
-        return createName;
-    }
-
-    public void setCreateName(String createName) {
-        this.createName = createName;
-    }
-
     public String getCreateHost() {
         return createHost;
     }
@@ -131,12 +123,20 @@ public class Home {
         this.updateUser = updateUser;
     }
 
-    public String getUpdateName() {
-        return updateName;
+    public String getCreateUserName() {
+        return createUserName;
     }
 
-    public void setUpdateName(String updateName) {
-        this.updateName = updateName;
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
+    public String getUpdateUserName() {
+        return updateUserName;
+    }
+
+    public void setUpdateUserName(String updateUserName) {
+        this.updateUserName = updateUserName;
     }
 
     public String getUpdateHost() {

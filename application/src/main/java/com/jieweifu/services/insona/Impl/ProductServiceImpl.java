@@ -113,18 +113,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void setStatus(int id, String status,String name) {
+    public void setStatus(int id, String status,String name,String sale_time) {
         Product product = db.select().columns("sale")
                 .from(Product.class)
                 .where("id = ?",id)
                 .queryForEntity(Product.class);
         if(!StringUtils.isBlank(product.getSale())){
-            name = product.getSale()+","+name;
+            name = product.getSale()+","+name+":"+sale_time;
+        }else {
+            name = name+":"+sale_time;
         }
         db.update()
                 .table(Product.class)
                 .set("status", status)
                 .set("sale", name)
+                .set("sale_time",sale_time)
                 .where("id = ?", id)
                 .execute();
     }
