@@ -342,7 +342,7 @@
                                 ]),
                                 h('access-ctrl', {
                                     props: {
-                                        name: 'SYS_USER_REMOVE',
+                                        name: 'SYS_USER_REMOVE_HIDDEN',
                                         ref: 'access'
                                     }
                                 }, [h('Button', {

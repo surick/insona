@@ -11,12 +11,12 @@
             </div>
             <div slot="extra">
                 <access-ctrl :name="'SYS_INS_ADD'" ref="access">
+                    <Input v-model="productMsg" placeholder="请输入设备名" @on-click="selectPro" icon="ios-search" style="width: 200px"/>
                     <Button type="primary" @click="addProduct()">
                         <Icon type="android-add"></Icon>
                         新建
                     </Button>
                 </access-ctrl>
-
                 <access-ctrl :name="'SYS_INS_ADD'" ref="access">
                     <Upload
                         :before-upload="handleUpload"
@@ -189,6 +189,7 @@
         components: {productRow},
         data: function () {
             return {
+                productMsg: '',
                 link: '',
                 configUrl: ipconfig.url,
                 sub_sale: '',
@@ -347,6 +348,18 @@
             }
         },
         methods: {
+            selectPro() {
+                Product.getList(this, {
+                    pageIndex: this.current - 1,
+                    pageSize: 10,
+                    name: this.productMsg
+                }).then((res) => {
+                    if (res.success) {
+                        this.data = res.data.list;
+                        this.total = res.data.total;
+                    }
+                });
+            },
             getLink() {
                 Product.getLink(this).then((res) => {
                     if (res.success) {

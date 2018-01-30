@@ -131,4 +131,21 @@ public class ProductServiceImpl implements ProductService {
                 .where("id = ?", id)
                 .execute();
     }
+
+    @Override
+    public List<Product> selectList(String name,int pageIndex, int pageSize) {
+        return db.select()
+                .from(Product.class)
+                .where("name like ?","%"+name+"%")
+                .limit(pageIndex,pageSize)
+                .queryForList(Product.class);
+    }
+
+    @Override
+    public int nameTotal(String name) {
+        return db.select()
+                .from(Product.class)
+                .where("name like ?","%"+name+"%")
+                .total();
+    }
 }

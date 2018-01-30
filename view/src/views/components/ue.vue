@@ -4,35 +4,36 @@
     </div>
 </template>
 <script>
-    export default {
-        name: 'ue',
-        data () {
-            return {
-                editor: null
-            };
+import '../../../static/ue/ueditor.config.js';
+import '../../../static/ue/ueditor.all.min.js';
+import '../../../static/ue/lang/zh-cn/zh-cn.js';
+import '../../../static/ue/ueditor.parse.min.js';
+
+export default {
+    name: 'ue',
+    data() {
+        return {
+            editor: null
+        };
+    },
+    props: {
+        defaultMsg: {
+            type: String
         },
-        props: {
-            defaultMsg: {
-                type: String
-            },
-            config: {
-                type: Object
-            }
-        },
-        mounted() {
-            const _this = this;
-            this.editor = window.UE.getEditor('editor', this.config); // 初始化UE
-            this.editor.addListener('ready', function () {
-                _this.editor.setContent(_this.defaultMsg); // 确保UE加载完成后，放入内容。
-            });
-        },
-        methods: {
-            getUEContent() { // 获取内容方法
-                return this.editor.getContent();
-            }
-        },
-        destroyed() {
-            this.editor.destroy();
+        config: {
+            type: Object
         }
-    };
+    },
+    mounted() {
+        this.editor = window.UE.getEditor('editor', this.config); // 初始化UE
+    },
+    methods: {
+        getUEContent() { // 获取内容方法
+            return this.editor.getContent();
+        }
+    },
+    destroyed() {
+        this.editor.destroy();
+    }
+};
 </script>

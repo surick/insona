@@ -204,6 +204,32 @@ public class ProductController {
     }
 
     /**
+     * 检索设备
+     */
+    @GetMapping("getList/{name}/{pageIndex}/{pageSize}")
+    public Result getList(@PathVariable String name,
+                          @PathVariable int pageIndex,
+                          @PathVariable int pageSize) {
+
+        System.out.println(name);
+        if(StringUtils.isBlank(name) || pageIndex < 0 || pageSize < 0){
+            return new Result().setError("参数有误，请检查后重新操作");
+        }
+        List<Product> list;
+        int total=0;
+        try{
+            list = productService.selectList(name,pageIndex,pageSize);
+            total = productService.nameTotal(name);
+        }catch (Exception e){
+            return new Result().setError("查询失败，请稍后重试");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", list);
+        map.put("total", total);
+        return new Result().setData(map);
+    }
+
+    /**
      * 设备类别
      */
     @GetMapping("type")

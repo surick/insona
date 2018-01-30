@@ -136,7 +136,8 @@ export const appRouter = [
             {
                 path: 'info',
                 title: '信息管理',
-                name: 'INFO',
+                name: 'AUTH_INFO',
+                access: 'AUTH_INFO',
                 component: resolve => {
                     require(['../views/insona/insona-info.vue'], resolve);
                 }
@@ -144,7 +145,8 @@ export const appRouter = [
             {
                 path: 'home',
                 title: '家庭背景',
-                name: 'HOME',
+                name: 'AUTH_HOME',
+                access: 'AUTH_HOME',
                 component: resolve => {
                     require(['../views/insona/insona-home.vue'], resolve);
                 }
@@ -152,7 +154,8 @@ export const appRouter = [
             {
                 path: 'document',
                 title: '文件服务',
-                name: 'DOCUMENT',
+                name: 'AUTH_DOCUMENT',
+                access: 'AUTH_DOCUMENT',
                 component: resolve => {
                     require(['../views/insona/insona-document.vue'], resolve);
                 }
@@ -160,7 +163,8 @@ export const appRouter = [
             {
                 path: 'type',
                 title: '设备类别',
-                name: 'TYPE',
+                name: 'AUTH_TYPE',
+                access: 'AUTH_TYPE',
                 component: resolve => {
                     require(['../views/insona/insona-type.vue'], resolve);
                 }
@@ -186,7 +190,8 @@ export const appRouter = [
             {
                 path: 'user-product',
                 title: '设备绑定',
-                name: 'USER-PRODUCT',
+                name: 'AUTH_USERPRODUCT',
+                access: 'AUTH_USERPRODUCT',
                 component: resolve => {
                     require(['../views/insona/insona-user-product.vue'], resolve);
                 }
@@ -194,7 +199,8 @@ export const appRouter = [
             {
                 path: 'users',
                 title: '终端用户管理',
-                name: 'USERS',
+                name: 'AUTH_USERS',
+                access: 'AUTH_USERS',
                 component: resolve => {
                     require(['../views/insona/insona-users.vue'], resolve);
                 }
@@ -202,7 +208,8 @@ export const appRouter = [
             {
                 path: 'message',
                 title: '通知管理',
-                name: 'MESSAGE',
+                name: 'AUTH_MESSAGE',
+                access: 'AUTH_MESSAGE',
                 component: resolve => {
                     require(['../views/insona/insona-message.vue'], resolve);
                 }
@@ -210,7 +217,8 @@ export const appRouter = [
             {
                 path: 'material',
                 title: '资料管理',
-                name: 'MATERIAL',
+                name: 'AUTH_MATERIAL    ',
+                access: 'AUTH_MATERIAL',
                 component: resolve => {
                     require(['../views/insona/insona-material.vue'], resolve);
                 }

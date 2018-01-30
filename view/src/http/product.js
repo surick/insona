@@ -15,6 +15,21 @@ export default {
             });
         });
     },
+    getList(vm, obj) {
+        return new Promise((resolve, reject) => {
+            console.log(obj);
+            ajax(vm, {
+                method: 'GET',
+                url: '/insona/product/getList/' + obj.name + '/' + obj.pageIndex + '/' + obj.pageSize
+            }).then(res => {
+                if (res.success) {
+                    res.data.list.forEach(item => {
+                    });
+                    resolve(res);
+                }
+            });
+        });
+    },
     addProduct(vm, obj) {
         console.log(obj);
         return ajax(vm, {
