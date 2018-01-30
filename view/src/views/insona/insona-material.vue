@@ -375,7 +375,7 @@
                 }
             },
             deleteMaterial(ids) {
-                if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
+                if (!ids && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的内容');
                 if (!ids && this.selected.length > 0) {
                     ids = this.selected.map(item => {
                         return item.id;
@@ -383,7 +383,7 @@
                 }
                 this.$Modal.confirm({
                     title: '提示',
-                    content: '确定删除用户？',
+                    content: '确定删除？',
                     okText: '确定',
                     cancelText: '取消',
                     onOk: () => {

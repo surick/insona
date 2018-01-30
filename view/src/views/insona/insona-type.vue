@@ -478,7 +478,7 @@
             },
             deleteType(id) {
                 var ids;
-                if (!id && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的用户');
+                if (!id && this.selected.length === 0) return this.$Message.warning('请先选择需要删除的内容');
                 if (!id && this.selected.length > 0) {
                     ids = this.selected.map(item => {
                         return item.id;
