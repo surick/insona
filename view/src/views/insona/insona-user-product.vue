@@ -10,7 +10,7 @@
             </div>
 
             <div slot="extra">
-
+                <access-ctrl :name="'SYS_INS_USERPRPDUCT'" ref="access">
                 <Button type="primary" @click="addUserProduct()">
                     <Icon type="android-add"></Icon>
                     绑定
@@ -19,6 +19,7 @@
                     <Icon type="trash-a"></Icon>
                     解绑
                 </Button>
+                </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">
@@ -60,10 +61,51 @@
         </Modal>
         <Modal
             v-model="productModal"
-            :title="'设备日志'"
+            :title="'用户详情'"
             :mask-closable="false">
             <div class="modal-body">
-                <div v-for="log in logs">{{ log.log }}</div>
+                <Row class="expand-row">
+                    <Col>
+                    <span class="expand-key">用户名：</span>
+                    <span class="expand-value">{{ userInfo.username }}</span>
+                    </Col>
+                </Row>
+                <Row class="expand-row" >
+                    <Col>
+                    <span class="expand-key">姓名：</span>
+                    <span class="expand-value">{{ userInfo.name }}</span>
+                    </Col>
+                </Row>
+                <Row class="expand-row" >
+                    <Col>
+                    <span class="expand-key">性别：</span>
+                    <span class="expand-value">{{ userInfo.gender }}</span>
+                    </Col>
+                </Row>
+                <Row class="expand-row" >
+                    <Col>
+                    <span class="expand-key">电话：</span>
+                    <span class="expand-value">{{ userInfo.phone }}</span>
+                    </Col>
+                </Row>
+                <Row class="expand-row" >
+                    <Col>
+                    <span class="expand-key">邮箱：</span>
+                    <span class="expand-value">{{ userInfo.email }}</span>
+                    </Col>
+                </Row>
+                <Row class="expand-row" >
+                    <Col>
+                    <span class="expand-key">生日：</span>
+                    <span class="expand-value">{{ userInfo.birthday }}</span>
+                    </Col>
+                </Row>
+                <Row class="expand-row" >
+                    <Col>
+                    <span class="expand-key">地址：</span>
+                    <span class="expand-value">{{ userInfo.address }}</span>
+                    </Col>
+                </Row>
             </div>
             <div slot="footer">
                 <Button type="primary" size="large" @click="close()">确定</Button>
@@ -98,7 +140,15 @@
                     version: '',
                     type: ''
                 },
-                logs: [],
+                userInfo: {
+                    username: '',
+                    phone: '',
+                    email: '',
+                    name: '',
+                    gender: '',
+                    birthday: '',
+                    address: ''
+                },
                 productList: [],
                 userProductList: [],
                 userProduct: {
@@ -117,7 +167,7 @@
                         align: 'center'
                     },
                     {
-                        title: '用户uid',
+                        title: '用户id',
                         key: 'uid',
                         align: 'center'
                     },
@@ -154,7 +204,7 @@
                                     },
                                     on: {
                                         click: () => {
-                                            this.info(params.row.did);
+                                            this.info(params.row.uid);
                                         }
                                     }
                                 }, [
@@ -166,7 +216,7 @@
                                             marginRight: '10px'
                                         }
                                     }),
-                                    '详情'
+                                    '用户详情'
                                 ])
                             ]);
                         }
@@ -210,7 +260,6 @@
                 UserDT.getUsers(this).then((res) => {
                     if (res.success) {
                         this.userDetail = res.data;
-                        console.log(this.userDetail);
                     }
                 });
             },
@@ -243,16 +292,15 @@
                 }
             },
 
-            info(did) {
+            info(uid) {
                 this.productModal = true;
-                UserDT.productInfo(this, did).then(
-                    (res) => {
-                        if (res.success) {
-                            this.logs = res.data;
-                            console.log(res.data);
-                        }
+                console.log(uid);
+                UserDT.getInfo(this, uid).then((res) => {
+                    if (res.success) {
+                        this.userInfo = res.data;
+                        console.log(this.userInfo);
                     }
-                );
+                });
             },
             close() {
                 this.productModal = close;

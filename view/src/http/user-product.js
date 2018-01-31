@@ -33,11 +33,11 @@ export default {
             data: ids
         });
     },
-    productInfo(vm, did) {
+    getInfo(vm, id) {
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'GET',
-                url: '/insona/userProduct/getProductInfo/' + did
+                url: 'insona/userProduct/getInfo/' + id
             }).then(res => {
                 if (res.success) {
                     resolve(res);

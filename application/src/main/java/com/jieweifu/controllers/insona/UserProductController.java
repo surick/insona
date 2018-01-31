@@ -5,17 +5,16 @@ import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
-import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.*;
 import com.jieweifu.services.admin.UserService;
 import com.jieweifu.services.insona.ProductService;
+import com.jieweifu.services.insona.TerminalUserService;
 import com.jieweifu.services.insona.UserProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,16 +29,19 @@ public class UserProductController {
     private RedisUtil redisUtil;
     private ProductService productService;
     private UserService userService;
+    private TerminalUserService terminalUserService;
 
     @Autowired
     public UserProductController(UserProductService userProductService,
                                  RedisUtil redisUtil,
                                  ProductService productService,
-                                 UserService userService) {
+                                 UserService userService,
+                                 TerminalUserService terminalUserService) {
         this.userProductService = userProductService;
         this.redisUtil = redisUtil;
         this.productService = productService;
         this.userService = userService;
+        this.terminalUserService = terminalUserService;
     }
 
     /**
@@ -133,5 +135,20 @@ public class UserProductController {
     public Result getUsers() {
         List<InsonaUser> list = userProductService.userList();
         return new Result().setData(list);
+    }
+
+    @GetMapping("getInfo/{id}")
+    public Result getProduct(@PathVariable int id) {
+        InsonaUser user;
+        if(id != 0){
+            try{
+                user = terminalUserService.getUserById(String.valueOf(id));
+            }catch (Exception e){
+                return new Result().setError("系统繁忙，请稍后重试");
+            }
+            return new Result().setData(user);
+        }else {
+            return new Result().setError("获取用户详情失败，请稍后重试");
+        }
     }
 }

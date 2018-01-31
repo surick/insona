@@ -10,6 +10,7 @@
             </div>
 
             <div slot="extra">
+                <access-ctrl :name="'SYS_INS_MESSAGE'" ref="access">
                 <Button type="primary" @click="addMessage()">
                     <Icon type="android-add"></Icon>
                     新增
@@ -18,6 +19,7 @@
                     <Icon type="trash-a"></Icon>
                     删除
                 </Button>
+                </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
             <div style="margin: 10px;overflow: hidden">

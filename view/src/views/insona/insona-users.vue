@@ -8,7 +8,9 @@
             <div slot="title">
                 终端用户管理
             </div>
+            <access-ctrl :name="'SYS_INS_USERS'" ref="access">
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
+            </access-ctrl>
             <div style="margin: 10px;overflow: hidden">
                 <div style="float: right;">
                     <Page :total="total" :current="current" @on-change="changePage"></Page>
