@@ -30,6 +30,7 @@
                 </div>
             </div>
         </Card>
+        <!-- 修改 -->
         <Modal
             v-model="addAndEditModal"
             :title="['修改设备信息'][addOrEdit]"
@@ -104,6 +105,7 @@
                 <Button type="primary" size="large" @click="addProduct()">确定</Button>
             </div>
         </Modal>
+        <!-- 审批 -->
         <Modal
             v-model="pendingProduct"
             :title="'待审批'"
@@ -119,6 +121,7 @@
                 <Button type="primary" size="large" @click="saleProduct()">关闭</Button>
             </div>
         </Modal>
+        <!-- 退回（已禁用） -->
         <Modal
             v-model="backedProduct"
             :title="'已退回'"
@@ -134,6 +137,7 @@
                 <Button type="primary" size="large" @click="saleProduct()">关闭</Button>
             </div>
         </Modal>
+        <!-- 退回（已禁用） -->
         <Modal
             v-model="reasonProduct"
             :title="'退回原因'"

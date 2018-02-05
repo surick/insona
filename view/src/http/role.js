@@ -29,7 +29,6 @@ export default {
             obj.expand = false;
             list.push(obj);
         });
-        console.log(list);
         return list;
     },
     dealRoleTree(tree) {
@@ -51,7 +50,6 @@ export default {
         return list;
     },
     saveAuth(vm, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
             url: '/sys/role/updateAuthority/'.concat(obj.roleId),
@@ -87,7 +85,6 @@ export default {
         });
     },
     addRole(vm, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'POST',
             url: '/sys/role/saveRole',

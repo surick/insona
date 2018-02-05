@@ -68,7 +68,8 @@
                     <div class="input-label">备注</div>
                     </Col>
                     <Col span="18" style="line-height: 32px;">
-                    <froala :tag="'textarea'" :config="config" v-model="material.content">Init text</froala>
+                    <UE :defaultMsg=defaultMsg :config=UEconfig ref="ue">
+                    </UE>
                     </Col>
                 </Row>
             </div>
@@ -76,6 +77,7 @@
                 <Button type="primary" size="large" @click="saveMaterial()">确定</Button>
             </div>
         </Modal>
+        <!-- 上传图片 -->
         <Modal
             v-model="uploadModal"
             :title="'上传图片'"
@@ -116,11 +118,17 @@
     import Material from '../../http/material.js';
     import VueFroala from 'vue-froala-wysiwyg';
     import ipconfig from '@/config/ipconfig';
+    import UE from '../components/ueditor.vue';
     export default {
         name: 'other_material',
-        components: {textRow, VueFroala},
+        components: {textRow, VueFroala, UE},
         data: function () {
             return {
+                defaultMsg: '',
+                UEconfig: {
+                    initialFrameWidth: null,
+                    initialFrameHeight: 350
+                },
                 configUrl: ipconfig.url,
                 uploadModal: false,
                 addAndEditModal: false,
@@ -258,26 +266,6 @@
                     }
                 ],
                 data: [],
-                config: {
-                    toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline',
-                        'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily',
-                        'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|',
-                        'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent',
-                        'indent', '-', 'insertImage',
-                        'embedly', 'insertFile', 'insertTable', '|',
-                        'specialCharacters', 'insertHR', 'selectAll', '|',
-                        'print', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
-                    imageUploadURL: ipconfig.url + '/image/upload',
-                    fileUploadURL: ipconfig.url + '/file/upload',
-                    imageManagerDeleteURL: ipconfig.url + '/image/delete',
-                    imageDefaultAlign: 'left',
-                    imageDefaultDisplay: 'inline',
-                    events: {
-                        'froalaEditor.initialized': function () {
-                            console.log(this.imageManagerLoadURL);
-                        }
-                    }
-                },
                 model: ''
             };
         },
@@ -330,6 +318,7 @@
                 this.getMaterial();
             },
             addMaterial() {
+                window.UE.getEditor('editor').setContent(this.defaultMsg);
                 this.addOrEdit = 0;
                 this.addAndEditModal = true;
                 this.material = {
@@ -341,6 +330,7 @@
                 };
             },
             editMaterial(material) {
+                window.UE.getEditor('editor').setContent(material.content);
                 this.addOrEdit = 1;
                 this.addAndEditModal = true;
                 this.editId = material.id;
@@ -350,14 +340,14 @@
                     enabled: material.enabled,
                     content: material.content
                 };
-                console.log(this.material);
             },
             saveMaterial() {
+                let content = this.$refs.ue.getUEContent();
                 if (this.addOrEdit === 0) {
                     if (this.$commonFun.checkObject(this.material, ['title'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
-                    Material.addMaterial(this, this.material).then(res => {
+                    Material.addMaterial(this, this.material, content).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;
                             this.getMaterial();
@@ -368,7 +358,7 @@
                         return this.$Message.warning('请将信息填写完整！');
                     }
 
-                    Material.updateMaterial(this, this.editId, this.material).then(res => {
+                    Material.updateMaterial(this, this.editId, this.material, content).then(res => {
                         if (res.success) {
                             this.addAndEditModal = false;
                             this.getMaterial();

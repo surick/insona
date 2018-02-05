@@ -3,8 +3,9 @@ import env from '@/config/env';
 import { router } from '@/router';
 
 const ajaxUrl = env === 'development'
-    ? 'http://127.0.0.1:8080'
-    : 'http://api.kyo.hahakeji.com';
+    ? 'http://192.168.3.163:8080'
+    : 'http://192.168.3.163:8080';
+    // : 'http://123.206.231.134:8080';
 
 const http = axios.create({
     baseURL: ajaxUrl,

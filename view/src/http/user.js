@@ -36,7 +36,6 @@ export default {
             }).then(res => {
                 if (res.success) {
                     res.data.list.forEach(item => {
-                        console.log(Number(item.updateTime));
                         item.createTime && (item.createTime = moment(Number(item.createTime)).format('YYYY-MM-DD HH:mm'));
                         item.updateTime && (item.updateTime = moment(Number(item.updateTime)).format('YYYY-MM-DD HH:mm'));
                     });
@@ -47,7 +46,6 @@ export default {
     },
 
     addUser(vm, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'POST',
             url: '/sys/user/saveUser',
@@ -83,7 +81,6 @@ export default {
         });
     },
     updateUser(vm, id, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
             url: '/sys/user/updateUser',

@@ -447,7 +447,6 @@
             this.current = 1;
             this.getUser();
             Role.getRoleTree(this).then(res => {
-                console.log(res);
                 if (res.success) {
                     this.roleData = Role.dealRoleTree(res.data);
                     this.roleList = Role.dealRoleTreeToList(res.data);
@@ -606,7 +605,6 @@
                 this.getUser();
             },
             saveRole() {
-                console.log(this.roleInfo);
                 User.saveRole(this, this.roleInfo).then((res) => {
                     if (res.success) this.getUser();
                 });

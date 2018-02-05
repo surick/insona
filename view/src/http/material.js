@@ -18,7 +18,7 @@ export default {
             });
         });
     },
-    addMaterial(vm, obj) {
+    addMaterial(vm, obj, content) {
         return ajax(vm, {
             method: 'POST',
             url: '/insona/material/saveMaterial',
@@ -27,11 +27,11 @@ export default {
                 type: obj.type,
                 imgUrl: '待上传',
                 enabled: 1,
-                content: obj.content
+                content: content
             }
         });
     },
-    updateMaterial(vm, id, obj) {
+    updateMaterial(vm, id, obj, content) {
         return ajax(vm, {
             method: 'PUT',
             url: '/insona/material/updateMaterial',
@@ -40,7 +40,7 @@ export default {
                 title: obj.title,
                 type: obj.type,
                 imgUrl: obj.imgUrl,
-                content: obj.content,
+                content: content,
                 enabled: obj.enabled ? 1 : 0
             }
         });

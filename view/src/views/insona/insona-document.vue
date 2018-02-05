@@ -42,7 +42,7 @@
                 </div>
             </div>
         </Card>
-
+        <!-- 设备绑定 -->
         <Modal
             v-model="EditModal"
             :title="'设备绑定'"
@@ -242,7 +242,6 @@
                 Document.types(this).then((res) => {
                     if (res.success) {
                         this.types = res.data;
-                        console.log(this.types);
                     }
                 });
             },

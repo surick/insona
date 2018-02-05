@@ -227,7 +227,6 @@
                 Role.getAuthTree(this, id).then(res => {
                     if (res.success) {
                         this.authData = Role.dealAuthTree(res.data);
-                        console.log(res);
                     }
                 });
             },
@@ -280,7 +279,6 @@
                 this.authModal = true;
             },
             saveAuth() {
-                debugger;
                 let role = this.$refs.roleTree.getSelectedNodes();
                 let roleId = role.map(item => {
                     return item.id;

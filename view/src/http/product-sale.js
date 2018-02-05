@@ -51,7 +51,6 @@ export default {
         });
     },
     backProduct(vm, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
             url: '/insona/productSale/back',
@@ -62,7 +61,6 @@ export default {
         });
     },
     updateProduct(vm, id, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
             url: '/insona/productSale/update',

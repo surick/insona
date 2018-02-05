@@ -14,7 +14,6 @@ export default {
         });
     },
     addUserProduct(vm, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'POST',
             url: '/insona/userProduct/saveUserProduct',

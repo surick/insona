@@ -17,7 +17,6 @@ export default {
     },
     getList(vm, obj) {
         return new Promise((resolve, reject) => {
-            console.log(obj);
             ajax(vm, {
                 method: 'GET',
                 url: '/insona/product/getList/' + obj.name + '/' + obj.pageIndex + '/' + obj.pageSize
@@ -31,7 +30,6 @@ export default {
         });
     },
     addProduct(vm, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'POST',
             url: '/insona/product/save',
@@ -74,7 +72,6 @@ export default {
         });
     },
     changeProduct(vm, status, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'PUT',
             url: '/insona/product/change/' + status,

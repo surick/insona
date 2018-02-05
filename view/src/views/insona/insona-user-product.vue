@@ -244,7 +244,6 @@
                 }).then((res) => {
                     if (res.success) {
                         this.data = res.data.list;
-                        console.log(this.data);
                         this.total = res.data.total;
                     }
                 });
@@ -294,11 +293,9 @@
 
             info(uid) {
                 this.productModal = true;
-                console.log(uid);
                 UserDT.getInfo(this, uid).then((res) => {
                     if (res.success) {
                         this.userInfo = res.data;
-                        console.log(this.userInfo);
                     }
                 });
             },

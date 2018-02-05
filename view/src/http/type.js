@@ -19,7 +19,6 @@ export default {
         });
     },
     addType(vm, obj) {
-        console.log(obj);
         return ajax(vm, {
             method: 'POST',
             url: '/insona/type/save',

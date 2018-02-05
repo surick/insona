@@ -1,5 +1,6 @@
 package com.jieweifu.controllers;
 
+import com.baidu.ueditor.ActionEnter;
 import com.froala.editor.Image;
 import com.froala.editor.image.ImageOptions;
 import com.jieweifu.models.insona.Home;
@@ -9,12 +10,12 @@ import com.jieweifu.services.insona.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,22 @@ public class ImageController {
     @Value("${custom.upload.home}")
     private String homeUpload;
 
+    @RequestMapping("config")
+    public void config(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType("application/json");
+        String rootPath = request.getSession().getServletContext().getRealPath("/");
+        try {
+            String exec = new ActionEnter(request, rootPath).exec();
+            PrintWriter writer = response.getWriter();
+            writer.write(exec);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     @PostMapping("upload")
     @ResponseBody
     public Map<Object, Object> upload(HttpServletRequest request,
@@ -62,7 +79,7 @@ public class ImageController {
     private Map<Object, Object> uploadImage(HttpServletRequest request, String path, ImageOptions options) {
         Map<Object, Object> responseData = new HashMap<>();
         try {
-            Image.upload(request, path, options).forEach((key, value) -> responseData.put(key, "http://localhost:8080/uploads/images/" + value));
+            Image.upload(request, path, options).forEach((key, value) -> responseData.put(key, "http://192.168.3.163:8080/uploads/images/" + value));
         } catch (Exception e) {
             e.printStackTrace();
             responseData.put("error", e.toString());

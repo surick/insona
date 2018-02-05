@@ -56,6 +56,7 @@
                 <Button type="primary" size="large" @click="saveHome()">确定</Button>
             </div>
         </Modal>
+        <!-- 上传图片 -->
         <Modal
             v-model="uploadModal"
             :title="'上传图片'"
@@ -293,7 +294,6 @@
             },
             saveHome() {
                 if (this.addOrEdit === 0) {
-                    console.log(this.home);
                     if (this.$commonFun.checkObject(this.home, ['imgUrl'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }

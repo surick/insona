@@ -47,6 +47,7 @@
                         </Button>
                     </a>
                 </access-ctrl>
+                <!-- 上传Excel表格 -->
                 <access-ctrl :name="'SYS_INS_ADD'" ref="access">
                     <Upload
                         :before-upload="handleUpload"
@@ -67,7 +68,7 @@
             </div>
         </Card>
 
-        <!-- 绑定与解绑 -->
+        <!-- 设备新增/修改 -->
         <Modal
             v-model="addAndEditModal"
             :title="['新增设备', '编辑设备'][addOrEdit]"
@@ -146,6 +147,7 @@
                 <Button type="primary" size="large" @click="saveProduct()">确定</Button>
             </div>
         </Modal>
+        <!-- 设备销售 -->
         <Modal
             v-model="saleDetail"
             :title="'销售设备'"

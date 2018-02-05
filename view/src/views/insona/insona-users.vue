@@ -206,7 +206,6 @@
                     if (res.success) {
                         this.data = res.data.list;
                         this.total = res.data.total;
-                        console.log(this.data);
                     }
                 });
             },
@@ -215,7 +214,6 @@
                 InsonaUser.getProducts(this, uid).then((res) => {
                     if (res.success) {
                         this.row = res.data;
-                        console.log(this.row);
                     }
                 });
             },

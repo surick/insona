@@ -269,7 +269,6 @@
                         ]
                     };
                 });
-                console.log(this.data);
             },
             getTable() {
                 Home.getTable(this).then((res) => {
@@ -288,7 +287,6 @@
             },
             getUser() {
                 Home.getUser(this).then((res) => {
-                    console.log(res.data);
                     if (res.success) {
                         this.user = {
                             isFirst: !res.data.isFirst
@@ -298,7 +296,6 @@
                 });
             },
             saveEditPass() {
-                console.log(this.user);
                 Home.putPassword(this, this.user).then(res => {
                     if (res.success) {
                         this.editPasswordModal = false;

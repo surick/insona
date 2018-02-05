@@ -11,14 +11,14 @@
 
             <div slot="extra">
                 <access-ctrl :name="'SYS_INS_MESSAGE'" ref="access">
-                <Button type="primary" @click="addMessage()">
-                    <Icon type="android-add"></Icon>
-                    新增
-                </Button>
-                <Button type="error" @click="deleteMessage()">
-                    <Icon type="trash-a"></Icon>
-                    删除
-                </Button>
+                    <Button type="primary" @click="addMessage()">
+                        <Icon type="android-add"></Icon>
+                        新增
+                    </Button>
+                    <Button type="error" @click="deleteMessage()">
+                        <Icon type="trash-a"></Icon>
+                        删除
+                    </Button>
                 </access-ctrl>
             </div>
             <Table border :columns="columns" :data="data" @on-selection-change="selectChange"></Table>
@@ -68,10 +68,11 @@
                     <div class="input-label">内容</div>
                     </Col>
                     <Col span="18" style="line-height: 32px;">
-                    <UE id="ue" :message="message.content" :config=UEconfig ref="ue"></UE>
-<!--
-                     <froala :tag="'textarea'" :config="config" v-model="material.content">Init text</froala>
--->
+                    <UE :defaultMsg=defaultMsg :config=UEconfig ref="ue">
+                    </UE>
+                    <!--
+                                         <froala :tag="'textarea'" :config="config" v-model="message.content">Init text</froala>
+                    -->
                     </Col>
                 </Row>
             </div>
@@ -87,7 +88,8 @@
     import Message from '../../http/insona-message.js';
     import VueFroala from 'vue-froala-wysiwyg';
     import ipconfig from '@/config/ipconfig';
-    import UE from '../components/ue.vue';
+    import UE from '../components/ueditor.vue';
+
     export default {
         name: 'other_message',
         components: {textRow, VueFroala, UE},
@@ -190,25 +192,6 @@
                     }
                 ],
                 data: [],
-                config: {
-                    toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline',
-                        'strikeThrough', 'subscript', 'superscript', '|', 'fontFamily',
-                        'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|',
-                        'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent',
-                        'indent', '-', 'insertImage',
-                        'embedly', 'insertFile', 'insertTable', '|',
-                        'specialCharacters', 'insertHR', 'selectAll', '|',
-                        'print', 'spellChecker', 'help', 'html', '|', 'undo', 'redo'],
-                    imageUploadURL: ipconfig.url + '/image/upload',
-                    fileUploadURL: ipconfig.url + '/file/upload',
-                    imageManagerDeleteURL: ipconfig.url + '/image/delete',
-                    imageDefaultAlign: 'left',
-                    imageDefaultDisplay: 'inline',
-                    events: {
-                        'froalaEditor.initialized': function () {
-                        }
-                    }
-                },
                 model: ''
             };
         },
@@ -241,6 +224,7 @@
                 this.getMessage();
             },
             addMessage() {
+                window.UE.getEditor('editor').setContent(this.defaultMsg);
                 this.message = {
                     id: '',
                     title: '',
@@ -252,7 +236,7 @@
                 this.addAndEditModal = true;
             },
             editMessage(message) {
-                console.log(this.$refs.ue);
+                window.UE.getEditor('editor').setContent(message.content);
                 this.message = {
                     id: message.id,
                     title: message.title,
@@ -267,7 +251,7 @@
             saveMessage() {
                 let content = this.$refs.ue.getUEContent();
                 if (this.addOrEdit === 0) {
-                    if (this.$commonFun.checkObject(this.message, ['id'])) {
+                    if (this.$commonFun.checkObject(this.title, ['id'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
                     Message.addMessage(this, this.message, content).then(res => {
@@ -277,7 +261,8 @@
                         }
                     });
                 } else {
-                    if (this.$commonFun.checkObject(this.message, ['id'])) {
+                    console.log(this.message);
+                    if (this.$commonFun.checkObject(this.title, ['id'])) {
                         return this.$Message.warning('请将信息填写完整！');
                     }
 
