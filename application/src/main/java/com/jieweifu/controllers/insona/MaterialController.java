@@ -38,8 +38,9 @@ public class MaterialController {
      */
     @PostMapping("saveMaterial")
     public Result saveMaterial(@Valid @RequestBody Material material, Errors errors) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
+        }
         material.setIsDeleted(0);
         materialService.saveMaterial(material);
         return new Result().setMessage("新增成功");
@@ -70,8 +71,9 @@ public class MaterialController {
      */
     @PutMapping("updateMaterial")
     public Result updateMaterial(@RequestBody Material material) {
-        if (materialService.getMaterial(material.getId()) == null)
+        if (materialService.getMaterial(material.getId()) == null) {
             return new Result().setError("不存在");
+        }
         materialService.updateMaterial(material);
         return new Result().setMessage("修改成功");
     }
@@ -86,8 +88,9 @@ public class MaterialController {
     @GetMapping("listMaterial/{pageIndex}/{pageSize}")
     public Result listMaterial(@PathVariable("pageIndex") Integer pageIndex,
                                @PathVariable("pageSize") Integer pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         List<Material> materialList = materialService.listMaterial(pageIndex, pageSize);
         int total = materialService.getMaterialTotal();
         Map<String, Object> map = new HashMap<>();

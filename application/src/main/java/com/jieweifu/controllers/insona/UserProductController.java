@@ -53,14 +53,17 @@ public class UserProductController {
      */
     @PostMapping("saveUserProduct")
     public Result saveUserProduct(@Valid @RequestBody UserProduct userProduct, Errors errors) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
-        if (userProductService.getByDid(userProduct.getDid()) != null)
+        }
+        if (userProductService.getByDid(userProduct.getDid()) != null) {
             return new Result().setError("该设备已绑定");
+        }
         Product product = null;
         product = productService.getByDid(userProduct.getDid());
-        if (product == null)
+        if (product == null) {
             return new Result().setError("设备不存在");
+        }
         Result result = new Result();
         Product finalProduct = product;
         redisUtil.lock("saveUserProduct", 3,
@@ -83,8 +86,9 @@ public class UserProductController {
     @GetMapping("getUserProduct/{pageIndex}/{pageSize}")
     public Result getUserProduct(@PathVariable("pageIndex") int pageIndex,
                                  @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         int userId = BaseContextHandler.getUserId();
         String dealer = BaseContextHandler.getName();
         List<ProductInfo> list = userProductService.pageUserProduct(pageIndex,pageSize,dealer);
@@ -104,8 +108,9 @@ public class UserProductController {
     @DeleteMapping("removeProduct")
     public Result removeProduct(@RequestBody List<String> ids) {
         for (String id : ids) {
-            if (userProductService.getByid(Integer.valueOf(id)) == null)
+            if (userProductService.getByid(Integer.valueOf(id)) == null) {
                 return new Result().setError("id无效");
+            }
             userProductService.removeUserProduct(Integer.parseInt(id));
         }
         return new Result().setMessage("删除成功");
@@ -120,8 +125,9 @@ public class UserProductController {
     @GetMapping("getProductInfo/{did}")
     public Result getProductInfo(@PathVariable("did") String did) {
         List<Log> logs = productService.getLog(did);
-        if (logs == null)
+        if (logs == null) {
             return new Result().setError("did不合法");
+        }
         return new Result().setData(logs);
     }
 

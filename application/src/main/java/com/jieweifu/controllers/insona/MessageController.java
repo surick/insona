@@ -31,8 +31,9 @@ public class MessageController {
      */
     @PostMapping("saveMessage")
     public Result saveMessage(@Valid @RequestBody Message message, Errors errors) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
+        }
         String userName = BaseContextHandler.getUserName();
         String time = String.valueOf(System.currentTimeMillis());
         message.setPublishTime(time);
@@ -61,8 +62,9 @@ public class MessageController {
     @PutMapping("updateMessage")
     public Result updateMessage(@RequestBody Message message) {
         System.out.println(message.getIsPublished());
-        if (messageService.getMessage(message.getId()) == null)
+        if (messageService.getMessage(message.getId()) == null) {
             return new Result().setError("不存在");
+        }
         messageService.updateMessage(message);
         return new Result().setMessage("修改成功");
     }
@@ -77,8 +79,9 @@ public class MessageController {
     @GetMapping("listMessage/{pageIndex}/{pageSize}")
     public Result listMessage(@PathVariable("pageIndex") Integer pageIndex,
                               @PathVariable("pageSize") Integer pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         List<Message> messageList = messageService.listMessage(pageIndex, pageSize);
         int total = messageService.getMessageTotal();
         Map<String, Object> map = new HashMap<>();

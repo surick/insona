@@ -48,8 +48,9 @@ public class TerminalUserController {
     @GetMapping("listTerminalUser/{pageIndex}/{pageSize}")
     public Result listTerminalUser(@PathVariable("pageIndex") int pageIndex,
                                    @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         //得到登录用户
         User user = BaseContextHandler.getUser();
         //得到下级厂商
@@ -124,12 +125,14 @@ public class TerminalUserController {
      */
     @GetMapping("getUserById/{id}")
     public Result getUserById(@PathVariable("id") String id) {
-        if (id == null)
+        if (id == null) {
             return new Result().setError("查询信息不能为空");
+        }
         System.out.println(id);
         InsonaUser user = terminalUserService.getUserById(id);
-        if (user == null)
+        if (user == null) {
             return new Result().setError("用户不存在");
+        }
         return new Result().setData(user);
     }
 
@@ -138,8 +141,9 @@ public class TerminalUserController {
      */
     @GetMapping("getProductById/{uid}")
     public Result getProductById(@PathVariable("uid") String uid) {
-        if (uid == null)
+        if (uid == null) {
             return new Result().setError("查询信息不能为空");
+        }
         System.out.println(uid);
         List<InsonaProductUser> productList = terminalUserService.listProducts(uid);
         List<Product> list = new ArrayList<>();
@@ -147,8 +151,9 @@ public class TerminalUserController {
             Product product1 = productService.getByDid(product.getDid());
             list.add(product1);
         }
-        if (productList.isEmpty())
+        if (productList.isEmpty()) {
             return new Result().setError("设备不存在");
+        }
         return new Result().setData(list);
     }
 }

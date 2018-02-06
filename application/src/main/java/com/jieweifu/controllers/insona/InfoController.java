@@ -47,8 +47,9 @@ public class InfoController {
     @GetMapping("pageInfo/{pageIndex}/{pageSize}")
     public Result getInfoByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         List<Info> infoList = infoService.pageInfo(pageIndex, pageSize);
         int total = infoService.getInfoTotal();
         Map<String, Object> map = new HashMap<>();
@@ -65,8 +66,9 @@ public class InfoController {
      */
     @GetMapping("InfoByTitle")
     public Result InfoByTitle(@Param("title") String title) {
-        if (title.length() < 1)
+        if (title.length() < 1) {
             return new Result().setError("title不能为空");
+        }
         Info info = infoService.getInfoByTitle(title);
         return new Result().setData(info);
     }
@@ -95,10 +97,12 @@ public class InfoController {
      */
     @PutMapping("updateInfo")
     public Result updateInfo(@Valid @RequestBody Info info, Errors errors) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
-        if (infoService.getInfoById(info.getId()) == null)
+        }
+        if (infoService.getInfoById(info.getId()) == null) {
             return new Result().setError("不存在");
+        }
         infoService.updateInfo(info);
         return new Result().setMessage("修改成功");
     }
@@ -112,10 +116,12 @@ public class InfoController {
      */
     @PostMapping("saveInfo")
     public Result saveInfo(@Valid @RequestBody Info info, Errors errors) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
-        if (infoService.getInfoByTitle(info.getTitle()) != null)
+        }
+        if (infoService.getInfoByTitle(info.getTitle()) != null) {
             return new Result().setError("已存在");
+        }
         infoService.saveInfo(info);
         return new Result().setMessage("新增成功");
     }

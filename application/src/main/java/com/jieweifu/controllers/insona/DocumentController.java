@@ -72,8 +72,9 @@ public class DocumentController {
      */
     @GetMapping("AllDocumentByName")
     public Result AllDocumentByName(@Param("name") String name) {
-        if (name.length() < 1)
+        if (name.length() < 1) {
             return new Result().setError("name不能为空");
+        }
         Document document = documentService.AllDocumentByName(name);
         return new Result().setData(document);
     }
@@ -86,8 +87,9 @@ public class DocumentController {
      */
     @GetMapping("AllDocumentByType")
     public Result AllDocumentByType(@Param("type") String type) {
-        if (StringUtils.isBlank(type))
+        if (StringUtils.isBlank(type)) {
             return new Result().setError("type不能为空");
+        }
         List<Document> documentList = documentService.AllDocumentByType(type);
         return new Result().setData(documentList);
     }
@@ -116,8 +118,9 @@ public class DocumentController {
     @GetMapping("pageDocument/{pageIndex}/{pageSize}")
     public Result getInfoByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         User user = BaseContextHandler.getUser();
         redisUtil.set("label",user.getLabel());
         List<Document> infoList = documentService.otherDocument(pageIndex,pageSize);
@@ -145,8 +148,9 @@ public class DocumentController {
                            @PathVariable("pageSize") int pageSize,
                            @PathVariable("label") String label) {
 
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         List<Document> infoList = null;
         if(label.equals("00100010001")){
             infoList = documentService.documentPage(pageIndex, pageSize,label);

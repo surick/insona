@@ -51,10 +51,12 @@ public class TableController {
         String newPassword = passInfo.getNewPassword();
         User user = BaseContextHandler.getUser();
         System.out.println(user.getId());
-        if (!userService.doUserLogin(user.getId(), password))
+        if (!userService.doUserLogin(user.getId(), password)) {
             return new Result().setError("原密码错误");
-        if (!password.matches(Regex.PASSWORD_REX))
+        }
+        if (!password.matches(Regex.PASSWORD_REX)) {
             return new Result().setError("新密码格式错误");
+        }
         String salt = UUID.randomUUID().toString().replace("-", "");
         user.setPassword(DigestUtils.md5Hex(salt + newPassword));
         user.setIsFirst(true);

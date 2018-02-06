@@ -39,10 +39,12 @@ public class HomeController {
      */
     @PostMapping("saveHome")
     public Result saveHome(@Valid @RequestBody Home home, Errors errors) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
             return new Result().setError(ErrorUtil.getErrors(errors));
-        if (homeService.getHomeByTitle(home.getTitle()) != null)
+        }
+        if (homeService.getHomeByTitle(home.getTitle()) != null) {
             return new Result().setError("已存在");
+        }
         homeService.saveHome(home);
         return new Result().setMessage("新增成功");
     }
@@ -55,8 +57,9 @@ public class HomeController {
      */
     @PutMapping("updateHome")
     public Result updateHome(@Valid @RequestBody Home home) {
-        if (homeService.getHomeById(home.getId()) == null)
+        if (homeService.getHomeById(home.getId()) == null) {
             return new Result().setError("不存在");
+        }
         homeService.updateHome(home);
         return new Result().setMessage("修改成功");
     }
@@ -86,8 +89,9 @@ public class HomeController {
      */
     @GetMapping("AllHomeByTitle")
     public Result AllHomeByTitle(@Param("title") String title) {
-        if (StringUtils.isBlank(title))
+        if (StringUtils.isBlank(title)) {
             return new Result().setError("title不能为空");
+        }
         Home home = homeService.getHomeByTitle(title);
         return new Result().setData(home);
     }
@@ -113,8 +117,9 @@ public class HomeController {
     @GetMapping("pageHome/{pageIndex}/{pageSize}")
     public Result getInfoByPage(@PathVariable("pageIndex") int pageIndex,
                                 @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         List<Home> infoList = homeService.homePage(pageIndex, pageSize);
         int total = homeService.getHomeTotal();
         Map<String, Object> map = new HashMap<>();

@@ -112,8 +112,9 @@ public class ProductController {
     @GetMapping("list/{pageIndex}/{pageSize}")
     public Result listProducts(@PathVariable("pageIndex") int pageIndex,
                                @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         List<Product> list = null;
         int total = 0;
         try {
@@ -134,8 +135,9 @@ public class ProductController {
     @GetMapping("show/{pageIndex}/{pageSize}")
     public Result showProducts(@PathVariable("pageIndex") int pageIndex,
                                @PathVariable("pageSize") int pageSize) {
-        if (pageIndex < 0 || pageSize < 0)
+        if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
+        }
         int userId = BaseContextHandler.getUserId();
         Role role = roleUserService.getRoleByUserId(userId);
         List<Product> list = null;
