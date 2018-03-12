@@ -11,4 +11,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Entity {
     String tableName() default "";
+
+
 }
