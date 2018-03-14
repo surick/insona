@@ -158,18 +158,15 @@ public class UserController {
      * 修改用户信息
      */
     @PutMapping("/user/update")
-    public Result updateUser(@RequestBody User user) {
-        String a=(String)redisUtil.get(UserConstant.USER_ID);
-
+    public Result updateUser(@RequestBody InsonaUser insonaUser) {
+        String a=(String)redisUtil.get(insonaUser.getHeadToken());
         if(a==null){
             return new Result().setMessage("登陆超时，重新登陆");
         }
         String b=tokenUtil.getUserId(a);
-
-
         Integer id=Integer.parseInt(b);
-        user.setId(id);
-        int i = mainUserService.updateUser(user);
+        insonaUser.setId(id);
+        int i = mainUserService.updateUser(insonaUser);
         if (i > 0) {
             return new Result().setMessage("更新成功");
         }

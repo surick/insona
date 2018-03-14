@@ -2,11 +2,12 @@ package com.jieweifu.models.insona;
 
 import com.jieweifu.common.dbservice.Column;
 import com.jieweifu.common.dbservice.Entity;
+import com.jieweifu.controllers.main.UserController;
 import org.hibernate.validator.constraints.NotBlank;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "insona_user")
-public class InsonaUser {
+public class InsonaUser extends UserController.HeadToken {
     @Column(primaryKey = true)
     private int id =1;
     @NotBlank(message = "uid不能为空")
