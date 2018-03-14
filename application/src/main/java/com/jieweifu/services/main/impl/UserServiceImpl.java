@@ -3,6 +3,7 @@ package com.jieweifu.services.main.impl;
 import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.admin.User;
+import com.jieweifu.models.insona.InsonaUser;
 import com.jieweifu.services.main.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,33 +23,31 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void addUser(User user) {
-        OperateHandler.assignCreateUser(user);//
+    public void addUser(InsonaUser insonaUser) {
+        OperateHandler.assignCreateUser(insonaUser);//
         String salt = UUID.randomUUID().toString().replace("-", "");
-        System.out.println("=====>" + salt);
-        user.setPassword(DigestUtils.md5Hex(salt + user.getPassword()));
+        insonaUser.setPassword(DigestUtils.md5Hex(salt + insonaUser.getPassword()));
         db.insert()
-                .save(user)
+                .save(insonaUser)
                 .set("salt", salt)
                 .execute();
     }
 
     @Override
-    public User findMainUserByUsernameAndPassword(String phone, String password) {
+    public InsonaUser findMainUserByUsernameAndPassword(String phone, String password) {
         return db.select()
-                .from(User.class)
-                .where("mobile_phone= ? ", phone)
+                .from(InsonaUser.class)
+                .where("phone= ? ", phone)
                 .where("password =MD5(CONCAT(salt,?))", password)
-                .queryForEntity(User.class);
-
+                .queryForEntity(InsonaUser.class);
     }
 
     @Override
-    public User findById(Integer id) {
+    public InsonaUser findById(Integer id) {
         return db.select()
-                .from(User.class)
+                .from(InsonaUser.class)
                 .where("id= ?", id)
-                .queryForEntity(User.class);
+                .queryForEntity(InsonaUser.class);
     }
 
     @Override
@@ -56,7 +55,7 @@ public class UserServiceImpl implements UserService {
         String salt = UUID.randomUUID().toString().replace("-", "");
         password = DigestUtils.md5Hex(salt + password);
         db.update()
-                .table(User.class)
+                .table(InsonaUser.class)
                 .set("password", password)
                 .set("salt",salt)
                 .where("id= ?", id)
@@ -94,5 +93,23 @@ public class UserServiceImpl implements UserService {
         return db.update()
                 .save(u)
                 .execute();
+    }
+
+
+    @Override
+    public int findByPhone(String phone) {
+        return db.select()
+                .columns("count()")
+                .from(InsonaUser.class)
+                .where("phone =?",phone)
+                .total();
+    }
+
+    @Override
+    public InsonaUser findIdByPhone(String phone) {
+        return db.select()
+                .from(InsonaUser.class)
+                .where("phone=?",phone)
+                .queryForEntity(InsonaUser.class);
     }
 }

@@ -1,12 +1,12 @@
 package com.jieweifu.controllers.main;
 
 import com.jieweifu.common.business.BaseContextHandler;
-import com.jieweifu.common.utils.FileUtil;
-import com.jieweifu.common.utils.RedisUtil;
-import com.jieweifu.common.utils.TokenUtil;
+import com.jieweifu.common.utils.*;
 import com.jieweifu.constants.UserConstant;
+import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
+import com.jieweifu.models.insona.InsonaUser;
 import com.jieweifu.services.main.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.Map;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unused")
 @RestController
 @RequestMapping("main/user")
+@AdminAuthAnnotation
 public class UserController {
 
     @Resource(name = "newService")
@@ -39,36 +41,89 @@ public class UserController {
 
     //注册
     @PostMapping("/register")
-    public Result register(@RequestBody User user) {
+    public Result register(@RequestBody RegisterUser registerUser) {
+
+        String phone = registerUser.getPhone();
+        String password=registerUser.getPassword();
+        String  code=registerUser.getCode();
+
+
+        int i = mainUserService.findByPhone(phone);
+        if (i > 0) {
+            return new Result().setMessage("号码已存在");
+        }
+        if (!code.equals(redisUtil.get(phone))) {
+        //if (!code.equals("1234")) {
+            return new Result().setMessage("手机验证码错误");
+        }
+        InsonaUser insonaUser=new InsonaUser();
+        insonaUser.setPhone(phone);
+        insonaUser.setPassword(password);
         try {
-            mainUserService.addUser(user);
+            mainUserService.addUser(insonaUser);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result().setMessage("注册失败");
         }
-        return new Result().setMessage("注册成功");
+        int newUserId = mainUserService.findIdByPhone(phone).getId();
+        Map<String, String> userInfo = new WeakHashMap<>();
+        //通过token 封装后的  id
+        String tokenId=tokenUtil.generateToken(String.valueOf(newUserId));
+        userInfo.put(UserConstant.USER_TOKEN, tokenId);
+        redisUtil.setEX(tokenId, tokenId, 30, TimeUnit.DAYS);
+        Result result=new Result();
+        return new Result().setData(userInfo);
     }
 
     //登陆  登陆成功后返回Token(加密后的用户id)  每次请求都需要带上此Token
+    @AdminAuthAnnotation(check = false)
     @PostMapping("/login")
     public Result login(@RequestBody LoginUser mainUser) {
 
-        User user = mainUserService.findMainUserByUsernameAndPassword(mainUser.getMobliePhone(), mainUser.getPassword());
-        if(user!=null){
-            Map<String,String> userInfo=new WeakHashMap<>();
-            userInfo.put(UserConstant.USER_TOKEN,tokenUtil.generateToken(String.valueOf(user.getId())));
-            redisUtil.setEX("userName",user.getName(),120, TimeUnit.MINUTES);
+        InsonaUser user = mainUserService.findMainUserByUsernameAndPassword(mainUser.getPhone(), mainUser.getPassword());
+        if (user != null) {
+            Map<String, String> userInfo = new WeakHashMap<>();
+            String tokenId=tokenUtil.generateToken(String.valueOf(user.getId()));
+            userInfo.put(UserConstant.USER_TOKEN,tokenId );
+            redisUtil.setEX(tokenId, tokenId, 30, TimeUnit.DAYS);
             return new Result().setData(userInfo);
         }
         return new Result().setError("用户名或密码错误");
     }
 
+    //根据用户id查询用户信息
+    @GetMapping("/findById")
+    public Result findById(HttpServletRequest request){
+
+       String id= request.getParameter("id");
+        /*//获得保存在redis的用户id（被token封装过）
+        String a=(String)redisUtil.get(UserConstant.USER_ID);
+        //破除token的封装 的Stirng的id
+        String b=tokenUtil.getUserId(a);*/
+
+        Integer newid=Integer.parseInt(id);
+        return new Result().setData(mainUserService.findById(newid));
+    }
+
+
     //修改密码
     @PutMapping("password/update")
-    public Result update(@RequestBody String newPassword) {
-        int userId = BaseContextHandler.getUserId();
+    public Result update(@RequestBody UpdateUser updateUser) {
+        String a=(String)redisUtil.get(updateUser.getHeadToken());
+        String b=tokenUtil.getUserId(a);
+        Integer id=Integer.parseInt(b);
+
+        InsonaUser insonaUser=mainUserService.findById(id);
+        if(insonaUser==null||!insonaUser.getPhone().equals(updateUser.getPhone())){
+            return new Result().setMessage("登陆超时，重新登陆");
+        }
+        String code=updateUser.getCode();
+        if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
+            //if (!code.equals("1234")) {
+            return new Result().setMessage("手机验证码错误");
+        }
         try {
-            mainUserService.updatePassword(newPassword, userId);
+            mainUserService.updatePassword(updateUser.getNewPassword(), id);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result().setMessage("修改失败");
@@ -76,69 +131,132 @@ public class UserController {
         return new Result().setMessage("密码修改成功");
     }
 
+
+
+
+
     @Value("${custom.upload.home}")
     private String uploadPath;
+
     /**
      * 修改头像
      */
     @PutMapping("headImage/update")
-    public Result updateHeadImg(@RequestParam(value = "file")MultipartFile mFile){
+    public Result updateHeadImg(@RequestParam(value = "file") MultipartFile mFile) {
         int userId = BaseContextHandler.getUserId();
-        String name= System.currentTimeMillis()+"";
-        File file=null;
+        String name = System.currentTimeMillis() + "";
+        File file = null;
         try {
-            file= FileUtil.uploadFile(mFile,uploadPath,name);
+            file = FileUtil.uploadFile(mFile, uploadPath, name);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result().setMessage("上次图片失败");
         }
-        String filePath=file.getAbsolutePath();
-        mainUserService.addPicUrl(userId,filePath);
+        String filePath = file.getAbsolutePath();
+        mainUserService.addPicUrl(userId, filePath);
         return new Result().setData(filePath);
     }
 
     /**
      * 修改用户信息
-     * */
+     */
     @PutMapping("/user/update")
-    public Result updateUser(@RequestBody User user){
-        int userId = BaseContextHandler.getUserId();
-        user.setId(userId);
-        int i= mainUserService.updateUser(user);
-        if(i>0){
+    public Result updateUser(@RequestBody User user) {
+        String a=(String)redisUtil.get(UserConstant.USER_ID);
+        String b=tokenUtil.getUserId(a);
+        Integer id=Integer.parseInt(b);
+        user.setId(id);
+        int i = mainUserService.updateUser(user);
+        if (i > 0) {
             return new Result().setMessage("更新成功");
         }
         return new Result().setMessage("更新失败");
     }
 
     /**
-     *
-     * 短信验证接口  这里先只是测试用
-     * */
-    @RequestMapping("/sendSMS")
-    public String sendSMS(){
-        return mainUserService.sendSMSCode();
+     * 短信验证接口
+     */
+
+    private static final int TIME_OUT = 2;
+    private static final String TEMPLATE_ID = "1";
+
+    @PostMapping("/sendSMS")
+    public Result sendSMS(@RequestBody LoginUser userPhone) {
+       String phone= userPhone.getPhone();
+        String code = SMSUtil.getVerificationCode();
+        System.out.println("====>"+phone);
+        //数组参数，第一个是验证码，第二个是失效时间
+        String[] content = {code, String.valueOf(TIME_OUT)};
+        //发送
+        boolean flag=CCPRESTSmsUtil.sendSMSByYunXunTong(phone, TEMPLATE_ID, content);
+        if (flag){
+            redisUtil.setEX(phone, code, TIME_OUT, TimeUnit.MINUTES);
+            return new Result().setData(code);
+        }
+        return new Result().setMessage("发送失败,网络繁忙");
+
     }
 
     /**
      * 登陆使用的临时对象
      */
-    public static class LoginUser {
-        @NotNull(message = "用户名不能为空")
-        private String loginName;
 
-        private String mobliePhone;
+    public static class HeadToken{
+        private String headToken;
+
+        public String getHeadToken() {
+            return headToken;
+        }
+
+        public void setHeadToken(String headToken) {
+            this.headToken = headToken;
+        }
+    }
+    public static class LoginUser extends HeadToken{
+
+
+        private String phone;
 
 
         @NotNull(message = "密码不能为空")
         private String password;
 
-        public String getLoginName() {
-            return loginName;
+
+        public String getPhone() {
+            return phone;
         }
 
-        public void setLoginName(String loginName) {
-            this.loginName = loginName;
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+
+    /**
+     * 注册使用的临时对象
+     *
+     * */
+    public static  class  RegisterUser extends HeadToken{
+        private  String phone;
+
+        private String password;
+
+        private String  code;
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
         }
 
         public String getPassword() {
@@ -149,13 +267,48 @@ public class UserController {
             this.password = password;
         }
 
-
-        public String getMobliePhone() {
-            return mobliePhone;
+        public String getCode() {
+            return code;
         }
 
-        public void setMobliePhone(String mobliePhone) {
-            this.mobliePhone = mobliePhone;
+        public void setCode(String code) {
+            this.code = code;
+        }
+    }
+
+    /**
+     *修改密码专用类
+     * */
+    public static  class UpdateUser extends HeadToken{
+
+        private String phone;
+        private String newPassword;
+
+        private String code;
+
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
         }
     }
 

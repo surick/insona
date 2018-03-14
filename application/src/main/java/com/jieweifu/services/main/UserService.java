@@ -1,6 +1,7 @@
 package com.jieweifu.services.main;
 
 import com.jieweifu.models.admin.User;
+import com.jieweifu.models.insona.InsonaUser;
 
 /**
  * Created by 陶Lyn
@@ -9,13 +10,14 @@ import com.jieweifu.models.admin.User;
 public interface UserService {
 
     //注册
-    void addUser(User user);
+
+    void addUser(InsonaUser insonaUser);
 
     //登陆
-    User findMainUserByUsernameAndPassword(String phone,String password);
+    InsonaUser findMainUserByUsernameAndPassword(String phone,String password);
 
     //查询当前用户
-    User findById(Integer id);
+    InsonaUser findById(Integer id);
 
     //修改密码
     void  updatePassword(String password,Integer id);
@@ -31,4 +33,10 @@ public interface UserService {
 
     //修改用户信息
     int updateUser(User u);
+
+    //手机号码注册判断 号码是否存在
+    int findByPhone(String phone);
+
+    //通过手机号码 查询id
+    InsonaUser findIdByPhone(String phone);
 }
