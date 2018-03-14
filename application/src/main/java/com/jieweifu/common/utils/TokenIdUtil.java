@@ -17,6 +17,9 @@ public class TokenIdUtil {
     //通过编码后的tokenid 获得token
     public  int getUserId(String headToken){
         String a=(String)redisUtil.get(headToken);
+        if(a==null||a==""){
+            return -1;
+        }
         String b=tokenUtil.getUserId(a);
         return Integer.parseInt(b);
     }

@@ -95,6 +95,9 @@ public class UserController {
     @PostMapping("/getUser")
     public Result findById(@RequestBody HeadToken headToken){
         Integer id=tokenIdUtil.getUserId(headToken.getHeadToken());
+        if(id==-1){
+            return new Result().setMessage("登陆超时，重新登陆");
+        }
         return new Result().setData(mainUserService.findById(id));
     }
 
@@ -104,10 +107,12 @@ public class UserController {
     public Result update(@RequestBody UpdateUser updateUser) {
 
         Integer id=tokenIdUtil.getUserId(updateUser.getHeadToken());
-
-        InsonaUser insonaUser=mainUserService.findById(id);
-        if(insonaUser==null||!insonaUser.getPhone().equals(updateUser.getPhone())){
+        if(id==-1){
             return new Result().setMessage("登陆超时，重新登陆");
+        }
+        InsonaUser insonaUser=mainUserService.findById(id);
+        if(!insonaUser.getPhone().equals(updateUser.getPhone())){
+            return new Result().setMessage("手机号码输入错误");
         }
         String code=updateUser.getCode();
         if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
@@ -155,7 +160,13 @@ public class UserController {
     @PutMapping("/user/update")
     public Result updateUser(@RequestBody User user) {
         String a=(String)redisUtil.get(UserConstant.USER_ID);
+
+        if(a==null){
+            return new Result().setMessage("登陆超时，重新登陆");
+        }
         String b=tokenUtil.getUserId(a);
+
+
         Integer id=Integer.parseInt(b);
         user.setId(id);
         int i = mainUserService.updateUser(user);
