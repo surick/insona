@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity(tableName = "insona_user")
 public class InsonaUser {
     @Column(primaryKey = true)
-    private int id;
+    private int id =1;
     @NotBlank(message = "uid不能为空")
     @Column(columnName = "uid")
     private String uid;
@@ -33,6 +33,15 @@ public class InsonaUser {
     private String remar;
     @Column(columnName = "is_anonymous")
     private int isAnonymous;
+
+    @Column(select = false)
+    private String password;
+
+    @Column(select = false)
+    private String salt;
+
+    @Column(columnName = "head_img_url")
+    private String headImgUrl;
 
     public int getId() {
         return id;
@@ -128,5 +137,29 @@ public class InsonaUser {
 
     public void setIsAnonymous(int isAnonymous) {
         this.isAnonymous = isAnonymous;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
     }
 }

@@ -37,8 +37,8 @@ public class UserController {
     private TokenUtil tokenUtil;
     @Autowired
     private RedisUtil redisUtil;
-
-
+    @Autowired
+    private TokenIdUtil tokenIdUtil;
     //注册
     @PostMapping("/register")
     public Result register(@RequestBody RegisterUser registerUser) {
@@ -92,26 +92,18 @@ public class UserController {
     }
 
     //根据用户id查询用户信息
-    @GetMapping("/findById")
-    public Result findById(HttpServletRequest request){
-
-       String id= request.getParameter("id");
-        /*//获得保存在redis的用户id（被token封装过）
-        String a=(String)redisUtil.get(UserConstant.USER_ID);
-        //破除token的封装 的Stirng的id
-        String b=tokenUtil.getUserId(a);*/
-
-        Integer newid=Integer.parseInt(id);
-        return new Result().setData(mainUserService.findById(newid));
+    @PostMapping("/getUser")
+    public Result findById(@RequestBody HeadToken headToken){
+        Integer id=tokenIdUtil.getUserId(headToken.getHeadToken());
+        return new Result().setData(mainUserService.findById(id));
     }
 
 
     //修改密码
     @PutMapping("password/update")
     public Result update(@RequestBody UpdateUser updateUser) {
-        String a=(String)redisUtil.get(updateUser.getHeadToken());
-        String b=tokenUtil.getUserId(a);
-        Integer id=Integer.parseInt(b);
+
+        Integer id=tokenIdUtil.getUserId(updateUser.getHeadToken());
 
         InsonaUser insonaUser=mainUserService.findById(id);
         if(insonaUser==null||!insonaUser.getPhone().equals(updateUser.getPhone())){
