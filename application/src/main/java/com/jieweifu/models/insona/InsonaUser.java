@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 @SuppressWarnings("unused")
 @Entity(tableName = "insona_user")
-public class InsonaUser extends UserController.HeadToken {
+public class InsonaUser {
     @Column(primaryKey = true)
     private int id =1;
     @NotBlank(message = "uid不能为空")

@@ -4,7 +4,7 @@ import com.jieweifu.common.business.OperateHandler;
 import com.jieweifu.common.dbservice.DB;
 import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.InsonaUser;
-import com.jieweifu.services.main.UserService;
+import com.jieweifu.services.main.AppUserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +15,8 @@ import java.util.UUID;
  * Created by 陶Lyn
  * on 2018/3/12.
  */
-@Service("newService")
-public class UserServiceImpl implements UserService {
+@Service
+public class AppUserServiceImpl implements AppUserService {
 
     @Autowired
     private DB db;
@@ -80,16 +80,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addPicUrl(int id, String picUrl) {
-        User u=new User();
-        u.setId(id);
-        u.setHeadImgUrl(picUrl);
+        InsonaUser insonaUser=new InsonaUser();
+        insonaUser.setId(id);
+        insonaUser.setHeadImgUrl(picUrl);
         db.update()
-               .save(u)
+               .save(insonaUser)
                 .execute();
     }
 
     @Override
-    public int updateUser(User u) {
+    public int updateUser(InsonaUser u) {
         return db.update()
                 .save(u)
                 .execute();

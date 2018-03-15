@@ -8,6 +8,10 @@ import java.util.HashMap;
  * Created by 陶Lyn
  * on 2018/3/14.
  */
+
+/**
+ * 发送短信验证码工具类
+ * */
 public class CCPRESTSmsUtil {
     public static boolean  sendSMSByYunXunTong (String phone,String templateId,String[]content){
         CCPRestSmsSDK ccpRestSmsSDK=new CCPRestSmsSDK();

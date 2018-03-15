@@ -7,7 +7,7 @@ import com.jieweifu.models.insona.InsonaUser;
  * Created by 陶Lyn
  * on 2018/3/12.
  */
-public interface UserService {
+public interface AppUserService {
 
     //注册
 
@@ -32,7 +32,7 @@ public interface UserService {
     void addPicUrl(int id,String picUrl);
 
     //修改用户信息
-    int updateUser(User u);
+    int updateUser(InsonaUser insonaUser);
 
     //手机号码注册判断 号码是否存在
     int findByPhone(String phone);

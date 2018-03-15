@@ -1,7 +1,10 @@
 package com.jieweifu.common.utils;
 
+import com.jieweifu.constants.CommonConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by 陶Lyn
@@ -15,12 +18,16 @@ public class TokenIdUtil {
     @Autowired
     private RedisUtil redisUtil;
     //通过编码后的tokenid 获得token
-    public  int getUserId(String headToken){
-        String a=(String)redisUtil.get(headToken);
-        if(a==null||a==""){
+
+    public int  getUserId(HttpServletRequest request){
+        String authToken = request.getHeader(CommonConstant.TOKEN_AUTHORIZATION);
+        String tokenId= (String) redisUtil.get(authToken);
+        if(tokenId==null){
             return -1;
         }
-        String b=tokenUtil.getUserId(a);
-        return Integer.parseInt(b);
+        String id =tokenUtil.getUserId(tokenId);
+        return Integer.parseInt(id);
     }
+
+
 }
