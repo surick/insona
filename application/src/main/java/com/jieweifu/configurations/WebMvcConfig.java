@@ -33,6 +33,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new OptionsInterceptor());
         registry.addInterceptor(new LimitInterceptor(tokenUtil.getRedisUtil()));
-        registry.addInterceptor(new AdminAuthInterceptor(tokenUtil, logService)).addPathPatterns("/sys/**", "/insona/**");
+        registry.addInterceptor(new AdminAuthInterceptor(tokenUtil, logService)).addPathPatterns("/sys/**", "/insona/**","/main/**");
     }
 }

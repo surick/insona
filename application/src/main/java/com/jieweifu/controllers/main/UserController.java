@@ -5,9 +5,8 @@ import com.jieweifu.common.utils.*;
 import com.jieweifu.constants.UserConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
-import com.jieweifu.models.admin.User;
 import com.jieweifu.models.insona.InsonaUser;
-import com.jieweifu.services.main.UserService;
+import com.jieweifu.services.main.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.Map;
@@ -26,52 +26,58 @@ import java.util.concurrent.TimeUnit;
  * on 2018/3/12.
  */
 @SuppressWarnings("unused")
-@RestController
+@RestController("mainUser")
 @RequestMapping("main/user")
 @AdminAuthAnnotation
 public class UserController {
 
-    @Resource(name = "newService")
-    private UserService mainUserService;
-    @Autowired
+    private AppUserService appUserService;
     private TokenUtil tokenUtil;
-    @Autowired
     private RedisUtil redisUtil;
-    @Autowired
     private TokenIdUtil tokenIdUtil;
+
+    @Autowired
+    public UserController(AppUserService appUserService, TokenUtil tokenUtil, RedisUtil redisUtil, TokenIdUtil tokenIdUtil) {
+        this.appUserService = appUserService;
+        this.tokenUtil = tokenUtil;
+        this.redisUtil = redisUtil;
+        this.tokenIdUtil = tokenIdUtil;
+    }
+
     //注册
+    @AdminAuthAnnotation(check = false)
     @PostMapping("/register")
     public Result register(@RequestBody RegisterUser registerUser) {
 
         String phone = registerUser.getPhone();
-        String password=registerUser.getPassword();
-        String  code=registerUser.getCode();
+        String password = registerUser.getPassword();
+        String code = registerUser.getCode();
 
 
-        int i = mainUserService.findByPhone(phone);
+        int i = appUserService.findByPhone(phone);
         if (i > 0) {
             return new Result().setMessage("号码已存在");
         }
-        if (!code.equals(redisUtil.get(phone))) {
-        //if (!code.equals("1234")) {
+         if (!code.equals(redisUtil.get(phone))) {
+       // if (!code.equals("1234")) {
             return new Result().setMessage("手机验证码错误");
         }
-        InsonaUser insonaUser=new InsonaUser();
+        InsonaUser insonaUser = new InsonaUser();
         insonaUser.setPhone(phone);
         insonaUser.setPassword(password);
         try {
-            mainUserService.addUser(insonaUser);
+            appUserService.addUser(insonaUser);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result().setMessage("注册失败");
         }
-        int newUserId = mainUserService.findIdByPhone(phone).getId();
+        int newUserId = appUserService.findIdByPhone(phone).getId();
         Map<String, String> userInfo = new WeakHashMap<>();
         //通过token 封装后的  id
-        String tokenId=tokenUtil.generateToken(String.valueOf(newUserId));
+        String tokenId = tokenUtil.generateToken(String.valueOf(newUserId));
         userInfo.put(UserConstant.USER_TOKEN, tokenId);
         redisUtil.setEX(tokenId, tokenId, 30, TimeUnit.DAYS);
-        Result result=new Result();
+        Result result = new Result();
         return new Result().setData(userInfo);
     }
 
@@ -80,11 +86,11 @@ public class UserController {
     @PostMapping("/login")
     public Result login(@RequestBody LoginUser mainUser) {
 
-        InsonaUser user = mainUserService.findMainUserByUsernameAndPassword(mainUser.getPhone(), mainUser.getPassword());
+        InsonaUser user = appUserService.findMainUserByUsernameAndPassword(mainUser.getPhone(), mainUser.getPassword());
         if (user != null) {
             Map<String, String> userInfo = new WeakHashMap<>();
-            String tokenId=tokenUtil.generateToken(String.valueOf(user.getId()));
-            userInfo.put(UserConstant.USER_TOKEN,tokenId );
+            String tokenId = tokenUtil.generateToken(String.valueOf(user.getId()));
+            userInfo.put(UserConstant.USER_TOKEN, tokenId);
             redisUtil.setEX(tokenId, tokenId, 30, TimeUnit.DAYS);
             return new Result().setData(userInfo);
         }
@@ -92,44 +98,41 @@ public class UserController {
     }
 
     //根据用户id查询用户信息
-    @PostMapping("/getUser")
-    public Result findById(@RequestBody HeadToken headToken){
-        Integer id=tokenIdUtil.getUserId(headToken.getHeadToken());
-        if(id==-1){
-            return new Result().setMessage("登陆超时，重新登陆");
+
+    @GetMapping("/getUser")
+    public Result findById(HttpServletRequest request) {
+        Integer id = tokenIdUtil.getUserId(request);
+        if (id == -1) {
+            return new Result().setError(401, "登录超时，重新登录");
         }
-        return new Result().setData(mainUserService.findById(id));
+        return new Result().setData(appUserService.findById(id));
     }
-
-
     //修改密码
     @PutMapping("password/update")
-    public Result update(@RequestBody UpdateUser updateUser) {
+    public Result update(@RequestBody UpdateUser updateUser, HttpServletRequest request) {
 
-        Integer id=tokenIdUtil.getUserId(updateUser.getHeadToken());
-        if(id==-1){
-            return new Result().setMessage("登陆超时，重新登陆");
+        Integer id = tokenIdUtil.getUserId(request);
+
+        if (id == -1) {
+            return new Result().setError(401, "登录超时，重新登录");
         }
-        InsonaUser insonaUser=mainUserService.findById(id);
-        if(!insonaUser.getPhone().equals(updateUser.getPhone())){
+        InsonaUser insonaUser = appUserService.findById(id);
+        if (!insonaUser.getPhone().equals(updateUser.getPhone())) {
             return new Result().setMessage("手机号码输入错误");
         }
-        String code=updateUser.getCode();
+        String code = updateUser.getCode();
         if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
-            //if (!code.equals("1234")) {
+      //  if (!code.equals("1234")) {
             return new Result().setMessage("手机验证码错误");
         }
         try {
-            mainUserService.updatePassword(updateUser.getNewPassword(), id);
+            appUserService.updatePassword(updateUser.getNewPassword(), id);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Result().setMessage("修改失败");
+            return new Result().setError("修改失败");
         }
         return new Result().setMessage("密码修改成功");
     }
-
-
-
 
 
     @Value("${custom.upload.home}")
@@ -139,8 +142,11 @@ public class UserController {
      * 修改头像
      */
     @PutMapping("headImage/update")
-    public Result updateHeadImg(@RequestParam(value = "file") MultipartFile mFile) {
-        int userId = BaseContextHandler.getUserId();
+    public Result updateHeadImg(@RequestParam(value = "file") MultipartFile mFile, HttpServletRequest request) {
+        Integer id = tokenIdUtil.getUserId(request);
+        if (id == -1) {
+            return new Result().setError(401, "登录超时，重新登录");
+        }
         String name = System.currentTimeMillis() + "";
         File file = null;
         try {
@@ -150,7 +156,7 @@ public class UserController {
             return new Result().setMessage("上次图片失败");
         }
         String filePath = file.getAbsolutePath();
-        mainUserService.addPicUrl(userId, filePath);
+        appUserService.addPicUrl(id, filePath);
         return new Result().setData(filePath);
     }
 
@@ -158,15 +164,13 @@ public class UserController {
      * 修改用户信息
      */
     @PutMapping("/user/update")
-    public Result updateUser(@RequestBody InsonaUser insonaUser) {
-        String a=(String)redisUtil.get(insonaUser.getHeadToken());
-        if(a==null){
-            return new Result().setMessage("登陆超时，重新登陆");
+    public Result updateUser(@RequestBody InsonaUser insonaUser, HttpServletRequest request) {
+        Integer id = tokenIdUtil.getUserId(request);
+        if (id == -1) {
+            return new Result().setError(401, "登录超时，重新登录");
         }
-        String b=tokenUtil.getUserId(a);
-        Integer id=Integer.parseInt(b);
         insonaUser.setId(id);
-        int i = mainUserService.updateUser(insonaUser);
+        int i = appUserService.updateUser(insonaUser);
         if (i > 0) {
             return new Result().setMessage("更新成功");
         }
@@ -182,14 +186,13 @@ public class UserController {
 
     @PostMapping("/sendSMS")
     public Result sendSMS(@RequestBody LoginUser userPhone) {
-       String phone= userPhone.getPhone();
+        String phone = userPhone.getPhone();
         String code = SMSUtil.getVerificationCode();
-        System.out.println("====>"+phone);
         //数组参数，第一个是验证码，第二个是失效时间
         String[] content = {code, String.valueOf(TIME_OUT)};
         //发送
-        boolean flag=CCPRESTSmsUtil.sendSMSByYunXunTong(phone, TEMPLATE_ID, content);
-        if (flag){
+        boolean flag = CCPRESTSmsUtil.sendSMSByYunXunTong(phone, TEMPLATE_ID, content);
+        if (flag) {
             redisUtil.setEX(phone, code, TIME_OUT, TimeUnit.MINUTES);
             return new Result().setData(code);
         }
@@ -201,18 +204,8 @@ public class UserController {
      * 登陆使用的临时对象
      */
 
-    public static class HeadToken{
-        private String headToken;
 
-        public String getHeadToken() {
-            return headToken;
-        }
-
-        public void setHeadToken(String headToken) {
-            this.headToken = headToken;
-        }
-    }
-    public static class LoginUser extends HeadToken{
+    public static class LoginUser {
 
 
         private String phone;
@@ -242,14 +235,13 @@ public class UserController {
 
     /**
      * 注册使用的临时对象
-     *
-     * */
-    public static  class  RegisterUser extends HeadToken{
-        private  String phone;
+     */
+    public static class RegisterUser {
+        private String phone;
 
         private String password;
 
-        private String  code;
+        private String code;
 
         public String getPhone() {
             return phone;
@@ -277,9 +269,9 @@ public class UserController {
     }
 
     /**
-     *修改密码专用类
-     * */
-    public static  class UpdateUser extends HeadToken{
+     * 修改密码专用类
+     */
+    public static class UpdateUser {
 
         private String phone;
         private String newPassword;
