@@ -1,0 +1,26 @@
+package com.jieweifu.services.main;
+
+/**
+ * Created by 陶Lyn
+ * on 2018/3/16.
+ */
+
+import com.jieweifu.models.insona.InsonaOperation;
+import com.jieweifu.models.insona.InsonaOperationLog;
+
+import java.util.List;
+
+/**
+ * 日志操作
+ * */
+public interface InsonaOperationLogService {
+    //查询所有具体操作
+     List<InsonaOperation> getInsonaOperation();
+
+     //保存操作日志
+    void addInsonaOperationLog(InsonaOperationLog insonaOperationLog);
+
+    //动态查询
+    List<InsonaOperationLog> getInsonaOperationLogByDynamicAndLimit(InsonaOperationLog insonaOperationLog,int pageIndex, int pageSize);
+
+}
