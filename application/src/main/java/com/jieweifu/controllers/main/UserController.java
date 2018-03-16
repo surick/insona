@@ -56,11 +56,11 @@ public class UserController {
 
         int i = appUserService.findByPhone(phone);
         if (i > 0) {
-            return new Result().setMessage("号码已存在");
+            return new Result().setError("号码已存在");
         }
          if (!code.equals(redisUtil.get(phone))) {
        // if (!code.equals("1234")) {
-            return new Result().setMessage("手机验证码错误");
+            return new Result().setError("手机验证码错误");
         }
         InsonaUser insonaUser = new InsonaUser();
         insonaUser.setPhone(phone);
@@ -69,7 +69,7 @@ public class UserController {
             appUserService.addUser(insonaUser);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Result().setMessage("注册失败");
+            return new Result().setError("注册失败");
         }
         int newUserId = appUserService.findIdByPhone(phone).getId();
         Map<String, String> userInfo = new WeakHashMap<>();
@@ -110,20 +110,18 @@ public class UserController {
     //修改密码
     @PutMapping("password/update")
     public Result update(@RequestBody UpdateUser updateUser, HttpServletRequest request) {
-
         Integer id = tokenIdUtil.getUserId(request);
-
         if (id == -1) {
             return new Result().setError(401, "登录超时，重新登录");
         }
         InsonaUser insonaUser = appUserService.findById(id);
         if (!insonaUser.getPhone().equals(updateUser.getPhone())) {
-            return new Result().setMessage("手机号码输入错误");
+            return new Result().setError("手机号码输入错误");
         }
         String code = updateUser.getCode();
         if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
       //  if (!code.equals("1234")) {
-            return new Result().setMessage("手机验证码错误");
+            return new Result().setError("手机验证码错误");
         }
         try {
             appUserService.updatePassword(updateUser.getNewPassword(), id);
@@ -134,13 +132,41 @@ public class UserController {
         return new Result().setMessage("密码修改成功");
     }
 
+    //忘记密码  通过手机号 来判断用户是否存在  如果存在 就发送验证码
+    @PutMapping("/password/forget")
+    @AdminAuthAnnotation(check = false)
+    public Result  forget(@RequestBody UpdateUser updateUser){
+        String  phone=updateUser.getPhone();
+        InsonaUser user=appUserService.findIdByPhone(phone);
+
+        if (user==null) {
+            return new Result().setError("对不起，手机号码不存在");
+        }
+        Integer id =user.getId();
+        String code = updateUser.getCode();
+        if (!code.equals(redisUtil.get(phone))) {
+             // if (!code.equals("1234")) {
+            return new Result().setError("手机验证码错误");
+        }
+        try {
+            appUserService.updatePassword(updateUser.getNewPassword(), id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result().setError("修改失败");
+        }
+        return new Result().setMessage("密码重新设置成功");
+
+    }
+
+
+
 
     @Value("${custom.upload.home}")
     private String uploadPath;
 
     /**
      * 修改头像
-     */
+     *//*
     @PutMapping("headImage/update")
     public Result updateHeadImg(@RequestParam(value = "file") MultipartFile mFile, HttpServletRequest request) {
         Integer id = tokenIdUtil.getUserId(request);
@@ -153,12 +179,12 @@ public class UserController {
             file = FileUtil.uploadFile(mFile, uploadPath, name);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Result().setMessage("上次图片失败");
+            return new Result().setError("上次图片失败");
         }
         String filePath = file.getAbsolutePath();
         appUserService.addPicUrl(id, filePath);
         return new Result().setData(filePath);
-    }
+    }*/
 
     /**
      * 修改用户信息
@@ -174,7 +200,7 @@ public class UserController {
         if (i > 0) {
             return new Result().setMessage("更新成功");
         }
-        return new Result().setMessage("更新失败");
+        return new Result().setError("更新失败");
     }
 
     /**
@@ -185,6 +211,7 @@ public class UserController {
     private static final String TEMPLATE_ID = "1";
 
     @PostMapping("/sendSMS")
+    @AdminAuthAnnotation(check = false)
     public Result sendSMS(@RequestBody LoginUser userPhone) {
         String phone = userPhone.getPhone();
         String code = SMSUtil.getVerificationCode();
@@ -196,7 +223,7 @@ public class UserController {
             redisUtil.setEX(phone, code, TIME_OUT, TimeUnit.MINUTES);
             return new Result().setData(code);
         }
-        return new Result().setMessage("发送失败,网络繁忙");
+        return new Result().setError("发送失败,网络繁忙");
 
     }
 
