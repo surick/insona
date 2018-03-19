@@ -2,10 +2,12 @@ package com.jieweifu.controllers.main;
 
 import com.jieweifu.common.utils.WeatherUtil;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.WeatherData;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by 陶Lyn
@@ -13,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @SuppressWarnings("unused")
 @RestController
-@RequestMapping("function")
-public class FunctionController {
+@RequestMapping("/function")
+public class AppWeatherController {
 
-    @GetMapping("getWeather")
-    public Result getWeather(String city) {
-        return WeatherUtil.getAirQuality(city);
+
+//City 输入的是中文
+  @GetMapping("/getWeather")
+    public Result getWeather(String City){
+       return  WeatherUtil.getAirQuality(City);
     }
 }
