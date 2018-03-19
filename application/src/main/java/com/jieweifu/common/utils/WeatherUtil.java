@@ -40,7 +40,7 @@ public class WeatherUtil {
     public static Result getAirQuality(String City) {
         String chinese_py=getPinYin(City);
         String host = "http://www.pm25.in";
-        String path = "/api/querys/only_aqi.json";
+        String path = "/api/querys/pm2_5.json";
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "APPCODE ");//工具类定义好了这个参数必不可少，这里随便设置一个，只是不让为空
         Map<String, String> querys = new HashMap<>();
