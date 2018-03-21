@@ -5,34 +5,28 @@ import com.jieweifu.common.dbservice.Entity;
 
 /**
  * Created by 陶Lyn
- * on 2018/3/16.
+ * on 2018/3/21.
  */
+@Entity
+public class InsonaLogInfo {
 
-@SuppressWarnings("unused")
-@Entity(tableName = "insona_operation_log")
-public class InsonaOperationLog {
-
-
-    @Column(primaryKey = true)
-    private int id = -1;
-
+    @Column(columnName = "id")
+    private int id  ;
+    @Column(columnName = "opt")
     private String opt;
+    @Column(columnName = "uri")
     private String uri;
-
     @Column(columnName = "action_time")
     private String actionTime;
-
     @Column(columnName = "crt_time")
     private String createTime;
-
     @Column(columnName = "crt_user")
     private Integer createUser;
-
-    @Column(columnName = "crt_name")
+    @Column(columnName = "user_name")
     private String createUserName;
-
     @Column(columnName = "crt_host")
     private String createHost;
+
 
     public int getId() {
         return id;
@@ -97,4 +91,5 @@ public class InsonaOperationLog {
     public void setCreateHost(String createHost) {
         this.createHost = createHost;
     }
+
 }

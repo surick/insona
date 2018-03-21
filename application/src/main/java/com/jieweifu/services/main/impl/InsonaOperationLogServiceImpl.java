@@ -1,6 +1,8 @@
 package com.jieweifu.services.main.impl;
 
 import com.jieweifu.common.dbservice.DB;
+import com.jieweifu.models.admin.User;
+import com.jieweifu.models.insona.InsonaLogInfo;
 import com.jieweifu.models.insona.InsonaOperation;
 import com.jieweifu.models.insona.InsonaOperationLog;
 import com.jieweifu.services.main.InsonaOperationLogService;
@@ -35,26 +37,32 @@ public class InsonaOperationLogServiceImpl implements InsonaOperationLogService 
     }
 
     @Override
-    public List<InsonaOperationLog> getInsonaOperationLogByDynamicAndLimit(InsonaOperationLog insonaOperationLog,int pageIndex, int pageSize) {
+    public List<InsonaLogInfo> getInsonaOperationLogByDynamicAndLimit(InsonaOperationLog insonaOperationLog,int pageIndex, int pageSize) {
         StringBuffer sql=new StringBuffer("1=1 ");
 
         if(insonaOperationLog.getOpt()!=null){
-            sql.append(" and opt ="+"\'"+insonaOperationLog.getOpt()+"\'");
+            sql.append(" and A.opt ="+"\'"+insonaOperationLog.getOpt()+"\'");
         }
         if(insonaOperationLog.getCreateTime()!=null){
-            sql.append(" and crt_time="+"\'"+insonaOperationLog.getCreateTime()+"\'");
+            sql.append(" and A.crt_time="+"\'"+insonaOperationLog.getCreateTime()+"\'");
         }
         if(insonaOperationLog.getCreateUser()!=null){
-            sql.append(" and crt_user="+"\'"+insonaOperationLog.getCreateUser()+"\'");
+            sql.append(" and A.crt_user="+insonaOperationLog.getCreateUser());
         }
         if(insonaOperationLog.getCreateHost()!=null){
-            sql.append(" and crt_host="+"\'"+insonaOperationLog.getCreateHost()+"\'");
+            sql.append(" and A.crt_host="+"\'"+insonaOperationLog.getCreateHost()+"\'");
         }
         String mes=sql.toString();
         return db.select()
-                .from(InsonaOperationLog.class)
+                .columns("A.*,B.user_name ")
+                .from(InsonaOperationLog.class,"A")
+                .leftOuterJoin(User.class,"B","A.crt_user=B.id")
                 .where(mes)
                 .limit(pageIndex,pageSize)
-                .queryForList(InsonaOperationLog.class);
+                .queryForList(InsonaLogInfo.class);
+    }
+
+    public static void main(String[] args) {
+
     }
 }

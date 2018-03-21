@@ -1,11 +1,13 @@
 package com.jieweifu.controllers.insona;
 
+import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.ClientUtil;
 import com.jieweifu.common.utils.RedisUtil;
 import com.jieweifu.common.utils.TokenIdUtil;
 import com.jieweifu.common.utils.TokenUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
+import com.jieweifu.models.insona.InsonaLogInfo;
 import com.jieweifu.models.insona.InsonaOperation;
 import com.jieweifu.models.insona.InsonaOperationLog;
 import com.jieweifu.services.main.InsonaOperationLogService;
@@ -24,7 +26,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @RestController("mainUserLog")
-@RequestMapping("main/log")
+@RequestMapping("/insona/log")
 @AdminAuthAnnotation
 public class OperationLogController {
 
@@ -62,14 +64,14 @@ public class OperationLogController {
     @PostMapping("/savaLog")
     public Result saveLog(@RequestBody InsonaOperationLog insonaOperationLog, HttpServletRequest request){
 
-        Integer id = tokenIdUtil.getUserId(request);
+        int id = BaseContextHandler.getUserId();
         if (id == -1) {
             return new Result().setError(401, "登录超时，重新登录");
         }
         //通过工具类获得ip
         String ip=ClientUtil.getClientIp(request);
         insonaOperationLog.setCreateHost(ip);
-        insonaOperationLog.setCreateUser(id.toString());
+        insonaOperationLog.setCreateUser(id);
         try {
             insonaOperationLogService.addInsonaOperationLog(insonaOperationLog);
         } catch (Exception e) {
@@ -82,20 +84,20 @@ public class OperationLogController {
     /**
      * 查询日志
      * */
-    @PostMapping("getLog/{pageIndex}/{pageSize}")
+    @PostMapping("/getLog/{pageIndex}/{pageSize}")
     public Result getLog(@RequestBody InsonaOperationLog insonaOperationLog,@PathVariable("pageIndex") int pageIndex,
                          @PathVariable("pageSize") int pageSize,HttpServletRequest request){
         if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
         }
-        Integer id = tokenIdUtil.getUserId(request);
+        int id = BaseContextHandler.getUserId();
         if (id == -1) {
             return new Result().setError(401, "登录超时，重新登录");
         }
         String ip=ClientUtil.getClientIp(request);
         insonaOperationLog.setCreateHost(ip);
-        insonaOperationLog.setCreateUser(id.toString());
-        List<InsonaOperationLog> list=null;
+        insonaOperationLog.setCreateUser(id);
+        List<InsonaLogInfo> list=null;
         try {
              list=insonaOperationLogService.getInsonaOperationLogByDynamicAndLimit(insonaOperationLog,pageIndex,pageSize);
         } catch (Exception e) {

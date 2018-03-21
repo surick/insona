@@ -5,6 +5,7 @@ package com.jieweifu.services.main;
  * on 2018/3/16.
  */
 
+import com.jieweifu.models.insona.InsonaLogInfo;
 import com.jieweifu.models.insona.InsonaOperation;
 import com.jieweifu.models.insona.InsonaOperationLog;
 
@@ -21,6 +22,6 @@ public interface InsonaOperationLogService {
     void addInsonaOperationLog(InsonaOperationLog insonaOperationLog);
 
     //动态查询
-    List<InsonaOperationLog> getInsonaOperationLogByDynamicAndLimit(InsonaOperationLog insonaOperationLog,int pageIndex, int pageSize);
+    List<InsonaLogInfo> getInsonaOperationLogByDynamicAndLimit(InsonaOperationLog insonaOperationLog, int pageIndex, int pageSize);
 
 }
