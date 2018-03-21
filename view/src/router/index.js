@@ -222,6 +222,15 @@ export const appRouter = [
                 component: resolve => {
                     require(['../views/insona/insona-material.vue'], resolve);
                 }
+            },
+            {
+                path: 'log',
+                title: '日志管理',
+                name: 'AUTH_LOG',
+                access: 'AUTH_LOG',
+                component: resolve => {
+                    require(['../views/insona/insona-log.vue'], resolve);
+                }
             }
         ]
     }
