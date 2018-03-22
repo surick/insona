@@ -78,7 +78,6 @@
         },
         methods: {
             getLog() {
-                console.log(this.end + '====');
                 InsonaLog.getInsonaLog(this, {
                     pageIndex: this.current - 1,
                     pageSize: 10,

@@ -3,7 +3,6 @@ import moment from 'moment';
 
 export default {
     getInsonaLog(vm, obj) {
-        console.log('==?？' + obj.endTime);
         return new Promise((resolve, reject) => {
             ajax(vm, {
                 method: 'POST',
