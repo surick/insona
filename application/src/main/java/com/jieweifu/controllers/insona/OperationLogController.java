@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 陶Lyn
@@ -45,7 +47,6 @@ public class OperationLogController {
     @AdminAuthAnnotation(check = false)
     @GetMapping("/getOperation")
     public Result getOperation(){
-
         List<InsonaOperation> list=new ArrayList<>();
         try {
             list= insonaOperationLogService.getInsonaOperation();
@@ -86,24 +87,28 @@ public class OperationLogController {
      * */
     @PostMapping("/getLog/{pageIndex}/{pageSize}")
     public Result getLog(@RequestBody InsonaOperationLog insonaOperationLog,@PathVariable("pageIndex") int pageIndex,
-                         @PathVariable("pageSize") int pageSize,HttpServletRequest request){
+                         @PathVariable("pageSize") int pageSize){
         if (pageIndex < 0 || pageSize < 0) {
             return new Result().setError("页码或条目数不合法");
         }
-        int id = BaseContextHandler.getUserId();
-        if (id == -1) {
-            return new Result().setError(401, "登录超时，重新登录");
-        }
-        String ip=ClientUtil.getClientIp(request);
-        insonaOperationLog.setCreateHost(ip);
-        insonaOperationLog.setCreateUser(id);
         List<InsonaLogInfo> list=null;
+        Map<String, Object> map = new HashMap<>();
         try {
              list=insonaOperationLogService.getInsonaOperationLogByDynamicAndLimit(insonaOperationLog,pageIndex,pageSize);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result().setError("查询失败");
         }
+        int total=insonaOperationLogService.getOperationLogTotal(insonaOperationLog);
+        map.put("list",list);
+        map.put("total",total);
+        return new Result().setData(map);
+    }
+
+    //日志多条件查询的用户显示
+    @GetMapping("/getUserNameByGroupBy")
+    public Result getUserNameByGroupBy(){
+        List<InsonaLogInfo> list= insonaOperationLogService.getUserByGroupBy();
         return new Result().setData(list);
     }
 

@@ -24,4 +24,10 @@ public interface InsonaOperationLogService {
     //动态查询
     List<InsonaLogInfo> getInsonaOperationLogByDynamicAndLimit(InsonaOperationLog insonaOperationLog, int pageIndex, int pageSize);
 
+    //查询日志总数
+    int getOperationLogTotal(InsonaOperationLog insonaOperationLog);
+
+    //查询有日志操作的用户 （通过分组查询）
+
+    List<InsonaLogInfo> getUserByGroupBy();
 }

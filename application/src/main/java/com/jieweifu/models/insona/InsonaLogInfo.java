@@ -22,7 +22,7 @@ public class InsonaLogInfo {
     private String createTime;
     @Column(columnName = "crt_user")
     private Integer createUser;
-    @Column(columnName = "user_name")
+    @Column(columnName = "username")
     private String createUserName;
     @Column(columnName = "crt_host")
     private String createHost;
