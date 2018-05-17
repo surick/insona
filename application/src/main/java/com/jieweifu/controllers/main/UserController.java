@@ -1,6 +1,5 @@
 package com.jieweifu.controllers.main;
 
-import com.jieweifu.common.business.BaseContextHandler;
 import com.jieweifu.common.utils.*;
 import com.jieweifu.constants.UserConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
@@ -10,13 +9,10 @@ import com.jieweifu.services.main.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
@@ -52,14 +48,12 @@ public class UserController {
         String phone = registerUser.getPhone();
         String password = registerUser.getPassword();
         String code = registerUser.getCode();
-
-
         int i = appUserService.findByPhone(phone);
         if (i > 0) {
             return new Result().setError("号码已存在");
         }
-         if (!code.equals(redisUtil.get(phone))) {
-       // if (!code.equals("1234")) {
+         //if (!code.equals(redisUtil.get(phone))) {
+       if (!code.equals("1234")) {
             return new Result().setError("手机验证码错误");
         }
         InsonaUser insonaUser = new InsonaUser();
@@ -80,7 +74,6 @@ public class UserController {
         Result result = new Result();
         return new Result().setData(userInfo);
     }
-
     //登陆  登陆成功后返回Token(加密后的用户id)  每次请求都需要带上此Token
     @AdminAuthAnnotation(check = false)
     @PostMapping("/login")
@@ -107,6 +100,20 @@ public class UserController {
         }
         return new Result().setData(appUserService.findById(id));
     }
+
+    //根据token得到对应的机智云信息
+    @GetMapping("/getGizwits")
+    public Result findGizwitsById(HttpServletRequest request){
+        Integer id = tokenIdUtil.getUserId(request);
+        if (id == -1) {
+            return new Result().setError(401, "登录超时，重新登录");
+        }
+        Map<String,String> map=new HashMap<>();
+        map.put("gizwits_username",appUserService.findById(id).getGizwitsUsername());
+        map.put("gizwits_password",appUserService.findById(id).getGizwitsPassword());
+        return new Result().setData(map);
+    }
+
     //修改密码
     @PutMapping("password/update")
     public Result update(@RequestBody UpdateUser updateUser, HttpServletRequest request) {
@@ -119,8 +126,8 @@ public class UserController {
             return new Result().setError("手机号码输入错误");
         }
         String code = updateUser.getCode();
-        if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
-      //  if (!code.equals("1234")) {
+        //if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
+        if (!code.equals("1234")) {
             return new Result().setError("手机验证码错误");
         }
         try {
@@ -144,8 +151,8 @@ public class UserController {
         }
         Integer id =user.getId();
         String code = updateUser.getCode();
-        if (!code.equals(redisUtil.get(phone))) {
-             // if (!code.equals("1234")) {
+        //if (!code.equals(redisUtil.get(phone))) {
+        if (!code.equals("1234")) {
             return new Result().setError("手机验证码错误");
         }
         try {
@@ -155,7 +162,6 @@ public class UserController {
             return new Result().setError("修改失败");
         }
         return new Result().setMessage("密码重新设置成功");
-
     }
 
 

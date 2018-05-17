@@ -198,8 +198,39 @@
             <version>2.5.0</version>
         </dependency>
 
-    </dependencies>
+        <!--本地jar-->
+        <!--<dependency>
+            <groupId>cn.com.guju</groupId>
+            <artifactId>CCP_REST_SMS_SDK_JAVA_v2.6.3r</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../classes/artifacts/application__1__jar/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar</systemPath>
+        </dependency>-->
+        <!--本地sdk的依赖-->
+        <dependency>
+            <groupId>com.hope.cloud</groupId>
+            <artifactId>cloud</artifactId>
+            <version>1.0</version>
+        </dependency>
 
+
+        <!--  机智云 接收数据推送-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.5</version>
+        </dependency>
+       <!-- <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160212</version>
+        </dependency>-->
+    </dependencies>
     <build>
         <resources>
             <resource>
