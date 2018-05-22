@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+        
+        <title>Client</title>
+
+        <link href="css/bootstrap.css" rel="stylesheet">
+        
+	<style>
+		body { 
+			padding:20px;
+		}
+		#console { 
+			height: 400px; 
+			overflow: auto; 
+		}
+		.username-msg {color:orange;}
+		.connect-msg {color:green;}
+		.disconnect-msg {color:red;}
+		.send-msg {color:#888}
+	</style>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script> 
+
+	<!-- <script src="js/socket.io/socket.io.js"></script>
+        <script src="js/moment.min.js"></script>
+        <script src="js/jquery-1.7.2.min.js"></script> -->
+	
+	<script>
+        $(function () {
+            var socket =  io.connect('http://localhost:8881');
+          
+            socket.on('chat message', function(msg){
+                    $('#console').append($('<li>').text(msg));
+            });
+        });
+		
+	</script>
+</head>
+
+<body>
+	
+	<h1>Netty-socketio Demo</h1>
+	
+	<br/>
+
+	<div id="console" class="well">
+	</div>
+
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 package com.jieweifu.controllers.main;
-import com.jieweifu.common.gizwits.GizwitsNoti;
-import com.jieweifu.common.gizwits.Setting;
+
+import com.jieweifu.common.gizwits.*;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.gizwits.*;
@@ -11,9 +11,12 @@ import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
 import javax.net.ssl.*;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -35,10 +38,8 @@ import java.util.*;
 public class GizwitsController {
 
 
-
-
-   @Autowired
-   private GizwitsService gizwitsService;
+    @Autowired
+    private GizwitsService gizwitsService;
 
 
     @Autowired
@@ -48,63 +49,69 @@ public class GizwitsController {
     //开启与机智云的连接
     @AdminAuthAnnotation(check = false)
     @GetMapping("/initGizwits")
-    public  void initGizwits(){
+    public void initGizwits() {
+        SocketQ s = new SocketQ();
+        s.webSocketServer();
         gizwitsNoti.init();
+
+
     }
 
 
+    @AdminAuthAnnotation(check = false)
+    @GetMapping("/init1")
+    public void init() {
+        SocketIODeviceEntity logFile = new SocketIODeviceEntity();
+        logFile.setMac("messageevent");
+        logFile.setDeviceStatus("asd");
+
+
+        SocketQ.client.sendEvent(logFile.getMac(), logFile);
+
+
+    }
 
     //获得大project
     @AdminAuthAnnotation(check = false)
     @PostMapping("/getGizwitsProject")
-    public Result getGizwitsProject(@RequestBody GizwitsMessage gizwitsMessage){
-        String mac =gizwitsMessage.getMac();
+    public Result getGizwitsProject(@RequestBody GizwitsMessage gizwitsMessage) {
+        String mac = gizwitsMessage.getMac();
 
-        GizwitsProject gizwitsProject=gizwitsService.getProject(mac);
+        GizwitsProject gizwitsProject = gizwitsService.getProject(mac);
         return new Result().setData(gizwitsProject);
     }
 
 
     @AdminAuthAnnotation(check = false)
     @PostMapping("/getAbc")
-    public Result getGizwitsProject1(@RequestBody GizwitsMessage gizwitsMessage){
-        String mac =gizwitsMessage.getMac();
-        String id =gizwitsMessage.getDeviceId();
-        String type= gizwitsService.getDeviceNameById(id,mac);
+    public Result getGizwitsProject1(@RequestBody GizwitsMessage gizwitsMessage) {
+        String mac = gizwitsMessage.getMac();
+        String id = gizwitsMessage.getDeviceId();
+        String type = gizwitsService.getDeviceNameById(id, mac);
         return new Result().setData(type);
     }
-
 
 
     //获得设备的状态的状态
     @AdminAuthAnnotation(check = false)
     @PostMapping("/getDeviceStatus")
-    public Result getDeviceStatus(@RequestBody GizwitsMessage gizwitsMessage){
-        String mac =gizwitsMessage.getMac();
-        String deviceId=gizwitsMessage.getDeviceId();
-        String deviceName =gizwitsMessage.getType();
+    public Result getDeviceStatus(@RequestBody GizwitsMessage gizwitsMessage) {
+        String mac = gizwitsMessage.getMac();
+        String deviceId = gizwitsMessage.getDeviceId();
+        String deviceName = gizwitsMessage.getType();
 
-        if(deviceName.equals("light")){
-            GizwitsStatusLight gizwitsStatusLight=gizwitsService.getLightStatus(mac,deviceId);
+        if (deviceName.equals("light")) {
+            GizwitsStatusLight gizwitsStatusLight = gizwitsService.getLightStatus(mac, deviceId);
             return new Result().setData(gizwitsStatusLight);
-        }else if(deviceName.equals("curtain")){
-            GizwitsStatusCurtain gizwitsStatusCurtain=gizwitsService.getCurtainStatus(mac,deviceId);
+        } else if (deviceName.equals("curtain")) {
+            GizwitsStatusCurtain gizwitsStatusCurtain = gizwitsService.getCurtainStatus(mac, deviceId);
             return new Result().setData(gizwitsStatusCurtain);
-        }else if(deviceName.equals("hvac")) {
-            GizwitsStatusHvac gizwitsStatusHvac=gizwitsService.getHavcStatus(mac,deviceId);
+        } else if (deviceName.equals("hvac")) {
+            GizwitsStatusHvac gizwitsStatusHvac = gizwitsService.getHavcStatus(mac, deviceId);
             return new Result().setData(gizwitsStatusHvac);
         }
         return new Result().setError("找不到设备");
     }
-
-
-
-
-
-
-
-
-
 
 
     /**
