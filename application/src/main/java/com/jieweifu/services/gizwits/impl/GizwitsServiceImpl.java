@@ -95,8 +95,9 @@ public class GizwitsServiceImpl implements GizwitsService {
 
                     //如果是状态，直接通过socketio推送到与之连接的前端
                     SocketIODeviceEntity socketIODeviceEntity=new SocketIODeviceEntity(mac,aa);
-                    SocketQ.client.sendEvent(socketIODeviceEntity.getMac(),socketIODeviceEntity);
-
+                    if(SocketQ.client!=null){
+                        SocketQ.client.sendEvent(socketIODeviceEntity.getMac(),socketIODeviceEntity);
+                    }
                     if(deviceName!=null){
                         if(deviceName.equals("light")){
                             GizwitsStatusLight gizwitsStatusLight = new GizwitsStatusLight();
