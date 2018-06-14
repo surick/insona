@@ -8,4 +8,5 @@ public class UserConstant {
     public final static String USER_TOKEN = "token";
     public final static String USER_NAME = "name";
     public final static String USER_HEAD_IMG = "headImgUrl";
+
 }

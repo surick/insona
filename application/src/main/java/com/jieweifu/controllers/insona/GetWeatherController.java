@@ -60,4 +60,11 @@ public class GetWeatherController {
         return new Result().setData(jsonObject);
     }
 
+
+
+
+
+
+
+
 }

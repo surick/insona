@@ -18,6 +18,9 @@ public class DB {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+
+
+
     public Select select() {
         return new Select(jdbcTemplate);
     }

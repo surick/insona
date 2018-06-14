@@ -20,21 +20,13 @@ public class CCPRESTSmsUtil {
         ccpRestSmsSDK.setAppId("8aaf070862181ad50162227e615c067d");
         //String []a={"1234","2"};
         HashMap<String,Object> data=ccpRestSmsSDK.sendTemplateSMS(phone,templateId,content);
-       if(data!=null){
-           if("000000".equals(data.get("statusCode"))){
+        if(data!=null){
+            if("000000".equals(data.get("statusCode"))){
                 return true;
-           }
-       }
-       return false;
+            }
+        }
+        return false;
     }
 
-   /* public static void main(String[] args) {
-        String []a={"1234","2"};
-        if( sendSMSByYunXunTong("18136098944","1",a)){
-            System.out.println("====true");
-        }
-        System.out.println("====false");
-
-    }*/
 
 }

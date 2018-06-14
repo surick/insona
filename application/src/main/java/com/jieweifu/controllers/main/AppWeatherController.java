@@ -21,7 +21,7 @@ public class AppWeatherController {
 
 //City 输入的是中文
   @GetMapping("/getWeather")
-    public Result getWeather(String City){
-       return  WeatherUtil.getAirQuality(City);
+    public Result getWeather(String City,String lng, String lat){
+       return  WeatherUtil.getWeather(City,lng,lat);
     }
 }

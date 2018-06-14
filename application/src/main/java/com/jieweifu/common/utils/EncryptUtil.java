@@ -51,5 +51,5 @@ public class EncryptUtil {
     public static void main(String[] args){
         System.out.println(encrypt("root"));
         System.out.println(encrypt("root3306"));
-    }
+}
 }
