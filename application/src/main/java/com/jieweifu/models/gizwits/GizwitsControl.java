@@ -1,22 +1,55 @@
 package com.jieweifu.models.gizwits;
 
+import com.jieweifu.common.dbservice.Column;
+import com.jieweifu.common.dbservice.Entity;
+
 import java.util.Map;
 
 /**
  * Created by 陶Lyn
  * on 2018/4/28.
  */
-public class GizwitsJson {
+
+@SuppressWarnings("unused")
+@Entity(tableName = "gizwits_control")
+public class GizwitsControl {
+
+    @Column(primaryKey = true)
+    private int id;
     private String cmd;
-    private String deliver_id;
+    private String delivery_id;
     private String event_type;
     private String did;
-    private String created_at;
+    private float created_at;
     private String product_key;
     private String mac;
     private String group_id;
     private Map<String,String> data;
 
+
+    public float getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(float created_at) {
+        this.created_at = created_at;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getDelivery_id() {
+        return delivery_id;
+    }
+
+    public void setDelivery_id(String delivery_id) {
+        this.delivery_id = delivery_id;
+    }
 
     public String getCmd() {
         return cmd;
@@ -26,13 +59,7 @@ public class GizwitsJson {
         this.cmd = cmd;
     }
 
-    public String getDeliver_id() {
-        return deliver_id;
-    }
 
-    public void setDeliver_id(String deliver_id) {
-        this.deliver_id = deliver_id;
-    }
 
     public String getEvent_type() {
         return event_type;
@@ -50,13 +77,7 @@ public class GizwitsJson {
         this.did = did;
     }
 
-    public String getCreated_at() {
-        return created_at;
-    }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
-    }
 
     public String getProduct_key() {
         return product_key;

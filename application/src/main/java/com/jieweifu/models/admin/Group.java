@@ -12,6 +12,7 @@ public class Group {
     @Column(columnName = "group_name")
     private String groupName;
 
+
     @Column(columnName = "order_num")
     private Integer orderNum;
 
@@ -191,4 +192,5 @@ public class Group {
     public void setAttr5(String attr5) {
         this.attr5 = attr5;
     }
+
 }

@@ -8,8 +8,8 @@ import com.jieweifu.common.dbservice.Entity;
  * on 2018/5/14.
  */
 @SuppressWarnings("unused")
-@Entity(tableName = "gizwits_status")
-public class GizwitsStatus {
+@Entity(tableName = "gizwits_status_light")
+public class GizwitsStatusLight {
     @Column(primaryKey = true)
     private Integer id;
 
@@ -20,6 +20,17 @@ public class GizwitsStatus {
     private String jsonObject;
 
     private String createTime;
+
+
+    private String deviceId;
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
     public Integer getId() {
         return id;

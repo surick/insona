@@ -66,7 +66,7 @@ public class GizwitsServiceImpl implements GizwitsService {
                 GizwitsDevice gizwitsDevice = (GizwitsDevice) JSONObject.toBean(jsonSF, GizwitsDevice.class, map);
                 Responses responses = gizwitsDevice.getResponses().get(0);
                 if (responses.getData() != null && responses.getData().getItem() != null && responses.getData().getItem().getType().equals("project")) {
-                    System.out.println("是最大的project");
+                  //  System.out.println("是最大的project");
                     GizwitsProject gizwitsProject = new GizwitsProject();
                     gizwitsProject.setDid(did);
                     gizwitsProject.setMac(mac);
@@ -78,7 +78,7 @@ public class GizwitsServiceImpl implements GizwitsService {
 
                     redisUtil.set(mac,aa);
                 } else {
-                    System.out.println("是操作");
+                  //  System.out.println("是操作");
                     GizwitsOperation gizwitsOperation = new GizwitsOperation();
                     gizwitsOperation.setDid(did);
                     gizwitsOperation.setMac(mac);

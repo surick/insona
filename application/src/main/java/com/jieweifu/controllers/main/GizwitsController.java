@@ -58,18 +58,7 @@ public class GizwitsController {
     }
 
 
-    @AdminAuthAnnotation(check = false)
-    @GetMapping("/init1")
-    public void init() {
-        SocketIODeviceEntity logFile = new SocketIODeviceEntity();
-        logFile.setMac("messageevent");
-        logFile.setDeviceStatus("asd");
 
-
-        SocketQ.client.sendEvent(logFile.getMac(), logFile);
-
-
-    }
 
     //获得大project
     @AdminAuthAnnotation(check = false)

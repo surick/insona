@@ -44,6 +44,12 @@ public class InsonaUser {
     @Column(columnName = "head_img_url")
     private String headImgUrl;
 
+    @Column(columnName = "gizwits_username")
+    private String gizwitsUsername;
+
+    @Column(columnName = "gizwits_password")
+    private String gizwitsPassword;
+
     public int getId() {
         return id;
     }
@@ -162,5 +168,22 @@ public class InsonaUser {
 
     public void setHeadImgUrl(String headImgUrl) {
         this.headImgUrl = headImgUrl;
+    }
+
+
+    public String getGizwitsUsername() {
+        return gizwitsUsername;
+    }
+
+    public void setGizwitsUsername(String gizwitsUsername) {
+        this.gizwitsUsername = gizwitsUsername;
+    }
+
+    public String getGizwitsPassword() {
+        return gizwitsPassword;
+    }
+
+    public void setGizwitsPassword(String gizwitsPassword) {
+        this.gizwitsPassword = gizwitsPassword;
     }
 }
