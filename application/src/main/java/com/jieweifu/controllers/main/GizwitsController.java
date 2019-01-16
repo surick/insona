@@ -53,8 +53,6 @@ public class GizwitsController {
         SocketQ s = new SocketQ();
         s.webSocketServer();
         gizwitsNoti.init();
-
-
     }
 
 

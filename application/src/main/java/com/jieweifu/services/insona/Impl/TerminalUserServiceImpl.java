@@ -38,6 +38,14 @@ public class TerminalUserServiceImpl implements TerminalUserService {
     }
 
     @Override
+    public List<InsonaUser> getAllUser() {
+        return db.select()
+                .from(InsonaUser.class)
+                .where("1 = 1")
+                .queryForList(InsonaUser.class);
+    }
+
+    @Override
     public int getTotal() {
         return db.select()
                 .from(InsonaUser.class)

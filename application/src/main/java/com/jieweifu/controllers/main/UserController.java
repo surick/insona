@@ -40,7 +40,11 @@ public class UserController {
         this.tokenIdUtil = tokenIdUtil;
     }
 
-    //注册
+    /**
+     * 注册
+     * @param registerUser
+     * @return
+     */
     @AdminAuthAnnotation(check = false)
     @PostMapping("/register")
     public Result register(@RequestBody RegisterUser registerUser) {
@@ -48,32 +52,44 @@ public class UserController {
         String phone = registerUser.getPhone();
         String password = registerUser.getPassword();
         String code = registerUser.getCode();
+        String gizwitsUsername = registerUser.getGizwitsUsername();
+        String gizwitsPassword = registerUser.getGizwitsPassword();
+
         int i = appUserService.findByPhone(phone);
+
         if (i > 0) {
             return new Result().setError("号码已存在");
         }
-         //if (!code.equals(redisUtil.get(phone))) {
-       if (!code.equals("1234")) {
+
+        if (!code.equals(redisUtil.get(phone))) {
             return new Result().setError("手机验证码错误");
         }
+
         InsonaUser insonaUser = new InsonaUser();
+
         insonaUser.setPhone(phone);
         insonaUser.setPassword(password);
+        insonaUser.setGizwitsUsername(gizwitsUsername);
+        insonaUser.setGizwitsPassword(gizwitsPassword);
+
         try {
             appUserService.addUser(insonaUser);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result().setError("注册失败");
         }
+
         int newUserId = appUserService.findIdByPhone(phone).getId();
         Map<String, String> userInfo = new WeakHashMap<>();
-        //通过token 封装后的  id
+        //通过token封装后的id
         String tokenId = tokenUtil.generateToken(String.valueOf(newUserId));
         userInfo.put(UserConstant.USER_TOKEN, tokenId);
         redisUtil.setEX(tokenId, tokenId, 30, TimeUnit.DAYS);
         Result result = new Result();
         return new Result().setData(userInfo);
     }
+
+
     //登陆  登陆成功后返回Token(加密后的用户id)  每次请求都需要带上此Token
     @AdminAuthAnnotation(check = false)
     @PostMapping("/login")
@@ -90,8 +106,8 @@ public class UserController {
         return new Result().setError("用户名或密码错误");
     }
 
-    //根据用户id查询用户信息
 
+    //根据用户id查询用户信息
     @GetMapping("/getUser")
     public Result findById(HttpServletRequest request) {
         Integer id = tokenIdUtil.getUserId(request);
@@ -126,8 +142,7 @@ public class UserController {
             return new Result().setError("手机号码输入错误");
         }
         String code = updateUser.getCode();
-        //if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
-        if (!code.equals("1234")) {
+        if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
             return new Result().setError("手机验证码错误");
         }
         try {
@@ -151,8 +166,7 @@ public class UserController {
         }
         Integer id =user.getId();
         String code = updateUser.getCode();
-        //if (!code.equals(redisUtil.get(phone))) {
-        if (!code.equals("1234")) {
+        if (!code.equals(redisUtil.get(phone))) {
             return new Result().setError("手机验证码错误");
         }
         try {
@@ -163,8 +177,6 @@ public class UserController {
         }
         return new Result().setMessage("密码重新设置成功");
     }
-
-
 
 
     @Value("${custom.upload.home}")
@@ -212,9 +224,8 @@ public class UserController {
     /**
      * 短信验证接口
      */
-
     private static final int TIME_OUT = 2;
-    private static final String TEMPLATE_ID = "1";
+    private static final String TEMPLATE_ID = "403000";
 
     @PostMapping("/sendSMS")
     @AdminAuthAnnotation(check = false)
@@ -227,7 +238,8 @@ public class UserController {
         boolean flag = CCPRESTSmsUtil.sendSMSByYunXunTong(phone, TEMPLATE_ID, content);
         if (flag) {
             redisUtil.setEX(phone, code, TIME_OUT, TimeUnit.MINUTES);
-            return new Result().setData(code);
+            return new Result().setMessage("发送成功");
+//            return new Result().setData(code);
         }
         return new Result().setError("发送失败,网络繁忙");
 
@@ -236,8 +248,6 @@ public class UserController {
     /**
      * 登陆使用的临时对象
      */
-
-
     public static class LoginUser {
 
 
@@ -276,6 +286,10 @@ public class UserController {
 
         private String code;
 
+        private String gizwitsUsername;
+
+        private String gizwitsPassword;
+
         public String getPhone() {
             return phone;
         }
@@ -298,6 +312,22 @@ public class UserController {
 
         public void setCode(String code) {
             this.code = code;
+        }
+
+        public String getGizwitsUsername() {
+            return gizwitsUsername;
+        }
+
+        public void setGizwitsUsername(String gizwitsUsername) {
+            this.gizwitsUsername = gizwitsUsername;
+        }
+
+        public String getGizwitsPassword() {
+            return gizwitsPassword;
+        }
+
+        public void setGizwitsPassword(String gizwitsPassword) {
+            this.gizwitsPassword = gizwitsPassword;
         }
     }
 

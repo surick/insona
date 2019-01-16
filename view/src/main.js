@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import iView from 'iview';
-import {router, otherRouter, appRouter} from './router';
+import { router, otherRouter, appRouter } from './router';
 import store from './store';
 import Util from './libs/util';
 import App from './app.vue';

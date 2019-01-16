@@ -1,6 +1,7 @@
 package com.jieweifu.controllers.insona;
 
 import com.jieweifu.common.business.BaseContextHandler;
+import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.admin.User;
@@ -10,12 +11,12 @@ import com.jieweifu.services.insona.ProductSaleService;
 import com.jieweifu.services.insona.ProductService;
 import com.jieweifu.services.insona.TerminalUserService;
 import com.jieweifu.services.insona.UserProductService;
+import com.jieweifu.services.main.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @SuppressWarnings("unused")
@@ -28,18 +29,21 @@ public class TerminalUserController {
     private UserService userService;
     private UserProductService userProductService;
     private ProductSaleService productSaleService;
+    private AppUserService appUserService;
 
     @Autowired
     public TerminalUserController(TerminalUserService terminalUserService,
                                   ProductService productService,
                                   UserService userService,
                                   UserProductService userProductService,
-                                  ProductSaleService productSaleService) {
+                                  ProductSaleService productSaleService,
+                                  AppUserService appUserService) {
         this.terminalUserService = terminalUserService;
         this.productService = productService;
         this.userService = userService;
         this.userProductService = userProductService;
         this.productSaleService = productSaleService;
+        this.appUserService = appUserService;
     }
 
     /**
@@ -90,11 +94,12 @@ public class TerminalUserController {
         }
         //查用户 ->id
         List<InsonaUser> listUser = new ArrayList<>();
-        ids.forEach(
-                id -> {
-                    listUser.add(terminalUserService.getUserById(id));
-                }
-        );
+//        ids.forEach(
+//                id -> {
+//                    listUser.add(terminalUserService.getUserById(id));
+//                }
+//        );
+        listUser.addAll(terminalUserService.getAllUser());
         //手动分页
         List<InsonaUser> list = new ArrayList<>();
         int total = listUser.size();
@@ -155,5 +160,23 @@ public class TerminalUserController {
             return new Result().setError("设备不存在");
         }
         return new Result().setData(list);
+    }
+
+    @PostMapping("addUser")
+    public Result addUser(@Valid @RequestBody InsonaUser insonaUser, Errors errors) {
+        if (errors.hasErrors()) {
+            return new Result().setError(ErrorUtil.getErrors(errors));
+        }
+        int i = appUserService.findByPhone(insonaUser.getPhone());
+        if (i > 0) {
+            return new Result().setError("号码已存在");
+        }
+        try {
+            appUserService.addUser(insonaUser);
+            return new Result().setMessage("添加成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result().setError("添加失败");
+        }
     }
 }

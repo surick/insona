@@ -217,7 +217,7 @@ export const appRouter = [
             {
                 path: 'material',
                 title: '资料管理',
-                name: 'AUTH_MATERIAL    ',
+                name: 'AUTH_MATERIAL',
                 access: 'AUTH_MATERIAL',
                 component: resolve => {
                     require(['../views/insona/insona-material.vue'], resolve);
@@ -230,6 +230,15 @@ export const appRouter = [
                 access: 'AUTH_LOG',
                 component: resolve => {
                     require(['../views/insona/insona-log.vue'], resolve);
+                }
+            },
+            {
+                path: 'about',
+                title: '关于我们',
+                name: 'AUTH_ABOUT',
+                access: 'AUTH_ABOUT',
+                component: resolve => {
+                    require(['../views/insona/insona-about.vue'], resolve);
                 }
             }
         ]

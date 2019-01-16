@@ -13,6 +13,8 @@ public interface TerminalUserService {
 
     InsonaUser getUserById(String id);
 
+    List<InsonaUser> getAllUser();
+
     int getTotal();
 
     List<UserProduct> listProduct(String uid);

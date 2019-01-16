@@ -198,20 +198,32 @@
             <version>2.5.0</version>
         </dependency>
 
-        <!--本地jar-->
-        <!--<dependency>
-            <groupId>cn.com.guju</groupId>
-            <artifactId>CCP_REST_SMS_SDK_JAVA_v2.6.3r</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../classes/artifacts/application__1__jar/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar</systemPath>
-        </dependency>-->
-        <!--本地sdk的依赖-->
         <dependency>
-            <groupId>com.hope.cloud</groupId>
-            <artifactId>cloud</artifactId>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cloopen.rest.sdk</groupId>
+            <artifactId>CCPRestSmsSDK</artifactId>
             <version>1.0</version>
         </dependency>
+
+        <!--本地jar-->
+        <!--<dependency>-->
+            <!--<groupId>cn.com.guju</groupId>-->
+            <!--<artifactId>CCP_REST_SMS_SDK_JAVA_v2.6.3r</artifactId>-->
+            <!--<version>1.0</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${basedir}/src/main/lib/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar</systemPath>-->
+        <!--</dependency>-->
+        <!--本地sdk的依赖-->
+        <!--<dependency>-->
+            <!--<groupId>com.hope.cloud</groupId>-->
+            <!--<artifactId>cloud</artifactId>-->
+            <!--<version>1.0</version>-->
+        <!--</dependency>-->
 
 
         <!--  机智云 接收数据推送-->
@@ -225,14 +237,6 @@
             <artifactId>log4j-core</artifactId>
             <version>2.5</version>
         </dependency>
-
-
-
-    <!--   <dependency>
-            <groupId>com.corundumstudio.socketio</groupId>
-            <artifactId>netty-socketio</artifactId>
-            <version>1.7.11</version>
-        </dependency>-->
 
         <dependency>
             <groupId>com.corundumstudio.socketio</groupId>
@@ -252,6 +256,26 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.cloopen.rest.sdk</groupId>
+                            <artifactId>CCPRestSmsSDK</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                            <file>${project.basedir}/src/main/lib/CCP_REST_SMS_SDK_JAVA_v2.6.3r.jar</file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -263,6 +287,13 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+
+        <repository>
+            <id>local-repo</id>
+            <!--<name>Repository in project's repos dir</name>
+            <layout>default</layout>-->
+            <url>${project.basedir}/src/main/lib/</url>
         </repository>
 
     </repositories>

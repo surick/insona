@@ -21,6 +21,14 @@
             <span class="expand-key">地址：</span>
             <span class="expand-value">{{ row.address }}</span>
             </Col>
+            <Col span="6">
+            <span class="expand-key">机智云用户名：</span>
+            <span class="expand-value">{{ row.gizwitsUsername }}</span>
+            </Col>
+            <Col span="6">
+            <span class="expand-key">机智云密码：</span>
+            <span class="expand-value">{{ row.gizwitsPassword }}</span>
+            </Col>
         </Row>
     </div>
 </template>

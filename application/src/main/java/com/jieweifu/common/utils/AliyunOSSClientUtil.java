@@ -1,19 +1,21 @@
 package com.jieweifu.common.utils;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.awt.*;
+import java.io.*;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.aliyun.oss.ClientException;
+import com.aliyun.oss.OSSException;
+import com.aliyun.oss.model.*;
 import org.apache.log4j.Logger;
 
 import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.model.Bucket;
-import com.aliyun.oss.model.OSSObject;
-import com.aliyun.oss.model.ObjectMetadata;
-import com.aliyun.oss.model.PutObjectResult;
 import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
 
 @Service
 public class AliyunOSSClientUtil {
@@ -28,6 +30,8 @@ public class AliyunOSSClientUtil {
     private static String BACKET_NAME;
     //阿里云API的文件夹名称
     private static String FOLDER;
+
+    private static String FILE_URL;
 
     //初始化属性
     static {
@@ -99,12 +103,12 @@ public class AliyunOSSClientUtil {
     /**
      * 根据key删除OSS服务器上的文件
      *
-     * @param ossClient  oss连接
      * @param bucketName 存储空间
      * @param folder     模拟文件夹名 如"qj_nanjing/"
      * @param key        Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
      */
-    public static void deleteFile(OSSClient ossClient, String bucketName, String folder, String key) {
+    public static void deleteFile(String bucketName, String folder, String key) {
+        OSSClient ossClient = getOSSClient();
         ossClient.deleteObject(bucketName, folder + key);
         logger.info("删除" + bucketName + "下的文件" + folder + key + "成功");
     }
@@ -191,6 +195,97 @@ public class AliyunOSSClientUtil {
         return "image/jpeg";
     }
 
+    /**
+     * 上传文件。
+     *
+     * @param file 需要上传的文件路径
+     * @return 如果上传的文件是图片的话，会返回图片的"URL"，如果非图片的话会返回"非图片，不可预览。文件路径为：+文件路径"
+     */
+    public static String upLoad(File file) {
+
+        // 默认值为：true
+        boolean isImage = true;
+        // 判断所要上传的图片是否是图片，图片可以预览，其他文件不提供通过URL预览
+        try {
+            Image image = ImageIO.read(file);
+            isImage = image == null ? false : true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("------OSS文件上传开始--------" + file.getName());
+
+        // 判断文件
+        if (file == null) {
+            return null;
+        }
+        // 创建OSSClient实例。
+        OSSClient ossClient = getOSSClient();
+        if (!ossClient.doesObjectExist(BACKET_NAME, "home/")) {
+            //创建文件夹
+            ossClient.putObject(BACKET_NAME, "home/", new ByteArrayInputStream(new byte[0]));
+            logger.info("创建文件夹成功");
+        }
+        try {
+            // 设置文件路径和名称
+            String suffix = file.getName().substring(file.getName().lastIndexOf("."));
+            String fileUrl = "home/" + UUID.randomUUID().toString().replace("-", "") + suffix;
+            if (isImage) {
+                FILE_URL = "https://" + BACKET_NAME + "." + ENDPOINT + "/" + fileUrl;
+            } else {
+                FILE_URL = "非图片，不可预览。文件路径为：" + fileUrl;
+            }
+
+            // 上传文件
+            PutObjectResult result = ossClient.putObject(new PutObjectRequest(BACKET_NAME, fileUrl, file));
+            // 设置权限(公开读)
+            ossClient.setBucketAcl(BACKET_NAME, CannedAccessControlList.PublicRead);
+            if (result != null) {
+                logger.info("------OSS文件上传成功------" + fileUrl);
+            }
+        } catch (OSSException oe) {
+            logger.error(oe.getMessage());
+        } catch (ClientException ce) {
+            logger.error(ce.getErrorMessage());
+        } finally {
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+        }
+        return FILE_URL;
+    }
+
+    /**
+     * 列举 test 文件下所有的文件
+     */
+    public static List listFile() {
+        OSSClient ossClient = getOSSClient();
+        try {
+            // 构造ListObjectsRequest请求。
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest(BACKET_NAME);
+
+            // 设置prefix参数来获取fun目录下的所有文件。
+            listObjectsRequest.setPrefix("home/");
+            // 列出文件。
+            ObjectListing listing = ossClient.listObjects(listObjectsRequest);
+            // 遍历所有文件。
+//        System.out.println("Objects:");
+//        for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
+//            System.out.println(objectSummary.getKey());
+//        }
+            return listing.getObjectSummaries().stream()
+                    .filter(item -> item.getKey().lastIndexOf(".") > 0)
+                    .map(item -> "https://insonaimage.oss-cn-beijing.aliyuncs.com/" + item.getKey())
+                    .collect(Collectors.toList());
+            // 遍历所有commonPrefix。
+//        System.out.println("CommonPrefixes:");
+//        for (String commonPrefix : listing.getCommonPrefixes()) {
+//            System.out.println(commonPrefix);
+//        }
+        } finally {
+            ossClient.shutdown();
+        }
+    }
 
 }
 
