@@ -112,4 +112,12 @@ public class AppUserServiceImpl implements AppUserService {
                 .where("phone=?",phone)
                 .queryForEntity(InsonaUser.class);
     }
+
+    @Override
+    public InsonaUser findByOpenId(String openId) {
+        return db.select()
+                .from(InsonaUser.class)
+                .where("openId=?", openId)
+                .queryForEntity(InsonaUser.class);
+    }
 }

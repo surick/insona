@@ -19,14 +19,18 @@ public class WechatUtil {
 
     private static final String APP_ID = "wx89a7462acaf6dccc";
     private static final String APP_SECRECT = "ad35d7a7ff3adeac39994e86d42e3c82";
+
     /**
      * 网页授权获取code
+     * scope snsapi_userinfo
      */
     public static final String OAUTH_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect";
+
     /**
      * code换取网页授权access_token
      */
     public static final String OAUTH_ASSCESSTOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
+
     /**
      * 拉取用户信息(需scope为 snsapi_userinfo)
      * 如果网页授权作用域为snsapi_userinfo，则此时开发者可以通过access_token和openid拉取用户信息了。
@@ -80,7 +84,7 @@ public class WechatUtil {
     }
 
     public static void main(String... args) {
-        OAuth2AccessToken oAuth2AccessToken = getAccessToken("011ajF582sZvSJ0FCs782O11682ajF5Q");
+        OAuth2AccessToken oAuth2AccessToken = getAccessToken("0614AYJZ12GSmT0lBrHZ11dzJZ14AYJf");
         WeixinUserInfo weixinUserInfo = getWeixinUserInfo(oAuth2AccessToken.getAccess_token(), oAuth2AccessToken.getOpenid());
         System.out.println(weixinUserInfo);
     }

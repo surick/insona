@@ -50,6 +50,10 @@ public class InsonaUser {
     @Column(columnName = "gizwits_password")
     private String gizwitsPassword;
 
+    private String openId;
+
+    private String unionId;
+
     public int getId() {
         return id;
     }
@@ -170,7 +174,6 @@ public class InsonaUser {
         this.headImgUrl = headImgUrl;
     }
 
-
     public String getGizwitsUsername() {
         return gizwitsUsername;
     }
@@ -185,5 +188,21 @@ public class InsonaUser {
 
     public void setGizwitsPassword(String gizwitsPassword) {
         this.gizwitsPassword = gizwitsPassword;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    public String getUnionId() {
+        return unionId;
+    }
+
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
     }
 }

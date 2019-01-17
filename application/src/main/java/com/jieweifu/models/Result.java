@@ -20,6 +20,12 @@ public class Result {
         return this;
     }
 
+    public Result setData(int code, Object data) {
+        this.code = code;
+        this.data = data;
+        return this;
+    }
+
     public Result setMessage(String message) {
         this.message = message;
         return this;

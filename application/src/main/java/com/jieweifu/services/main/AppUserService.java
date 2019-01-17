@@ -40,5 +40,5 @@ public interface AppUserService {
     //通过手机号码 查询id
     InsonaUser findIdByPhone(String phone);
 
-
+    InsonaUser findByOpenId(String openId);
 }
