@@ -129,7 +129,7 @@ public class UserController {
                     appUserService.updateUser(updateUser);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return new Result().setError("绑定openid失败");
+                    return new Result().setError("绑定失败");
                 }
             }
 //            return new Result().setError("号码已存在");
