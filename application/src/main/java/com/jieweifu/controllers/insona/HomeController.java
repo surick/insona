@@ -74,6 +74,7 @@ public class HomeController {
                     // 上传到OSS
                     String uploadUrl = AliyunOSSClientUtil.upLoad(newFile);
                     System.out.println(uploadUrl);
+                    newFile.delete();
                     return new Result().setData(uploadUrl);
                 }
             }
