@@ -17,7 +17,8 @@ public class MapUtil {
 
     private static final String BAIDU_MAP = "http://api.map.baidu.com/geocoder?location=:lat,:lng&output=json&key=:key";
 
-    public static String getCityByGeo(String lat, String lng, String key) throws IOException {
+    public static String getCityByGeo(String lat, String lng, String key)
+            throws IOException {
         OkHttpClient client = new OkHttpClient();
 
         try {
@@ -35,7 +36,8 @@ public class MapUtil {
         }
     }
 
-    public static void main(String... args) throws Exception{
+    public static void main(String... args)
+            throws Exception{
         String res = getCityByGeo("31.2990", "120.5853", "01FNnTFgvnMRi6TfsOehb94Z");
         System.out.println(res);
     }
