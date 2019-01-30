@@ -1,6 +1,7 @@
 package com.jieweifu.controllers.insona;
 
 import com.jieweifu.common.utils.HttpUtil;
+import com.jieweifu.common.utils.MapUtil;
 import com.jieweifu.models.Result;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpResponse;
@@ -8,8 +9,10 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,11 +63,12 @@ public class GetWeatherController {
         return new Result().setData(jsonObject);
     }
 
-
-
-
-
-
-
-
+    @GetMapping("getCityByGeo")
+    public String getCityByGeo(@RequestParam(value = "lat") String lat,
+                               @RequestParam(value = "lng") String lng,
+                               @RequestParam(value = "key") String key)
+            throws IOException {
+        String res = MapUtil.getCityByGeo(lat, lng, key);
+        return res;
+    }
 }
