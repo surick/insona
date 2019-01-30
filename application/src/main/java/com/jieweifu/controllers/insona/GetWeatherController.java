@@ -2,6 +2,7 @@ package com.jieweifu.controllers.insona;
 
 import com.jieweifu.common.utils.HttpUtil;
 import com.jieweifu.common.utils.MapUtil;
+import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpResponse;
@@ -63,6 +64,7 @@ public class GetWeatherController {
         return new Result().setData(jsonObject);
     }
 
+    @AdminAuthAnnotation(check = false)
     @GetMapping("getCityByGeo")
     public String getCityByGeo(@RequestParam(value = "lat") String lat,
                                @RequestParam(value = "lng") String lng,

@@ -1,5 +1,6 @@
 package com.jieweifu.controllers.insona;
 
+import com.froala.editor.Utils;
 import com.jieweifu.common.utils.AliyunOSSClientUtil;
 import com.jieweifu.common.utils.ErrorUtil;
 import com.jieweifu.common.utils.OSSClientConstants;
@@ -61,28 +62,25 @@ public class HomeController {
      */
     @PostMapping("imgUpload")
     public Result imgUpload(@RequestParam(value = "file") MultipartFile file) {
-        String filename = file.getOriginalFilename();
-        System.out.println(filename);
         try {
-            if (file != null) {
-                if (!"".equals(filename.trim())) {
-                    File newFile = new File(filename);
-                    FileOutputStream os = new FileOutputStream(newFile);
-                    os.write(file.getBytes());
-                    os.close();
-                    file.transferTo(newFile);
-                    // 上传到OSS
-                    String uploadUrl = AliyunOSSClientUtil.upLoad(newFile);
-                    System.out.println(uploadUrl);
-                    newFile.delete();
-                    return new Result().setData(uploadUrl);
-                }
-            }
+            String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            String filename = Utils.generateUniqueString() + suffix;
+
+            File newFile = new File(filename);
+            FileOutputStream os = new FileOutputStream(newFile);
+            os.write(file.getBytes());
+            os.close();
+            file.transferTo(newFile);
+            // 上传到OSS
+            String uploadUrl = AliyunOSSClientUtil.upLoad(newFile);
+
+            newFile.delete();
+            return new Result().setData(uploadUrl);
         } catch (Exception ex) {
             return new Result().setError("error-->" + ex);
 //            ex.printStackTrace();
         }
-        return new Result().setError("上传失败");
+//        return new Result().setError("上传失败");
     }
 
     @GetMapping("deleteImg")
