@@ -205,6 +205,12 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.cloopen.rest.sdk</groupId>
             <artifactId>CCPRestSmsSDK</artifactId>
             <version>1.0</version>

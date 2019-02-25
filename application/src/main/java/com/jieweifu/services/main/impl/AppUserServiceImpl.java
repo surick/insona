@@ -43,6 +43,15 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    public InsonaUser findMainUser(String email, String password) {
+        return db.select()
+                .from(InsonaUser.class)
+                .where("email= ? ", email)
+                .where("password =MD5(CONCAT(salt,?))", password)
+                .queryForEntity(InsonaUser.class);
+    }
+
+    @Override
     public InsonaUser findById(Integer id) {
         return db.select()
                 .from(InsonaUser.class)
@@ -106,10 +115,27 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    public int findByEmail(String email) {
+        return db.select()
+                .columns("count()")
+                .from(InsonaUser.class)
+                .where("email =?", email)
+                .total();
+    }
+
+    @Override
     public InsonaUser findIdByPhone(String phone) {
         return db.select()
                 .from(InsonaUser.class)
                 .where("phone=?",phone)
+                .queryForEntity(InsonaUser.class);
+    }
+
+    @Override
+    public InsonaUser findIdByEmail(String email) {
+        return db.select()
+                .from(InsonaUser.class)
+                .where("email=?", email)
                 .queryForEntity(InsonaUser.class);
     }
 

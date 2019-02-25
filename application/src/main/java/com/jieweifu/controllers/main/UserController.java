@@ -5,8 +5,6 @@ import com.jieweifu.constants.UserConstant;
 import com.jieweifu.interceptors.AdminAuthAnnotation;
 import com.jieweifu.models.Result;
 import com.jieweifu.models.insona.InsonaUser;
-import com.jieweifu.models.wechat.OAuth2AccessToken;
-import com.jieweifu.models.wechat.WeixinUserInfo;
 import com.jieweifu.services.main.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,35 +40,6 @@ public class UserController {
         this.tokenIdUtil = tokenIdUtil;
     }
 
-    @AdminAuthAnnotation(check = false)
-    @GetMapping("/wx/login")
-    public Result wxLogin(@RequestParam(name = "code") String code,
-                          @RequestParam(name = "state", required = false) String state) {
-        OAuth2AccessToken oAuth2AccessToken = WechatUtil.getAccessToken(code);
-        if (oAuth2AccessToken == null) {
-            return new Result().setError("获取微信用户信息失败");
-        }
-        WeixinUserInfo weixinUserInfo =
-                WechatUtil.getWeixinUserInfo(oAuth2AccessToken.getAccess_token(), oAuth2AccessToken.getOpenid());
-
-        InsonaUser user = appUserService.findByOpenId(weixinUserInfo.getOpenid());
-        if (user != null) {
-            // 已用微信注册
-            Map<String, String> userInfo = new HashMap<>(3);
-
-            String tokenId = tokenUtil.generateToken(String.valueOf(user.getId()));
-            userInfo.put(UserConstant.USER_TOKEN, tokenId);
-
-            redisUtil.setEX(tokenId, tokenId, 30, TimeUnit.DAYS);
-
-            return new Result().setData(userInfo);
-        } else {
-            // 第一次使用微信登录
-            return new Result().setData(301, weixinUserInfo);
-        }
-    }
-
-
     /**
      * 注册
      * @param registerUser
@@ -80,105 +49,60 @@ public class UserController {
     @PostMapping("/register")
     public Result register(@RequestBody RegisterUser registerUser) {
 
-        String phone = registerUser.getPhone();
         String password = registerUser.getPassword();
         String code = registerUser.getCode();
         String gizwitsUsername = registerUser.getGizwitsUsername();
         String gizwitsPassword = registerUser.getGizwitsPassword();
+        String phone = registerUser.getPhone();
+        String email = registerUser.getEmail();
 
-        // 微信相关
-        String openId = registerUser.getOpenId();
-        String unionId = registerUser.getUnionId();
-        String nickName = registerUser.getNickName();
-        Integer sex = registerUser.getSex();
-        String city = registerUser.getCity();
-        String province = registerUser.getProvince();
-        String country = registerUser.getCountry();
-        String headimgurl = registerUser.getHeadimgurl();
+        InsonaUser insonaUser = new InsonaUser();
 
-        if (!code.equals(redisUtil.get(phone))) {
-            return new Result().setError("手机验证码错误");
-        }
+        if (registerUser.getType() == 0) {
+            int i = appUserService.findByPhone(phone);
 
-        int i = appUserService.findByPhone(phone);
-        if (i > 0) {
-            // 号码已经注册 重新绑定微信openid
-            if (code.equals(redisUtil.get(phone))) {
-                InsonaUser updateUser = appUserService.findIdByPhone(phone);
-
-                updateUser.setOpenId(openId);
-                updateUser.setUnionId(unionId);
-                updateUser.setName(nickName);
-                updateUser.setAddress(country + province + city);
-                updateUser.setHeadImgUrl(headimgurl);
-                switch (sex) {
-                    case 0:
-                        updateUser.setGender("N");
-                        break;
-                    case 1:
-                        updateUser.setGender("M");
-                        break;
-                    case 2:
-                        updateUser.setGender("F");
-                        break;
-                    default:
-                        updateUser.setGender("");
-                        break;
-                }
-                try {
-                    appUserService.updateUser(updateUser);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return new Result().setError("绑定失败");
-                }
+            if (i > 0) {
+                return new Result().setError("号码已存在");
             }
-//            return new Result().setError("号码已存在");
-        } else {
-            // 新注册用户
-            InsonaUser insonaUser = new InsonaUser();
 
+            if (!code.equals(redisUtil.get(phone))) {
+                return new Result().setError("手机验证码错误");
+            }
             insonaUser.setPhone(phone);
-            insonaUser.setPassword(password);
-            insonaUser.setGizwitsUsername(gizwitsUsername);
-            insonaUser.setGizwitsPassword(gizwitsPassword);
-            insonaUser.setOpenId(openId);
-            insonaUser.setUnionId(unionId);
-            insonaUser.setAddress(country + province + city);
-            insonaUser.setName(nickName);
-            insonaUser.setHeadImgUrl(headimgurl);
-            switch (sex) {
-                case 0:
-                    insonaUser.setGender("N");
-                    break;
-                case 1:
-                    insonaUser.setGender("M");
-                    break;
-                case 2:
-                    insonaUser.setGender("F");
-                    break;
-                default:
-                    insonaUser.setGender("N");
-                    break;
-            }
-
-            try {
-                appUserService.addUser(insonaUser);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new Result().setError("注册失败");
-            }
         }
 
-        int newUserId = appUserService.findIdByPhone(phone).getId();
+        if (registerUser.getType() == 1) {
+            int i = appUserService.findByEmail(email);
 
+            if (i > 0) {
+                return new Result().setError("邮箱已存在");
+            }
+
+            if (!code.equals(redisUtil.get(email))) {
+                return new Result().setError("验证码错误");
+            }
+            insonaUser.setEmail(email);
+        }
+
+        insonaUser.setPassword(password);
+        insonaUser.setGizwitsUsername(gizwitsUsername);
+        insonaUser.setGizwitsPassword(gizwitsPassword);
+
+        try {
+            appUserService.addUser(insonaUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result().setError("注册失败");
+        }
+
+        int newUserId = registerUser.getType() == 0 ?
+                appUserService.findIdByPhone(phone).getId() : appUserService.findIdByEmail(email).getId();
         Map<String, String> userInfo = new WeakHashMap<>();
-
         //通过token封装后的id
         String tokenId = tokenUtil.generateToken(String.valueOf(newUserId));
         userInfo.put(UserConstant.USER_TOKEN, tokenId);
-
         redisUtil.setEX(tokenId, tokenId, 30, TimeUnit.DAYS);
-
+        Result result = new Result();
         return new Result().setData(userInfo);
     }
 
@@ -187,8 +111,17 @@ public class UserController {
     @AdminAuthAnnotation(check = false)
     @PostMapping("/login")
     public Result login(@RequestBody LoginUser mainUser) {
-
-        InsonaUser user = appUserService.findMainUserByUsernameAndPassword(mainUser.getPhone(), mainUser.getPassword());
+        InsonaUser user = new InsonaUser();
+        switch (mainUser.getType()) {
+            case 0:
+                user = appUserService.findMainUserByUsernameAndPassword(mainUser.getPhone(), mainUser.getPassword());
+                break;
+            case 1:
+                user = appUserService.findMainUser(mainUser.getEmail(), mainUser.getPassword());
+                break;
+            default:
+                break;
+        }
         if (user != null) {
             Map<String, String> userInfo = new WeakHashMap<>();
             String tokenId = tokenUtil.generateToken(String.valueOf(user.getId()));
@@ -227,16 +160,27 @@ public class UserController {
     @PutMapping("password/update")
     public Result update(@RequestBody UpdateUser updateUser, HttpServletRequest request) {
         Integer id = tokenIdUtil.getUserId(request);
+        String code = updateUser.getCode();
         if (id == -1) {
             return new Result().setError(401, "登录超时，重新登录");
         }
         InsonaUser insonaUser = appUserService.findById(id);
-        if (!insonaUser.getPhone().equals(updateUser.getPhone())) {
-            return new Result().setError("手机号码输入错误");
+
+        if (updateUser.getType() == 0) {
+            if (!insonaUser.getPhone().equals(updateUser.getPhone())) {
+                return new Result().setError("手机号码输入错误");
+            }
+            if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
+                return new Result().setError("手机验证码错误");
+            }
         }
-        String code = updateUser.getCode();
-        if (!code.equals(redisUtil.get(updateUser.getPhone()))) {
-            return new Result().setError("手机验证码错误");
+        if (updateUser.getType() == 1) {
+            if (!insonaUser.getEmail().equals(updateUser.getEmail())) {
+                return new Result().setError("邮箱输入错误");
+            }
+            if (!code.equals(redisUtil.get(updateUser.getEmail()))) {
+                return new Result().setError("邮箱验证码错误");
+            }
         }
         try {
             appUserService.updatePassword(updateUser.getNewPassword(), id);
@@ -250,18 +194,35 @@ public class UserController {
     //忘记密码  通过手机号 来判断用户是否存在  如果存在 就发送验证码
     @PutMapping("/password/forget")
     @AdminAuthAnnotation(check = false)
-    public Result  forget(@RequestBody UpdateUser updateUser){
-        String  phone=updateUser.getPhone();
-        InsonaUser user=appUserService.findIdByPhone(phone);
-
-        if (user==null) {
-            return new Result().setError("对不起，手机号码不存在");
-        }
-        Integer id =user.getId();
+    public Result  forget(@RequestBody UpdateUser updateUser) {
+        InsonaUser user = new InsonaUser();
         String code = updateUser.getCode();
-        if (!code.equals(redisUtil.get(phone))) {
-            return new Result().setError("手机验证码错误");
+
+        if (updateUser.getType() == 0) {
+            String phone=updateUser.getPhone();
+            user=appUserService.findIdByPhone(phone);
+
+            if (user==null) {
+                return new Result().setError("对不起，手机号码不存在");
+            }
+            if (!code.equals(redisUtil.get(phone))) {
+                return new Result().setError("手机验证码错误");
+            }
         }
+
+        if (updateUser.getType() == 1) {
+            String email = updateUser.getEmail();
+            user = appUserService.findIdByEmail(email);
+
+            if (user == null) {
+                return new Result().setError("对不起，邮箱不存在");
+            }
+            if (!code.equals(redisUtil.get(email))) {
+                return new Result().setError("邮箱验证码错误");
+            }
+        }
+
+        Integer id =user.getId();
         try {
             appUserService.updatePassword(updateUser.getNewPassword(), id);
         } catch (Exception e) {
@@ -338,14 +299,40 @@ public class UserController {
 
     }
 
+    @PostMapping("/sendEmail")
+    @AdminAuthAnnotation(check = false)
+    public Result sendEmail(@RequestBody LoginUser loginUser) {
+        String email = loginUser.getEmail();
+        try {
+            String code = EmailUtil.sendEmailCode(email);
+            if (!code.equals("-1")) {
+                redisUtil.setEX(email, code, TIME_OUT, TimeUnit.MINUTES);
+                return new Result().setMessage("发送成功");
+            }
+        } catch (Exception e) {
+            return new Result().setError("发送失败");
+        }
+        return new Result().setMessage("发送成功");
+    }
+
     /**
      * 登陆使用的临时对象
      */
     public static class LoginUser {
+
         private String phone;
+
+        private String email;
+
+        /**
+         * 0-手机
+         * 1-邮箱
+         */
+        private Integer type;
 
         @NotNull(message = "密码不能为空")
         private String password;
+
 
         public String getPhone() {
             return phone;
@@ -353,6 +340,22 @@ public class UserController {
 
         public void setPhone(String phone) {
             this.phone = phone;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public void setType(Integer type) {
+            this.type = type;
         }
 
         public String getPassword() {
@@ -369,20 +372,23 @@ public class UserController {
      * 注册使用的临时对象
      */
     public static class RegisterUser {
-        private String phone;
-        private String password;
-        private String code;
-        private String gizwitsUsername;
-        private String gizwitsPassword;
+        private String email;
 
-        private String openId;
-        private String unionId;
-        private String nickName;
-        private Integer sex;
-        private String city;
-        private String province;
-        private String country;
-        private String headimgurl;
+        /**
+         * 0-手机
+         * 1-邮箱
+         */
+        private Integer type;
+
+        private String phone;
+
+        private String password;
+
+        private String code;
+
+        private String gizwitsUsername;
+
+        private String gizwitsPassword;
 
         public String getPhone() {
             return phone;
@@ -424,68 +430,20 @@ public class UserController {
             this.gizwitsPassword = gizwitsPassword;
         }
 
-        public String getOpenId() {
-            return openId;
+        public String getEmail() {
+            return email;
         }
 
-        public void setOpenId(String openId) {
-            this.openId = openId;
+        public void setEmail(String email) {
+            this.email = email;
         }
 
-        public String getUnionId() {
-            return unionId;
+        public Integer getType() {
+            return type;
         }
 
-        public void setUnionId(String unionId) {
-            this.unionId = unionId;
-        }
-
-        public String getNickName() {
-            return nickName;
-        }
-
-        public void setNickName(String nickName) {
-            this.nickName = nickName;
-        }
-
-        public Integer getSex() {
-            return sex;
-        }
-
-        public void setSex(Integer sex) {
-            this.sex = sex;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getProvince() {
-            return province;
-        }
-
-        public void setProvince(String province) {
-            this.province = province;
-        }
-
-        public String getCountry() {
-            return country;
-        }
-
-        public void setCountry(String country) {
-            this.country = country;
-        }
-
-        public String getHeadimgurl() {
-            return headimgurl;
-        }
-
-        public void setHeadimgurl(String headimgurl) {
-            this.headimgurl = headimgurl;
+        public void setType(Integer type) {
+            this.type = type;
         }
     }
 
@@ -494,9 +452,17 @@ public class UserController {
      */
     public static class UpdateUser {
 
+        private String email;
+        /**
+         * 0-手机
+         * 1-邮件
+         */
+        private Integer type;
         private String phone;
         private String newPassword;
+
         private String code;
+
 
         public String getNewPassword() {
             return newPassword;
@@ -520,6 +486,22 @@ public class UserController {
 
         public void setPhone(String phone) {
             this.phone = phone;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public void setType(Integer type) {
+            this.type = type;
         }
     }
 

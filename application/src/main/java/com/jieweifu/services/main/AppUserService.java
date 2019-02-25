@@ -16,6 +16,14 @@ public interface AppUserService {
     //登陆
     InsonaUser findMainUserByUsernameAndPassword(String phone,String password);
 
+    /**
+     * 邮箱登录
+     * @param email
+     * @param password
+     * @return
+     */
+    InsonaUser findMainUser(String email, String password);
+
     //查询当前用户
     InsonaUser findById(Integer id);
 
@@ -37,8 +45,22 @@ public interface AppUserService {
     //手机号码注册判断 号码是否存在
     int findByPhone(String phone);
 
+    /**
+     * email是否存在
+     * @param email
+     * @return
+     */
+    int findByEmail(String email);
+
     //通过手机号码 查询id
     InsonaUser findIdByPhone(String phone);
+
+    /**
+     * 通过邮箱 查询id
+     * @param email
+     * @return
+     */
+    InsonaUser findIdByEmail(String email);
 
     InsonaUser findByOpenId(String openId);
 }
